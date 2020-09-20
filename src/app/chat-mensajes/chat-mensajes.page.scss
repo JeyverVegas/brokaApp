@@ -1,0 +1,27 @@
+.mensaje{
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    white-space: pre-wrap;    
+}
+
+.mi-mensaje{
+    color: white;
+    background: #79cd8a; 
+}
+
+.otro-mensaje{
+    color: white;
+    background: #6dcec1;
+}
+
+.time{
+    color: #ffffff;
+    float: right;
+    font-size: small;
+}
+
+.mensaje-input{
+    padding: 0 10px;
+    resize: none;
+}

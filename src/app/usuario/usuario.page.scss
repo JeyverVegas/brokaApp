@@ -1,0 +1,28 @@
+.img-user{    
+    max-width: 25%;
+    border-radius: 100%;
+    background: white;
+}
+
+.button-edit{
+    --border-radius: 100%;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    position: absolute;
+    bottom: 0;
+    right: 38%;
+}
+
+@media(min-width: 768px){
+    .button-edit{
+        right: 40%;
+        height: 20%;
+        width: 6%;
+    }
+}
+
+.div-img-user{
+    position: relative;
+}

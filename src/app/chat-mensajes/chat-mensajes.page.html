@@ -1,0 +1,55 @@
+<ion-header class="ion-no-border color_primario2">
+  <ion-item lines="none b_transparent">
+    <ion-button style="margin-inline-end: 5px;" fill="clear" color="light" slot="start" (click)="closeModal()">
+      <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-avatar slot="start">
+      <img src="{{usuario.img}}" alt="">
+    </ion-avatar>
+    <ion-label color="light">
+      <h3><b>{{usuario.nombre}}</b></h3>
+      <p>Activo hace 3 dias</p>
+    </ion-label>
+  </ion-item>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngFor="let mensaje of mensajes">
+      <ion-col size="9" *ngIf="usuario.id === mensaje.usuario.id" class="mensaje otro-mensaje">
+        <b>{{mensaje.usuario.nombre}}</b>
+        <br>
+        <span>{{mensaje.mensaje}}</span>
+        <div class="time ion-text-right">
+          <br>
+          {{mensaje.createdAt | date:'short'}}
+        </div>
+      </ion-col>
+
+      <ion-col offset="3" size="9" *ngIf="me.id === mensaje.usuario.id" class="mensaje mi-mensaje">
+        <b>{{mensaje.usuario.nombre}}</b>
+        <br>
+        <span>{{mensaje.mensaje}}</span>
+        <div class="time ion-text-right">
+          <br>
+          {{mensaje.createdAt | date:'short'}}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button expand="block" fill="clear" color="medium" class="mensaje-button" (click)="uploadOptions()">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>    
+    <ion-textarea [(ngModel)]="nuevoMensaje" placeholder="Escribe un mensaje..." rows="2" class="mensaje-input"></ion-textarea>
+    <ion-buttons slot="end">
+      <ion-button expand="block" fill="clear" color="medium" class="mensaje-button" (click)="enviarMensaje()">
+        <ion-icon name="send" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>    
+  </ion-toolbar>  
+</ion-footer>

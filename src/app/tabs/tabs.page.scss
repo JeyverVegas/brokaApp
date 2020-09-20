@@ -1,1 +1,11 @@
+ion-tab-button{
+    --color-focused: #5cc372;
+    --color-selected: #5cc372;
+}
 
+.button_add{
+    background: linear-gradient(to left, #92d9b5, #5cc372) !important;
+    padding: 3px 10px;
+    border-radius: 15px;
+    color: white;
+}

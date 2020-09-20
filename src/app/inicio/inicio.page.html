@@ -1,0 +1,55 @@
+<ion-content>
+    <div class="menu-buttons">
+        <ion-grid>
+            <ion-row>
+                <ion-col class="ion-text-center" size="4">
+                    <ion-button mode="md" size="small" fill="clear" color="light" (click)="abriFiltros()">
+                        <ion-icon slot="start" name="options-outline"></ion-icon>
+                        FILTRAR
+                    </ion-button>
+                </ion-col>
+                <ion-col class="ion-text-center" size="4">
+                    <ion-button mode="md" size="small" fill="clear" color="light">
+                        GUARDAR <br>
+                        BÚSQUEDA
+                    </ion-button>
+                </ion-col>
+                <ion-col class="ion-text-center" size="4">
+                    <ion-button mode="md" size="small" fill="clear" color="light" routerLink="/map" routerDirection="forward">
+                        <ion-icon slot="start" name="map-outline"></ion-icon>
+                        MAPA
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+    <ion-slides pager="true" style="height: 100%;" [options]="slideOpts">
+        <ion-slide *ngFor="let producto of productos"
+            style="background: url({{producto.imagenes[0]}}); background-size: 100% 100%; position: relative;">
+            <div class="description-container">
+                <div class="ion-activatable ripple-parent" style="position: relative;" (click)="openProduct(producto)">
+                    <h3 style="color: white;">{{producto.nombre}}</h3>
+                    <p style="color: white;">{{producto.descripcion}}</p>
+                    <ion-ripple-effect></ion-ripple-effect>
+                </div>                
+                <ion-buttons style="justify-content: space-between;">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
+                        <ion-icon slot="icon-only" color="medium" name="reload"></ion-icon>
+                    </ion-button>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
+                        <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>
+                    </ion-button>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
+                        <ion-icon slot="icon-only" color="warning" name="star"></ion-icon>
+                    </ion-button>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
+                        <ion-icon slot="icon-only" color="success" name="checkmark"></ion-icon>
+                    </ion-button>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
+                        <ion-icon slot="icon-only" color="primary" name="list"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </div>
+        </ion-slide>
+    </ion-slides>
+</ion-content>

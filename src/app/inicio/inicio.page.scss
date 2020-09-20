@@ -1,0 +1,26 @@
+ion-content{
+    position: relative;
+}
+
+.description-container{
+    position: absolute;
+    bottom: 0;
+    height: 40%;
+    background: rgba(0,0,0, .3);
+    color: white;
+    text-align: left;
+    padding: 10%;
+    width: 100%;
+}
+
+.menu-buttons{
+    z-index: 99999999999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.boton-redondo{
+    --border-radius: 100% !important;
+}

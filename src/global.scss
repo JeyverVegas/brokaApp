@@ -24,3 +24,101 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+/*Estilos Globales de la App*/
+
+/*Estilos del select de categorias*/
+.hello .alert-wrapper {    
+
+    /*color de los valores al ser seleccionados*/
+    [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
+        border-color: #59C16A;
+    }
+
+    .alert-radio-inner.sc-ion-alert-md{
+        background: #59C16A;
+    }
+
+    /*color de los botones cancel y ok*/
+    .alert-button.sc-ion-alert-md{
+        color: #59C16A;   
+    }
+}
+
+
+.custom-bullets{
+    width: 15px;
+    height: fit-content;
+    font-size: 15px;    
+    background: white;    
+
+}
+
+.swiper-container-vertical>.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {    
+    width: 20px;
+}
+
+.logo-white{
+    background: white;
+    border-radius: 20px;
+}
+
+.full-heigth{
+    min-height: 100vh;
+    position: relative;
+    max-width: 100%;
+}
+
+.sombra_no{
+    box-shadow: none;
+    --box-shadow: none;
+}
+
+.b_transparent{
+    --background: transparent;
+    background: transparent;
+}
+
+.color_primario2{
+    background: linear-gradient(to left, #59C16A, #48C2B5);
+}
+
+.color_primario{
+    //background: linear-gradient(to left, #59C16A, #48C2B5);
+    --background: linear-gradient(to left, #92d9b5, #5cc372) !important;
+    --background-activated: #5cc372;
+}
+
+.boton-facebook{
+    --background: #3a569a;
+    --background-activated: #48619b;
+}
+
+
+@media(min-width: 320px){
+    .img-logo-menu{
+        max-height: 70px;
+    }
+}
+
+@media(min-width: 768px){
+    .img-logo-menu{
+        max-height: 110px;
+    }
+}
+
+.line{
+    width: 100%;
+    height: 1px;    
+}
+
+.line-dark{
+    background: #222428;
+}
+
+.line-medium{
+    background: #e9e9e9;
+}
+
+
+

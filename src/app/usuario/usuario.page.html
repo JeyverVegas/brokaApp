@@ -1,0 +1,34 @@
+<app-top-bar></app-top-bar>
+
+<ion-content class="ion-padding">
+    <div class="ion-text-center">
+        <div class="div-img-user">
+            <img class="img-user" src="../../assets/images/user.PNG" alt="">
+            <ion-button size="small" class="button-edit color_primario">
+                <ion-icon name="add" slot="icon-only"></ion-icon>
+            </ion-button>
+        </div>        
+        <h1>{{usuario.nombre}}</h1>
+        <h4>{{usuario.direccion}}</h4>
+        <p>{{usuario.descripcion}}</p>
+        <ion-button expand="block" fill="outline" color="dark">
+            Mensaje
+        </ion-button>
+        <br>
+        <ion-button expand="block" fill="outline" color="dark" (click)="logOut()">
+            cerrar sesion
+        </ion-button>
+        <br>
+        <ion-button expand="block" fill="outline" color="dark">
+            añadir imagen
+            <ion-icon slot="end" name="camera-outline"></ion-icon>
+        </ion-button>
+    </div>
+    <ion-grid>
+        <ion-row>            
+            <ion-col size="6" *ngFor=" let image of usuario.images">
+                <img src="{{image}}" alt="">
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
