@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 import { ProductosService } from '../servicios/productos.service';
 import { ShowProductPage } from '../show-product/show-product.page';
 
@@ -10,8 +11,8 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class BuscarPage implements OnInit {
 
-  productos = [];
-  filtro = [];
+  productos = new BehaviorSubject([]);
+  filtro = new BehaviorSubject([]);
 
   constructor(
     private productosService: ProductosService,
@@ -23,29 +24,27 @@ export class BuscarPage implements OnInit {
     this.initializedItems();
   }
 
-  initializedItems(){
-    this.filtro = this.productos;    
+  initializedItems() {
+    this.filtro = this.productos;
   }
 
-  filtrar(ev){
+  filtrar(ev) {
     this.initializedItems();
-    
+
     const valor = ev.target.value;
 
-    if(!valor){
+    if (!valor) {
       return
-    }
+    }    
 
-    this.filtro = this.filtro.filter(producto => {
-      if (producto.nombre && valor){
-        return (producto.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1);
-      }
-    });
-
-    console.log(this.filtro);
+      this.filtro.next(this.filtro.getValue().filter(producto => {
+        if (producto.nombre && valor) {
+          return (producto.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1);
+        }
+      }))    
   }
 
-  async openProduct(producto){
+  async openProduct(producto) {
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
@@ -54,6 +53,16 @@ export class BuscarPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  addToFavorite(producto) {
+    producto.favorito = !producto.favorito;
+    this.productosService.addProductFavorito(producto);
+  }
+
+  removeFromFavorite(producto) {
+    producto.favorito = !producto.favorito;
+    this.productosService.removeProductFavorito(producto);
   }
 
 }

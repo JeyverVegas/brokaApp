@@ -36,10 +36,10 @@
         <ion-button fill="clear" color="secondary" (click)="openShared()">
           <ion-icon slot="icon-only" name="share-social"></ion-icon>
         </ion-button>
-        <ion-button *ngIf="!favorito" fill="clear" color="secondary" (click)="favorito = !favorito">
+        <ion-button *ngIf="!producto.favorito" fill="clear" color="secondary" (click)="addToFavorite()">
           <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
         </ion-button>
-        <ion-button *ngIf="favorito" fill="clear" color="secondary" (click)="favorito = !favorito">
+        <ion-button *ngIf="producto.favorito" fill="clear" color="secondary" (click)="removeFromFavorite()">
           <ion-icon slot="icon-only" name="heart" color="danger"></ion-icon>
         </ion-button>
       </ion-col>

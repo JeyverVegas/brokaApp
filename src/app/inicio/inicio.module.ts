@@ -10,6 +10,7 @@ import { InicioPage } from './inicio.page';
 
 import { ComponentsModule } from '../components/components.module'
 import { ShowProductPageModule } from '../show-product/show-product.module';
+import { AlertPageModule } from '../alert/alert.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { ShowProductPageModule } from '../show-product/show-product.module';
     IonicModule,
     InicioPageRoutingModule,
     ComponentsModule,
-    ShowProductPageModule
+    ShowProductPageModule,
+    AlertPageModule
   ],
   declarations: [InicioPage]
 })

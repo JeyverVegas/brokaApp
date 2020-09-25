@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActionSheetController, IonSlides, ModalController, NavParams } from '@ionic/angular';
+import { ProductosService } from '../servicios/productos.service';
 
 declare var google: any;
 
@@ -34,7 +35,8 @@ export class ShowProductPage implements OnInit {
   constructor(
     private navParams: NavParams,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private productosService: ProductosService
   ) { }
 
   IonViewDidEnter() {
@@ -111,6 +113,20 @@ export class ShowProductPage implements OnInit {
     });
 
     actionSheet.present();
+  }
+
+  descartar(){    
+    this.productosService.descartarProducto(this.producto);
+  }
+
+  addToFavorite(){
+    this.producto.favorito = !this.producto.favorito;
+    this.productosService.addProductFavorito(this.producto);
+  }
+
+  removeFromFavorite(){
+    this.producto.favorito = !this.producto.favorito;
+    this.productosService.removeProductFavorito(this.producto);
   }
 
 }

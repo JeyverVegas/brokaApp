@@ -9,7 +9,7 @@ import { FiltrosPage } from 'src/app/filtros/filtros.page';
 })
 export class TopBarComponent implements OnInit {
 
-  @Input() titulo: string;
+  @Input() titulo: string;  
 
   constructor(
     private modalCtrl: ModalController

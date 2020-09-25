@@ -23,6 +23,18 @@ const routes: Routes = [
         path: 'buscar',
         loadChildren: () => import('../buscar/buscar.module').then( m => m.BuscarPageModule)
       },
+      {
+        path: 'favoritos',
+        loadChildren: () => import('../favoritos/favoritos.module').then( m => m.FavoritosPageModule)
+      },
+      {
+        path: 'descartado',
+        loadChildren: () => import('../descartado/descartado.module').then( m => m.DescartadoPageModule)
+      },
+      {
+        path: 'inmobiliarias',
+        loadChildren: () => import('../inmobiliarias/inmobiliarias.module').then( m => m.InmobiliariasPageModule)
+      },
     ]
   },
   {

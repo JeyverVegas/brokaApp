@@ -1,0 +1,14 @@
+.contenedor{
+    --overflow: hidden;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --padding-start: 10px;
+    --padding-end: 10px;    
+}
+
+
+@media(max-width: 320px){
+    .contenedor{
+        --overflow: auto;
+    }
+}

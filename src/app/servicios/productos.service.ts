@@ -6,7 +6,11 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ProductosService {
 
-  private productos = [
+  private favoritos = [];
+
+  private descartados = [];
+
+  private productos = new BehaviorSubject([
     {
       id: 1,
       nombre: 'Fit Roiz 1350',
@@ -14,11 +18,12 @@ export class ProductosService {
         id: 2,
         nombre: 'Apartamentos'
       },
+      favorito: false,
       provincy: 'Buenos Aires',
       partido: 'Rosario',
       address: 'Calle Rossini 9',
       latLng: {
-        lat: -34.609129, 
+        lat: -34.609129,
         lng: -58.426284
       },
       imagenes: [
@@ -83,11 +88,12 @@ export class ProductosService {
         id: 1,
         nombre: 'Viviendas'
       },
+      favorito: false,
       provincy: 'Córdoba',
       partido: 'Gral. San Martín',
       address: 'Calle #9, Casa #3.',
       latLng: {
-        lat: -34.595194,  
+        lat: -34.595194,
         lng: -58.389484
       },
       imagenes: [
@@ -151,11 +157,12 @@ export class ProductosService {
         id: 1,
         nombre: 'Viviendas'
       },
+      favorito: false,
       provincy: 'Buenos Aires',
       partido: 'EZEIZA',
       address: 'Av. Bolivar, Casa #4',
       latLng: {
-        lat: -34.608405,  
+        lat: -34.608405,
         lng: -58.437978
       },
       imagenes: [
@@ -219,6 +226,7 @@ export class ProductosService {
         value: 4,
         nombre: 'Locales'
       },
+      favorito: false,
       provincy: 'Córdoba',
       partido: 'Gral. Roca',
       address: 'Calle #5, C.C. "Alto Palermo".',
@@ -259,12 +267,12 @@ export class ProductosService {
         },
       ]
     },
-    
-  ];
+
+  ]);
 
   filtros = {
     mostrarTodo: true,
-    categoria: '1',    
+    categoria: '1',
     precios: {
       lower: this.getMaxAndMin().minPrecio,
       upper: this.getMaxAndMin().maxPrecio
@@ -360,8 +368,8 @@ export class ProductosService {
       },
     ],
     caracteristicas: [
-      {  
-        id: 1,      
+      {
+        id: 1,
         titulo: 'Ascensor',
         filtrar: false
       },
@@ -435,31 +443,64 @@ export class ProductosService {
         filtrar: false
       }
     ]
-  }  
+  }
+
+  inmobiliarias = [
+    {
+      id: 1,
+      img: '../../assets/images/logo_inmobiliaria1.png',
+      nombre: 'Inmobiliaria A'
+    },
+    {
+      id: 2,
+      img: '../../assets/images/logo_inmobiliaria2.png',
+      nombre: 'Inmobiliaria B'
+    },
+    {
+      id: 3,
+      img: '../../assets/images/logo_inmobiliaria3.png',
+      nombre: 'Inmobiliaria C'
+    },
+    {
+      id: 4,
+      img: '../../assets/images/logo_inmobiliaria4.png',
+      nombre: 'Inmobiliaria D'
+    },
+    {
+      id: 5,
+      img: '../../assets/images/logo_inmobiliaria5.png',
+      nombre: 'Inmobiliaria E'
+    },
+    {
+      id: 6,
+      img: '../../assets/images/logo_inmobiliaria6.png',
+      nombre: 'Inmobiliaria F'
+    }
+  ];
 
   constructor() { }
 
   getMaxAndMin() {
     return {
-      maxPrecio: Math.max.apply(Math, this.productos.map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
-      minPrecio: Math.min.apply(Math, this.productos.map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
+      maxPrecio: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
+      minPrecio: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
 
-      maxM2: Math.max.apply(Math, this.productos.map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
-      minM2: Math.min.apply(Math, this.productos.map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
+      maxM2: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
+      minM2: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
 
-      maxHabitaciones: Math.max.apply(Math, this.productos.map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
-      minHabitaciones: Math.min.apply(Math, this.productos.map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
+      maxHabitaciones: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
+      minHabitaciones: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
 
-      maxBanos: Math.max.apply(Math, this.productos.map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
-      minBanos: Math.min.apply(Math, this.productos.map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
+      maxBanos: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
+      minBanos: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
     }
   }
 
-  addFiltros(filtros){
+  addFiltros(filtros) {
     Object.assign(this.filtros, filtros);
-    if(!this.filtros.mostrarTodo){
-      console.log('estoy filtrando.');      
-    }else{
+    if (!this.filtros.mostrarTodo) {
+      console.log('estoy filtrando.');
+    } else {
       console.log('no estoy filtrando.');
     }
   }
@@ -468,7 +509,54 @@ export class ProductosService {
     return this.filtros;
   }
 
-  getProducts() {    
-      return this.productos;    
+  getInmobiliarias(){
+    return this.inmobiliarias;
+  }
+
+  getFavoritos() {
+    return this.favoritos;
+  }
+
+  getDescartados() {
+    return this.descartados;
+  }
+
+  addProductFavorito(product) {
+    this.favoritos.push(product);
+  }
+
+  getFavoritosProducts() {
+    this.productos.getValue().map(producto => {
+      this.favoritos.some(favorito => producto.id === favorito);
+    });
+
+
+  }
+
+  removeProductFavorito(product) {
+    for (let [index, p] of this.favoritos.entries()) {
+      if (product.id === p.id) {
+        this.favoritos.splice(index, 1);
+      }
+    }
+  }
+
+  descartarProducto(product) {
+    for (let [index, p] of this.productos.getValue().entries()) {
+      if (product.id === p.id) {
+        this.descartados.push(product);
+        this.productos.getValue().splice(index, 1);
+        console.log(this.productos.getValue());
+      }
+    }
+  }
+
+  getProducts() {
+    this.productos.getValue().forEach(producto => {
+      producto.favorito = this.favoritos.some(favorito => producto.id === favorito.id);
+      return producto;
+    });
+
+    return this.productos;
   }
 }

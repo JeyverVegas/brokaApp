@@ -7,7 +7,7 @@
       <ion-text color="dark">Todos los resultados</ion-text>
     </h3>
     <ion-grid>      
-      <ion-row style="position: relative;" class="ion-activatable ripple-parent" *ngFor="let producto of filtro" (click)="openProduct(producto)">
+      <ion-row style="position: relative;" class="ion-activatable ripple-parent" *ngFor="let producto of filtro | async" (click)="openProduct(producto)">
         <ion-col size="5" class="ion-align-self-center">
           <img class="img-list" src="{{producto.imagenes[0]}}" alt="">
         </ion-col>
@@ -30,9 +30,12 @@
           </div>
           
           <div class="price-container" *ngIf="producto.precio">
-            <p class="price"><ion-text color="secondary">${{producto.precio}}</ion-text></p>
-            <ion-button color="dark" fill="clear">
-              219 <ion-icon slot="end" name="heart" color="danger"></ion-icon>
+            <p class="price"><ion-text color="secondary">${{producto.precio}}</ion-text></p>            
+            <ion-button *ngIf="!producto.favorito" color="dark" fill="clear" (click)="addToFavorite(producto)">
+              219 <ion-icon slot="end" name="heart-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button *ngIf="producto.favorito" color="dark" fill="clear" (click)="removeFromFavorite(producto)">
+              220 <ion-icon slot="end" name="heart" color="danger"></ion-icon>
             </ion-button>            
           </div>
         </ion-col>

@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 import { ProductosService } from '../servicios/productos.service';
 
 declare var google: any;
@@ -10,7 +11,7 @@ declare var google: any;
 })
 export class MapPage implements OnInit {
 
-  productos = [];
+  productos = new BehaviorSubject([]);
   @ViewChild('googlemap', { static: true }) protected googlemap: ElementRef;
   constructor(
     private productoService: ProductosService,
@@ -20,16 +21,13 @@ export class MapPage implements OnInit {
   ngOnInit() {
     this.productos = this.productoService.getProducts();
     this.crearMapa();
-
-    this.productos.forEach(producto =>{
-      console.log(producto.nombre.length);
-    })
+    
   }
 
 
   crearMapa() {
     var map = new google.maps.Map(this.googlemap.nativeElement, {
-      center: this.productos[0].latLng, 
+      center: this.productos.getValue()[0].latLng, 
       zoom: 10,      
       mapTypeControl: false,
       zoomControl: false,
@@ -38,7 +36,7 @@ export class MapPage implements OnInit {
       fullscreenControl: false
     });
 
-    this.productos.forEach(producto =>{      
+    this.productos.getValue().forEach(producto =>{      
       var labelOrigin = new google.maps.Point(80, 15);
       if(producto.nombre.length > 12){
         labelOrigin = new google.maps.Point(95, 15);

@@ -9,7 +9,7 @@
                     </ion-button>
                 </ion-col>
                 <ion-col class="ion-text-center" size="4">
-                    <ion-button mode="md" size="small" fill="clear" color="light">
+                    <ion-button mode="md" size="small" fill="clear" color="light" (click)="saveSearch()">
                         GUARDAR <br>
                         BÚSQUEDA
                     </ion-button>
@@ -23,8 +23,8 @@
             </ion-row>
         </ion-grid>
     </div>
-    <ion-slides pager="true" style="height: 100%;" [options]="slideOpts">
-        <ion-slide *ngFor="let producto of productos"
+    <ion-slides #slideHome pager="true" style="height: 100%;" [options]="slideOpts">
+        <ion-slide *ngFor="let producto of productos | async"
             style="background: url({{producto.imagenes[0]}}); background-size: 100% 100%; position: relative;">
             <div class="description-container">
                 <div class="ion-activatable ripple-parent" style="position: relative;" (click)="openProduct(producto)">
@@ -33,8 +33,8 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>                
                 <ion-buttons style="justify-content: space-between;">
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid">
-                        <ion-icon slot="icon-only" color="medium" name="reload"></ion-icon>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="descartar(producto)">
+                        <ion-icon slot="icon-only" color="medium" name="trash"></ion-icon>
                     </ion-button>
                     <ion-button color="light" size="large" class="boton-redondo" fill="solid">
                         <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>

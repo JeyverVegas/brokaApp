@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AlertController, IonSlides, ModalController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
+import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
 import { ProductosService } from '../servicios/productos.service';
 import { ShowProductPage } from '../show-product/show-product.page';
@@ -11,8 +13,8 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class InicioPage implements OnInit {
 
-  productos = [];
-
+  productos = new BehaviorSubject([]);
+  favoritos = [];
   slideOpts = {
     direction: 'vertical',
     pagination: {
@@ -27,14 +29,20 @@ export class InicioPage implements OnInit {
     }
   };
 
+  @ViewChild('slideHome', { static: true }) protected slides: IonSlides;
+
   constructor(
     private productosService: ProductosService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,    
   ) { }  
 
   ngOnInit() {
-    this.productos = this.productosService.getProducts();    
-    console.log(this.productos);
+    this.productos = this.productosService.getProducts();
+    this.slides.update();    
+  }
+  
+  IonViewDidEnter() {
+    this.slides.update();
   }
 
   async openProduct(producto){
@@ -54,6 +62,20 @@ export class InicioPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  async saveSearch() {
+    const modal = await this.modalCtrl.create({
+      cssClass: ['alertModal'],
+      animated: true,
+      component: AlertPage,
+    });
+
+    modal.present();
+  }
+
+  descartar(product){    
+    this.productosService.descartarProducto(product);
   }
 
 

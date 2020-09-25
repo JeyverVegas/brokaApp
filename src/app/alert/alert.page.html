@@ -1,0 +1,20 @@
+<ion-content class="ion-text-center contenedor">
+  <div style="display: flex; height: 100%;">
+    <div style="margin: auto;">
+      <ion-icon *ngIf="!guardarBusqueda" style="font-size: xx-large;" color="medium" name="notifications"></ion-icon>      
+      <ion-icon *ngIf="guardarBusqueda" style="font-size: xx-large;" color="primary" name="checkmark-circle-outline"></ion-icon>
+    <p style="margin: 5px 0;">
+      <ion-text color="medium">
+        ¿Te avisamos si hay <b>novedades</b>? <br>
+        Recibe <b>notificaciones</b> de esta búsqueda
+      </ion-text>
+    </p>    
+    <ion-button *ngIf="!guardarBusqueda" color="secondary" class="sombra_no" (click)="guardarBusqueda = !guardarBusqueda">
+      Guardar Búsqueda
+    </ion-button>
+    <ion-button *ngIf="guardarBusqueda" color="secondary" class="sombra_no" (click)="closeModal()">
+      ¡Búsqueda Guardada!
+    </ion-button>
+    </div>    
+  </div>
+</ion-content>

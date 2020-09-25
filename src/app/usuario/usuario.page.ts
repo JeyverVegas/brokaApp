@@ -12,6 +12,7 @@ export class UsuarioPage implements OnInit {
     nombre: 'Jane',
     direccion: 'RECOLECTA C.A.B.A',
     descripcion: 'Necesito apartamento, preferiblemente cerca del alto palermo para facilidad en mi empleo.',
+    perfilImg: '../../assets/images/user.PNG',
     images: [
       '../../assets/images/user(2).PNG',
       '../../assets/images/user(3).PNG',
