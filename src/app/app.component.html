@@ -1,67 +1,27 @@
 <ion-app>
-  <ion-menu side="end" menuId="first" contentId="main">
-    <ion-header class="color_primario2 ion-no-border">
-      <ion-toolbar class="ion-padding b_transparent">
-        <ion-avatar slot="start">
-          <img src="{{usuario.perfilImg}}" alt="">
-        </ion-avatar>
-        <ion-label class="user-name" color="light">
-          {{usuario.nombre}}
+  <ion-menu swipeGesture="false" side="end" menuId="first" contentId="main" (ionWillOpen)="updateUser()">    
+    <ion-content>
+      <div class="menu-header-bg"></div>
+      
+      <div class="header-content">
+        <img src="{{usuario.perfilImg}}" alt="">
+        <ion-label color="light">
+          <h2>{{usuario.name}}</h2>
+          <p>{{usuario.email}}</p>
         </ion-label>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content color="dark">
+      </div>
 
       <ion-menu-toggle>
-        <ion-item button lines="none" color="dark">
-          <ion-icon name="search-outline" slot="start"></ion-icon>
-          <ion-label>Nueva búsqueda</ion-label>
-        </ion-item>
-      </ion-menu-toggle>      
-
-      <div class="line line-light"></div>
-
-      <ion-menu-toggle>
-        <ion-item button lines="none" color="dark">
-          <ion-icon name="notifications" slot="start"></ion-icon>
-          <ion-label>Mis notificaciones</ion-label>
+        <ion-item mode ="md" *ngFor="let page of pages" button lines="none"  (click)="playSound()" routerLink="{{page.url}}" routerDirection="forward" [class.active]="selectedPath === page.url">
+          <ion-icon name="{{page.icon}}" slot="start"></ion-icon>
+          <ion-label>{{page.name}}</ion-label>
         </ion-item>
       </ion-menu-toggle>
-
+      
       <ion-menu-toggle>
-        <ion-item button lines="none" color="dark">
-          <ion-icon name="search-circle-outline" slot="start"></ion-icon>
-          <ion-label>Mis búsquedas</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-
-      <ion-menu-toggle>
-        <ion-item button lines="none" color="dark" routerLink="tabs/tabs/favoritos" routerDirection="forward">
-          <ion-icon name="heart-outline" slot="start"></ion-icon>
-          <ion-label>Mis favoritos</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-
-      <ion-menu-toggle>
-        <ion-item button lines="none" color="dark" routerLink="tabs/tabs/descartado" routerDirection="forward">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          <ion-label>Mis descartados</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-
-      <ion-menu-toggle>
-        <ion-item button lines="none" color="dark" routerLink="tabs/tabs/inmobiliarias" routerDirection="forward">
-          <ion-icon name="home-outline" slot="start"></ion-icon>
-          <ion-label>Mis Inmobiliarias</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-
-      <div class="line line-light"></div>
-
-      <ion-menu-toggle>
-        <ion-item button lines="none" color="dark">
-          <ion-icon name="call-outline" slot="start"></ion-icon>
-          <ion-label>Contacte con nosotros</ion-label>
+        <ion-item mode ="md" button lines="none"  (click)="logOut()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          <ion-label>Cerrar sesión</ion-label>
         </ion-item>
       </ion-menu-toggle>
 

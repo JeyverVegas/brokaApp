@@ -1,3 +1,11 @@
+.delete-button{
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    position: absolute;    
+}
+
 .mensaje{
     padding: 10px;
     border-radius: 10px;

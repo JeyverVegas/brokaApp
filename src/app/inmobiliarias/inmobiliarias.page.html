@@ -3,11 +3,11 @@
 <ion-content class="ion-padding">
   <h1>Mis inmobiliarias</h1>
   <ion-grid>      
-    <ion-row style="position: relative;" class="ion-activatable ripple-parent" *ngFor="let inmobiliaria of inmobiliarias" (click)="openInmobiliaria(inmobiliaria)">
-      <ion-col size="5" class="ion-align-self-center">
+    <ion-row *ngFor="let inmobiliaria of inmobiliarias">
+      <ion-col size="5" class="ion-align-self-center" (click)="openPreview(inmobiliaria.img)">
         <img class="img-list" src="{{inmobiliaria.img}}" alt="">
       </ion-col>
-      <ion-col size="7" class="ion-align-self-center">          
+      <ion-col style="position: relative;" size="7" class="ion-align-self-center ion-activatable ripple-parent" (click)="openInmobiliaria(inmobiliaria)">
         <h4><ion-text color="dark">{{inmobiliaria.nombre}}</ion-text></h4>
 
         <div class="atribute-container" style="display: flex; align-items: center;">
@@ -30,8 +30,8 @@
             219 <ion-icon slot="end" name="heart" color="danger"></ion-icon>
           </ion-button>            
         </div>
-      </ion-col>
-      <ion-ripple-effect></ion-ripple-effect>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>      
     </ion-row>
   </ion-grid>
 </ion-content>

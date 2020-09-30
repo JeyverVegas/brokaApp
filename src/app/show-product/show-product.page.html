@@ -9,7 +9,7 @@
     <img class="img-logo-menu logo-white ion-margin-top" src="../../../assets/images/logo.png" alt="">
 
     <ion-buttons slot="end">
-      <ion-button color="light">
+      <ion-button color="light" (click)="playSound()">
         <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -18,7 +18,7 @@
 
 <ion-content>
   <ion-slides #sliderRef pager="true" class="slider-img" [options]="slideOpts">
-    <ion-slide *ngFor="let image of producto.imagenes" style="background: url({{image}}); background-size: 100% 100%;">
+    <ion-slide *ngFor="let image of producto.imagenes" style="background: url({{image}}); background-size: 100% 100%;" (click)="openPreview(image)">
     </ion-slide>
   </ion-slides>
 
@@ -73,7 +73,7 @@
     <p>
       <ion-text color="medium">{{producto.partido}}, {{producto.provincy}}</ion-text>
     </p>
-    <ion-button color="secondary" shape="round" fill="clear" size="large">
+    <ion-button color="secondary" shape="round" fill="clear" size="large" (click)="playSound();">
       <ion-icon name="location-outline" slot="start"></ion-icon>
       ver en mapa
     </ion-button>
@@ -135,29 +135,29 @@
   <div style="display: flex;">
     <!--Si solo hay una imagen-->
     <div *ngIf="producto.imagenes.length == 1">
-      <img class="img-full" src="{{producto.imagenes[0]}}" alt="">
+      <img class="img-full" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
     </div>
 
     <!--Si hay 2 imagenes-->
     <div *ngIf="producto.imagenes.length == 2">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="">
+      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
+      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
     </div>
 
     <!--Si hay 3 imagenes-->
     <div *ngIf="producto.imagenes.length == 3">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="">
-      <img class="img-full" src="{{producto.imagenes[2]}}" alt="">
+      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
+      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
+      <img class="img-full" src="{{producto.imagenes[2]}}" alt="" (click)="openPreview(producto.imagenes[2])">
     </div>
 
     <!--Si hay 4 imagenes o mas-->
     <div *ngIf="producto.imagenes.length > 3" class="ion-text-center">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="">
-      <img class="img-height img-3" src="{{producto.imagenes[2]}}" alt="">
-      <img class="img-height img-4" src="{{producto.imagenes[3]}}" alt="">
-      <ion-button color="tertiary" spand="block" fill="clear">
+      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
+      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
+      <img class="img-height img-3" src="{{producto.imagenes[2]}}" alt="" (click)="openPreview(producto.imagenes[2])">
+      <img class="img-height img-4" src="{{producto.imagenes[3]}}" alt="" (click)="openPreview(producto.imagenes[3])">
+      <ion-button color="tertiary" spand="block" fill="clear" (click)="playSound();">
         <ion-icon name="camera-outline" slot="start"></ion-icon>
         Ver las {{producto.imagenes.length}} imágenes
       </ion-button>

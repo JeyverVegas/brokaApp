@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private smartAudio: SmartAudioService
+  ) { }
 
   ngOnInit() {
+  }
+
+  playSound() {
+    this.smartAudio.play('tabSwitch');
   }
 
 }

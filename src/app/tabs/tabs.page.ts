@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
   selector: 'app-tabs',
@@ -7,6 +8,12 @@ import { Component } from '@angular/core';
 })
 export class TabsPage {
 
-  constructor() {}
-
+  constructor(
+    private smartAudio: SmartAudioService,    
+  ) { }  
+  
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
+  
 }

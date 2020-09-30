@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ChatMensajesPage } from '../chat-mensajes/chat-mensajes.page';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
   selector: 'app-chat',
@@ -73,13 +74,15 @@ export class ChatPage implements OnInit {
   ]
 
   constructor(
-    public modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private smartAudio: SmartAudioService
   ) { }
 
   ngOnInit() {
   }
 
   async openChat(chat){
+      this.playSound();
       const modal = await this.modalCtrl.create({
         component: ChatMensajesPage,
         componentProps: {
@@ -88,6 +91,10 @@ export class ChatPage implements OnInit {
       });
 
       modal.present();
-  } 
+  }
+  
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
 
 }

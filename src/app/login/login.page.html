@@ -4,7 +4,7 @@
       <ion-col size="8">
         <ion-label>
           <h1>
-            <ion-icon name="location-outline" slot="start"></ion-icon>
+            <ion-icon name="location-outline" slot="start">{{ error }}</ion-icon>
             Buenos Aires, Arg
           </h1>
         </ion-label>
@@ -20,19 +20,20 @@
       <ion-text color="medium">¡Bienvenido de nuevo, te extrañamos!</ion-text>
     </p>
   </div>
+  <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>  
   <div>
     <form (ngSubmit)="onSubmit()">
       <ion-item>
         <ion-label position="stacked" color="medium">Nombre de usuario o correo electrónico</ion-label>
         <ion-input [(ngModel)]="usuario.email" name="email" type="email" required>
-          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-icon style="margin-right: 10px" name="person-outline" slot="start"></ion-icon>
         </ion-input>
       </ion-item>
       <br>
       <ion-item>
         <ion-label position="stacked" color="medium">Contraseña</ion-label>
         <ion-input [(ngModel)]="usuario.password" name="password" type="password" required>
-          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-icon style="margin-right: 10px" name="lock-closed-outline" slot="start"></ion-icon>
         </ion-input>
       </ion-item>
       <br>
@@ -40,19 +41,22 @@
         Iniciar Sesión
         <ion-icon name="log-in-outline" slot="end"></ion-icon>
       </ion-button>
-      <p class="ion-text-center"><ion-text color="medium">¿No tienes una cuenta? <a routerLink="/registro" routerDirection="forward" style="color: gray;"><b>Regístrate</b></a></ion-text></p>
+      <p class="ion-text-center">
+        <ion-text color="medium">¿No tienes una cuenta? <a routerLink="/registro" routerDirection="forward"
+            style="color: gray;"><b>Regístrate</b></a></ion-text>
+      </p>
     </form>
   </div>
   <br>
-  <div class="line line-medium ion-margin-bottom"></div>  
+  <div class="line line-medium ion-margin-bottom"></div>
   <br>
   <div>
-    <ion-button expand="block" shape="round" class="boton-facebook">
+    <ion-button expand="block" shape="round" class="boton-facebook" (click)="playSound()">
       <ion-icon name="logo-facebook" slot="start"></ion-icon>
       Conectate con Facebook
     </ion-button>
     <br>
-    <ion-button color="danger" expand="block" shape="round" fill="outline">
+    <ion-button color="danger" expand="block" shape="round" fill="outline" (click)="playSound()">
       <ion-icon name="logo-google"></ion-icon>
       Conectate con Google
     </ion-button>

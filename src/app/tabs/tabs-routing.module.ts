@@ -34,7 +34,7 @@ const routes: Routes = [
       {
         path: 'inmobiliarias',
         loadChildren: () => import('../inmobiliarias/inmobiliarias.module').then( m => m.InmobiliariasPageModule)
-      },
+      },      
     ]
   },
   {

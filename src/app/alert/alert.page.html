@@ -9,7 +9,7 @@
         Recibe <b>notificaciones</b> de esta búsqueda
       </ion-text>
     </p>    
-    <ion-button *ngIf="!guardarBusqueda" color="secondary" class="sombra_no" (click)="guardarBusqueda = !guardarBusqueda">
+    <ion-button *ngIf="!guardarBusqueda" color="secondary" class="sombra_no" (click)="guardarBusqueda = !guardarBusqueda; playSound()">
       Guardar Búsqueda
     </ion-button>
     <ion-button *ngIf="guardarBusqueda" color="secondary" class="sombra_no" (click)="closeModal()">

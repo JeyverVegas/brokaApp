@@ -1,0 +1,27 @@
+<ion-content fullscreen="true">
+  <ion-buttons style="margin-top: 20px;">
+    <ion-button (click)="closeModal()" mode="md" size="small" color="light">
+      <ion-icon name="close-outline" slot="start"></ion-icon>
+      Cerrar
+    </ion-button>    
+  </ion-buttons>  
+
+  <ion-slides #slideszoom [options]="slidesOpts">
+    <ion-slide>
+      <div #slidezoom class="swiper-zoom-container">
+        <img src="{{imgSrc}}" alt="">
+      </div>      
+    </ion-slide>
+  </ion-slides>
+
+  <div class="ion-text-center">
+    <ion-button (click)="zoom(false)" mode="md" size="small" fill="clear" color="light">
+      <ion-icon name="remove" slot="start"></ion-icon>
+      Disminuir
+    </ion-button>
+    <ion-button (click)="zoom(true)" mode="md" size="small" fill="clear" color="light">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Aumentar      
+    </ion-button>
+  </div>
+</ion-content>

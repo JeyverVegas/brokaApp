@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActionSheetController, ModalController, NavParams } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
+import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
 
 declare var google: any;
@@ -21,7 +23,8 @@ export class ShowInmobiliariaPage implements OnInit {
     private navParams: NavParams,
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private smartAudio: SmartAudioService
   ) { }
 
   ngOnInit() {
@@ -32,6 +35,7 @@ export class ShowInmobiliariaPage implements OnInit {
   }
 
   closeModal(){
+    this.playSound();
     this.modalCtrl.dismiss();
   }
 
@@ -64,6 +68,7 @@ export class ShowInmobiliariaPage implements OnInit {
   }
 
   async openShared(){
+    this.playSound();
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Compartir en:',
       buttons: [
@@ -95,6 +100,7 @@ export class ShowInmobiliariaPage implements OnInit {
   }
 
   async openProduct(producto) {
+    this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
@@ -105,4 +111,19 @@ export class ShowInmobiliariaPage implements OnInit {
     modal.present();
   }
 
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
+
+  async openPreview(img){
+    const modal = await this.modalCtrl.create({
+      component: ImageModalPage,
+      cssClass: 'b_transparent',
+      componentProps: {
+        img: img
+      }
+    });
+
+    modal.present();
+  }
 }

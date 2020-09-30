@@ -20,26 +20,20 @@
       <ion-text color="medium">¡Crea una cuenta para continuar!</ion-text>
     </p>
   </div>
+  <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>  
   <div>
     <form (ngSubmit)="onSubmit()">
       <ion-item>
         <ion-label position="stacked" color="medium">email</ion-label>
         <ion-input [(ngModel)]="usuario.email" name="email" type="email" required>
-          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-icon class="icon-input" name="mail-outline" slot="start"></ion-icon>
         </ion-input>
-      </ion-item>      
-      <br>
-      <ion-item>
-        <ion-label position="stacked" color="medium">usuario</ion-label>
-        <ion-input [(ngModel)]="usuario.user" name="user" type="text" required>
-          <ion-icon name="person-outline" slot="start"></ion-icon>
-        </ion-input>
-      </ion-item>
+      </ion-item>            
       <br>
       <ion-item>
         <ion-label position="stacked" color="medium">Contraseña</ion-label>
         <ion-input [(ngModel)]="usuario.password" name="password" type="password" required>
-          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-icon class="icon-input" name="lock-closed-outline" slot="start"></ion-icon>
         </ion-input>
       </ion-item>
       <br>
@@ -59,12 +53,12 @@
   <div class="line line-medium ion-margin-bottom"></div>  
   <br>
   <div>
-    <ion-button expand="block" shape="round" class="boton-facebook">
+    <ion-button expand="block" shape="round" class="boton-facebook" (click)="playSound()">
       <ion-icon name="logo-facebook" slot="start"></ion-icon>
       Conectate con Facebook
     </ion-button>
     <br>
-    <ion-button color="danger" expand="block" shape="round" fill="outline">
+    <ion-button color="danger" expand="block" shape="round" fill="outline" (click)="playSound()">
       <ion-icon name="logo-google"></ion-icon>
       Conectate con Google
     </ion-button>

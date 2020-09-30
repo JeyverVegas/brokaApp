@@ -24,6 +24,7 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+@import "~animate.css/animate.css";
 
 /*Estilos Globales de la App*/
 
@@ -32,16 +33,16 @@
 
     /*color de los valores al ser seleccionados*/
     [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
-        border-color: #59C16A;
+        border-color: var(--ion-color-primary);
     }
 
     .alert-radio-inner.sc-ion-alert-md{
-        background: #59C16A;
+        background: var(--ion-color-primary);
     }
 
     /*color de los botones cancel y ok*/
     .alert-button.sc-ion-alert-md{
-        color: #59C16A;   
+        color: var(--ion-color-primary);   
     }
 }
 
@@ -87,13 +88,13 @@
 }
 
 .color_primario2{
-    background: linear-gradient(to left, #59C16A, #93eae5);
+    background: linear-gradient(to left, var(--ion-color-primary), var(--ion-color-secondary));
 }
 
 .color_primario{
     //background: linear-gradient(to left, #59C16A, #48C2B5);
-    --background: linear-gradient(to left, #59C16A, #93eae5) !important;
-    --background-activated: #5cc372;
+    --background: linear-gradient(to left, var(--ion-color-primary), var(--ion-color-secondary)) !important;
+    --background-activated: var(--ion-color-primary);
 }
 
 .boton-facebook{
@@ -104,13 +105,16 @@
 
 @media(min-width: 320px){
     .img-logo-menu{
-        max-height: 70px;
+        height: 80px;
+        height: 80px;
     }
 }
 
 @media(min-width: 768px){
     .img-logo-menu{
-        max-height: 110px;
+        height: 100px;
+        height: 100px;
+
     }
 }
 
@@ -142,7 +146,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 110%;
     height: 100%;
 }
 
@@ -152,6 +156,13 @@
 
 .cover-dark{
     background: rgba(0, 0, 0, .4);
+}
+
+.no-padding{    
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
 }
 
 /*Estilos para las listas*/

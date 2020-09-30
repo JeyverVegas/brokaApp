@@ -1,0 +1,8 @@
+<div class="animate__animated animate__fadeIn alert-error">
+  <div class="ion-text-right">
+    <ion-button fill="clear" color="light" size="small" (click)="error.displayError = false;">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <p *ngFor="let errors of errorList" style="margin: 1px; color: white;">{{ errors }}</p>
+</div>

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
 
 @Component({
@@ -14,7 +16,8 @@ export class FavoritosPage implements OnInit {
 
   constructor(
     private productosService: ProductosService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private smartAudio: SmartAudioService
   ) { }
 
   ngOnInit() {
@@ -23,10 +26,27 @@ export class FavoritosPage implements OnInit {
   }
 
   async openProduct(producto){
+    this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
         producto: producto
+      }
+    });
+
+    modal.present();
+  }
+
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
+
+  async openPreview(img){
+    const modal = await this.modalCtrl.create({
+      component: ImageModalPage,
+      cssClass: 'b_transparent',
+      componentProps: {
+        img: img
       }
     });
 

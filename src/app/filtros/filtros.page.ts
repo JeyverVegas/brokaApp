@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonSelect, ModalController } from '@ionic/angular';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
   selector: 'app-filtros',
@@ -53,7 +54,8 @@ export class FiltrosPage implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private smartAudio: SmartAudioService
   ) { }  
 
   ngOnInit() {
@@ -63,8 +65,13 @@ export class FiltrosPage implements OnInit {
   }
 
   async aplicarFiltro() {
+    this.playSound();
     this.productosService.addFiltros(this.filtros);
     this.modalCtrl.dismiss();
+  }
+
+  playSound(){
+    this.smartAudio.play('tabSwitch');
   }
 
 

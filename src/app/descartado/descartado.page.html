@@ -3,11 +3,11 @@
 <ion-content class="ion-padding">
   <h1>Mis descartados</h1>
   <ion-grid class="ion-padding">      
-    <ion-row style="position: relative;" class="ion-activatable ripple-parent" *ngFor="let producto of descartados">
+    <ion-row style="position: relative;" *ngFor="let producto of descartados">
       <ion-col size="5" class="ion-align-self-center">
-        <img class="img-list" src="{{producto.imagenes[0]}}" alt="">
+        <img class="img-list" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
       </ion-col>
-      <ion-col size="6" class="ion-align-self-center">          
+      <ion-col style="position: relative;" size="6" class="ion-align-self-center ion-activatable ripple-parent">
         <h4 style="margin: 0;"><ion-text color="dark">{{producto.nombre}}</ion-text></h4>
 
         <div class="atribute-container" *ngIf="producto.banos" style="display: flex; align-items: center;">
@@ -31,14 +31,14 @@
             219 <ion-icon slot="end" name="heart" color="danger"></ion-icon>
           </ion-button>            
         </div>
+        <ion-ripple-effect></ion-ripple-effect>
       </ion-col>
       <ion-col size="1" class="ion-align-self-center">
         <ion-button class="no-padding" fill="clear" color="dark">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
       </ion-col>
-      <div class="cover cover-light"></div>
-      <ion-ripple-effect></ion-ripple-effect>
+      <div class="cover cover-light"></div>      
     </ion-row>
   </ion-grid>
 </ion-content>

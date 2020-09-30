@@ -3,7 +3,9 @@ import { AlertController, IonSlides, ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
+import { AuthenticationService } from '../servicios/authentication.service';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
 
 @Component({
@@ -30,22 +32,21 @@ export class InicioPage implements OnInit {
   };
 
   @ViewChild('slideHome', { static: true }) protected slides: IonSlides;
-
+    
   constructor(
     private productosService: ProductosService,
-    private modalCtrl: ModalController,    
+    private modalCtrl: ModalController,   
+    private smartAudio: SmartAudioService ,
+    private authService: AuthenticationService
   ) { }  
 
-  ngOnInit() {
+  ngOnInit() {    
     this.productos = this.productosService.getProducts();
     this.slides.update();    
   }
-  
-  IonViewDidEnter() {
-    this.slides.update();
-  }
 
   async openProduct(producto){
+    this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
@@ -57,6 +58,7 @@ export class InicioPage implements OnInit {
   }
 
   async abriFiltros(){
+    this.playSound();
     const modal = await this.modalCtrl.create({
       component: FiltrosPage
     });
@@ -65,6 +67,7 @@ export class InicioPage implements OnInit {
   }
 
   async saveSearch() {
+    this.playSound();
     const modal = await this.modalCtrl.create({
       cssClass: ['alertModal'],
       animated: true,
@@ -74,9 +77,13 @@ export class InicioPage implements OnInit {
     modal.present();
   }
 
-  descartar(product){    
+  descartar(product){
+    this.playSound();    
     this.productosService.descartarProducto(product);
   }
 
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
 
 }

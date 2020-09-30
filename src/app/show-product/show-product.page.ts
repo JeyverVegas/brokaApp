@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActionSheetController, IonSlides, ModalController, NavParams } from '@ionic/angular';
+import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 declare var google: any;
 
@@ -36,21 +38,22 @@ export class ShowProductPage implements OnInit {
     private navParams: NavParams,
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private smartAudio: SmartAudioService
   ) { }
 
-  IonViewDidEnter() {
+  ionViewDidEnter() {
     this.slides.update();
   }
 
   ngOnInit() {
-    this.producto = this.navParams.get('producto');
-    console.log(this.producto);
-    this.slides.update();
+    this.producto = this.navParams.get('producto');        
     this.crearMapa();
   }
 
-
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
 
   crearMapa() {
     var map = new google.maps.Map(this.map.nativeElement, {
@@ -81,10 +84,12 @@ export class ShowProductPage implements OnInit {
   }
 
   closeModal(){
+    this.playSound();
     this.modalCtrl.dismiss();
   }
 
   async openShared(){
+    this.playSound();
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Compartir en:',
       buttons: [
@@ -116,17 +121,32 @@ export class ShowProductPage implements OnInit {
   }
 
   descartar(){    
+    this.playSound();
     this.productosService.descartarProducto(this.producto);
   }
 
   addToFavorite(){
+    this.playSound();
     this.producto.favorito = !this.producto.favorito;
     this.productosService.addProductFavorito(this.producto);
   }
 
   removeFromFavorite(){
+    this.playSound();
     this.producto.favorito = !this.producto.favorito;
     this.productosService.removeProductFavorito(this.producto);
+  }
+
+  async openPreview(img){
+    const modal = await this.modalCtrl.create({
+      component: ImageModalPage,
+      cssClass: 'b_transparent',
+      componentProps: {
+        img: img
+      }
+    });
+
+    modal.present();
   }
 
 }

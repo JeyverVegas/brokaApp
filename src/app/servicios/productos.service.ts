@@ -25,7 +25,7 @@ export class ProductosService {
       latLng: {
         lat: -34.609129,
         lng: -58.426284
-      },
+      },    
       imagenes: [
         "../../assets/images/inmuebles/inmueble1/1.jpg",
         "../../assets/images/inmuebles/inmueble1/2.jpg",

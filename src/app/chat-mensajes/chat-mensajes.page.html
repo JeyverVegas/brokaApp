@@ -40,8 +40,25 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar>
+    <div *ngIf="files.length > 0" style="display: flex;">
+      <div *ngFor="let file of files" style="margin-right: 10px; position: relative;">
+        <div *ngIf="file.type == 'img'" class="ion-text-center">
+          <img style="width: 70px; height: 70px;" src="{{file.resPath}}" alt="">          
+          <ion-button size="small" class="delete-button" style="top: -5px; right: -10px;" color="dark">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>
+        <div *ngIf="file.type == 'pdf'" class="ion-text-center">
+          <img style="width: 50px; height: 70px;" src="../../assets/icon/pdf.png" alt="">
+          <p style="margin: 0;">{{file.name}}</p>
+          <ion-button size="small" class="delete-button" style="top: -5px; right: 10px;" color="dark">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>          
+        </div>        
+      </div>      
+    </div>
     <ion-buttons slot="start">
-      <ion-button expand="block" fill="clear" color="medium" class="mensaje-button" (click)="uploadOptions()">
+      <ion-button expand="block" fill="clear" color="medium" class="mensaje-button" (click)="selectFile()">
         <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>    

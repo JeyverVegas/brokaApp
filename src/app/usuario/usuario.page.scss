@@ -1,5 +1,6 @@
 .img-user{    
-    max-width: 25%;
+    width: 120px;
+    height: 120px;
     border-radius: 100%;
     background: white;
 }
@@ -12,14 +13,22 @@
     --padding-bottom: 0;
     position: absolute;
     bottom: 0;
-    right: 38%;
+    right: 35%;
+    height: 30px;
+    width: 30px;
 }
 
 @media(min-width: 768px){
     .button-edit{
-        right: 40%;
-        height: 20%;
-        width: 6%;
+        right: 42%;
+        height: 40px;
+        width: 40px;
+    }
+    .img-user{    
+        width: 170px;
+        height: 175px;
+        border-radius: 100%;
+        background: white;
     }
 }
 

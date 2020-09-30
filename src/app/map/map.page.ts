@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { ProductosService } from '../servicios/productos.service';
+import { SmartAudioService } from '../servicios/smart-audio.service';
 
 declare var google: any;
 @Component({
@@ -13,9 +14,11 @@ export class MapPage implements OnInit {
 
   productos = new BehaviorSubject([]);
   @ViewChild('googlemap', { static: true }) protected googlemap: ElementRef;
+
   constructor(
     private productoService: ProductosService,
-    private navCtrl: NavController    
+    private navCtrl: NavController,
+    private smartAudio: SmartAudioService
   ) { }
 
   ngOnInit() {
@@ -62,7 +65,12 @@ export class MapPage implements OnInit {
     
   }
 
-  goBack(){
+  goBack(){    
+    this.playSound();
     this.navCtrl.back();
+  }
+
+  playSound(){
+    this.smartAudio.play('tabSwitch');
   }
 }
