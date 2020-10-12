@@ -17,8 +17,8 @@ export class AuthenticationService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject(null);
   token = '';
 
-  host = 'www.beneficio-si.com';
-  api = 'http://' + this.host + '/inmatch/api'
+  host = '192.168.0.100';
+  api = 'http://' + this.host + '/inmobiliaria/public/api'
   user: Usuario = null;
   authHeader = null;
 

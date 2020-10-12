@@ -11,7 +11,7 @@ import { ShowProductPage } from '../show-product/show-product.page';
 declare var google: any;
 
 export function CustomMarker(latlng, map, imageSrc, callback = null) {
-  this.latlng_ = latlng;
+  this.latlng_ = latlng;  
   this.imageSrc = imageSrc;
   this.callback = callback;
   this.setMap(map);
@@ -33,6 +33,7 @@ CustomMarker.prototype.draw = function () {
 
 
     var img = document.createElement("img");    
+    
     img.src = this.imageSrc;
     img.className = "img-iconxD";
 
@@ -116,11 +117,27 @@ export class MapPage implements OnInit {
       fullscreenControl: false
     });
 
-    new CustomMarker(
-      this.currentPosition,
-      map,
-      this.user.profile.image,
-    )
+    console.log(this.user.profile);
+
+    if(
+      this.user.profile === null || 
+      this.user.profile === undefined || 
+      this.user.profile.image === null || 
+      this.user.profile.image === undefined ||
+      this.user.profile.image === ''){
+        new CustomMarker(
+          this.currentPosition,
+          map,
+          '../../assets/images/user.png',
+        )
+      }else{
+        new CustomMarker(
+          this.currentPosition,
+          map,
+          this.user.profile.image,
+        )
+      }
+    
 
     this.productos.getValue().forEach(producto => {
       new CustomMarker(
