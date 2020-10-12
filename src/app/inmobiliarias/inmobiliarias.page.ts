@@ -21,7 +21,7 @@ export class InmobiliariasPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.inmobiliarias = this.productosService.getInmobiliarias();
+    //this.inmobiliarias = this.productosService.getInmobiliarias();
   }
 
   async openInmobiliaria(inmobiliaria){

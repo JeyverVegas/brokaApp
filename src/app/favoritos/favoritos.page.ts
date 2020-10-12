@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -17,11 +17,23 @@ export class FavoritosPage implements OnInit {
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
-    private smartAudio: SmartAudioService
+    private smartAudio: SmartAudioService,
+    private loadingCtrl: LoadingController,
+    private toastController: ToastController
   ) { }
 
-  ngOnInit() {
-    this.favoritos = this.productosService.getFavoritos();
+  async ngOnInit() {  
+   
+  }
+
+  async ionViewDidEnter(){
+    const loading = await this.loadingCtrl.create({
+      message: 'Cargando...',
+      spinner: 'bubbles'
+    });
+    await loading.present();
+    this.favoritos = await this.productosService.getProductsFavorites();
+    loading.dismiss();
     console.log(this.favoritos);
   }
 
@@ -35,6 +47,40 @@ export class FavoritosPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  addToFavorite(producto) {
+    this.playSound();
+    this.productosService.addFavoriteProduct(producto.id).then(response => {
+      this.presentToast(producto.name + ' ha sido añadido a favoritos.', 'success');
+      producto.is_favorite = true;
+      producto.favorite_to_count++;
+    }).catch(error => {
+      this.presentToast(error.error.errors.property_id[0], 'danger');
+    });
+  }
+
+  removeFromFavorite(producto) {
+    this.playSound();
+    this.productosService.removeFavoriteProduct(producto.id).then(response => {
+      this.presentToast(producto.name + ' ha sido removido de favoritos', 'success');
+      producto.is_favorite = false;
+      producto.favorite_to_count--;
+    }).catch(error => {
+      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
+      console.log(error);
+    });
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color,
+      mode: 'ios'
+    });
+    toast.present();
   }
 
   playSound(){
@@ -51,6 +97,11 @@ export class FavoritosPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  async doRefresh(event) {
+    this.favoritos = await this.productosService.getProductsFavorites(); 
+    event.target.complete();
   }
 
 }

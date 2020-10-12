@@ -4,7 +4,7 @@
     <div class="ion-text-center">
         <div class="div-img-user">
             <img *ngIf="user.profile && user.profile.image; else invitadoImg" class="img-user"
-                src="{{user.profile.image}}" alt="" (click)="openPreview(user.perfilImg)">
+                src="{{user.profile.image}}" alt="" (click)="openPreview(user.profile.image)">
             <ng-template #invitadoImg>
                 <ion-icon name="person-circle-outline" class="img-user" color="primary"></ion-icon>
             </ng-template>

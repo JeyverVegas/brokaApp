@@ -2,11 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { rejects } from 'assert';
-import { resolve } from 'dns';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { Profile, Usuario } from '../interface';
+import { Profile, UserAddress, Usuario } from '../interface';
 
 const TOKEN_KEY = 'my-token';
 const USER_DATA = 'user-data';
@@ -18,8 +16,11 @@ export class AuthenticationService {
 
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject(null);
   token = '';
-  host = 'localhost';
-  user: BehaviorSubject<Usuario> = new BehaviorSubject(null);
+
+  host = 'www.beneficio-si.com';
+  api = 'http://' + this.host + '/inmatch/api'
+  user: Usuario = null;
+  authHeader = null;
 
   constructor(private storage: Storage, private http: HttpClient, private platform: Platform) {
     if (platform.is('cordova')) {
@@ -34,8 +35,8 @@ export class AuthenticationService {
     const user = await this.storage.get(USER_DATA);
     if (token && user) {
       this.token = token;
-      this.user.next(user);
-      console.log(this.user.getValue());
+      this.user = user;
+      this.authHeader = new HttpHeaders().set('Authorization', 'Bearer ' + this.token);  
       this.isAuthenticated.next(true)
     } else {
       this.isAuthenticated.next(false);
@@ -43,25 +44,14 @@ export class AuthenticationService {
 
   }
 
-  getCsrfToken() {
-    return new Promise(resolve =>{
-      this.http.get('http://' + this.host + '/inmobiliaria/sanctum/csrf-cookie').subscribe(csrfToken => {
-        resolve(csrfToken);
-      }, error =>{        
-        alert(JSON.stringify(error));
-      });
-    })
-  }
-
   login(credentials): Observable<any> {
-    
-    /* let header = new HttpHeaders();
-    header = header.set('XSRF-TOKEN', this.getCsrfToken()); */
 
-    return this.http.post('http://' + this.host + '/inmobiliaria/public/api/login', credentials).pipe(
+    return this.http.post(this.api + '/login', credentials).pipe(
       map((response: { data: Usuario; token: string }) => {
-        this.user.next(response.data);
-        this.storage.set(USER_DATA, response.data);
+        this.user = response.data;
+        this.token = response.token;
+        this.authHeader = new HttpHeaders().set('Authorization', 'Bearer ' + this.token);
+        this.storage.set(USER_DATA, response.data);        
         return response.token
       }),
       switchMap(token => {
@@ -73,19 +63,72 @@ export class AuthenticationService {
     )
   }
 
-  updateProfile(formData) {
+  addProfile(formData) {
 
-    let header = new HttpHeaders();
-    header = header.set('Authorization', 'Bearer ' + this.token).set('Accept', 'application/json');
+    let header = this.authHeader.set('Accept', 'application/json');
 
-    return this.http.post('http://' + this.host + '/inmobiliaria/public/api/profile', formData, {
+    return this.http.post(this.api + '/profile', formData, {
       headers: header
     }).pipe(
       map((response: { data: Profile }) => {
-        let user = this.user.getValue();
-        Object.assign(user.profile, response.data);
-        this.user.next(user);
-        return user;
+        this.user.profile = response.data;        
+        return this.user;
+      }),
+      switchMap(user => {
+        return from(this.storage.set(USER_DATA, user));
+      }),
+      tap(_ => {
+        //this.isAuthenticated.next(true);
+      })
+    )
+  }
+
+  updateProfile(formData) {
+
+    let header = this.authHeader.set('Accept', 'application/json');
+
+    return this.http.post(this.api + '/profile/' + this.user.profile.id, formData, {
+      headers: header
+    }).pipe(
+      map((response: { data: Profile }) => {
+        this.user.profile = response.data;        
+        return this.user;
+      }),
+      switchMap(user => {
+        return from(this.storage.set(USER_DATA, user));
+      }),
+      tap(_ => {
+        //this.isAuthenticated.next(true);
+      })
+    )
+  }
+
+  addAddress(address:UserAddress) {    
+
+    return this.http.post(this.api + '/profile/address', address, {
+      headers: this.authHeader
+    }).pipe(
+      map((response: { data: UserAddress }) => {
+        this.user.address = response.data;      
+        return this.user; 
+      }),
+      switchMap(user => {
+        return from(this.storage.set(USER_DATA, user));
+      }),
+      tap(_ => {
+        //this.isAuthenticated.next(true);
+      })
+    )
+  }
+
+  updateAddress(address:UserAddress) {    
+
+    return this.http.put(this.api + '/profile/address/' + this.user.address.id, address, {
+      headers: this.authHeader
+    }).pipe(
+      map((response: { data: UserAddress }) => {
+        this.user.address = response.data;      
+        return this.user; 
       }),
       switchMap(user => {
         return from(this.storage.set(USER_DATA, user));
@@ -97,9 +140,11 @@ export class AuthenticationService {
   }
 
   register(credentials): Observable<any> {
-    return this.http.post('http://' + this.host + '/inmobiliaria/public/api/register', credentials).pipe(
+    return this.http.post(this.api + '/register', credentials).pipe(
       map((response: { data: Usuario; token: string }) => {
-        this.user.next(response.data);
+        this.user = response.data;
+        this.token = response.token;        
+        this.authHeader = new HttpHeaders().set('Authorization', 'Bearer ' + this.token);
         this.storage.set(USER_DATA, response.data);
         return response.token
       }),
@@ -114,7 +159,8 @@ export class AuthenticationService {
 
   logOut(): Promise<void> {
     this.isAuthenticated.next(false);
-    return this.storage.remove(TOKEN_KEY) && this.storage.remove(USER_DATA);;
+    this.storage.remove(USER_DATA)
+    return this.storage.remove(TOKEN_KEY);
   }
 
 

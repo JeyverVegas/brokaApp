@@ -16,7 +16,7 @@
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
+@import "~@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "~@ionic/angular/css/padding.css";
@@ -29,120 +29,115 @@
 /*Estilos Globales de la App*/
 
 /*Estilos del select de categorias*/
-.hello .alert-wrapper {    
-
+.hello .alert-wrapper {
     /*color de los valores al ser seleccionados*/
-    [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
+    [aria-checked="true"].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
         border-color: var(--ion-color-primary);
     }
 
-    .alert-radio-inner.sc-ion-alert-md{
+    .alert-radio-inner.sc-ion-alert-md {
         background: var(--ion-color-primary);
     }
 
     /*color de los botones cancel y ok*/
-    .alert-button.sc-ion-alert-md{
-        color: var(--ion-color-primary);   
+    .alert-button.sc-ion-alert-md {
+        color: var(--ion-color-primary);
     }
 }
 
-
 /*Estilos para el nombre del usuarion en el menu*/
 
-.user-name{
+.user-name {
     margin-left: 10px;
     font-size: x-large;
 }
 
-.custom-bullets{
+.custom-bullets {
     width: 15px;
     height: fit-content;
-    font-size: 15px;    
-    background: white;    
-
+    font-size: 15px;
+    background: white;
 }
 
-.swiper-container-vertical>.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {    
+.swiper-container-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
     width: 20px;
 }
 
-.logo-white{
+.logo-white {
     background: white;
     border-radius: 20px;
 }
 
-.full-heigth{
+.full-heigth {
     min-height: 100vh;
     position: relative;
     max-width: 100%;
 }
 
-.sombra_no{
+.sombra_no {
     box-shadow: none;
     --box-shadow: none;
 }
 
-.b_transparent{
+.b_transparent {
     --background: transparent;
     background: transparent;
 }
 
-.color_primario2{
+.color_primario2 {
     background: linear-gradient(to left, var(--ion-color-primary), var(--ion-color-secondary));
 }
 
-.color_primario{
+.color_primario {
     //background: linear-gradient(to left, #59C16A, #48C2B5);
     --background: linear-gradient(to left, var(--ion-color-primary), var(--ion-color-secondary)) !important;
     --background-activated: var(--ion-color-primary);
 }
 
-.boton-facebook{
+.boton-facebook {
     --background: #3a569a;
     --background-activated: #48619b;
 }
 
-
-@media(min-width: 320px){
-    .img-logo-menu{
+@media (min-width: 320px) {
+    .img-logo-menu {
         height: 80px;
         height: 80px;
     }
 }
 
-@media(min-width: 768px){
-    .img-logo-menu{
+@media (min-width: 768px) {
+    .img-logo-menu {
         height: 100px;
         height: 100px;
-
     }
 }
 
-.alertModal{
+.alertModal {
     padding: 15% 5% 120% 5% !important;
-    .modal-wrapper{
-        border-radius: 15px;        
+    .modal-wrapper {
+        border-radius: 15px;
     }
 }
 
-.line{
+.line {
     width: 100%;
-    height: 1px;    
+    height: 1px;
 }
 
-.line-dark{
+.line-dark {
     background: #222428;
 }
 
-.line-medium{
+.line-medium {
     background: #e9e9e9;
 }
 
-.line-light{
+.line-light {
     background: #ffffff;
 }
 
-.cover{
+.cover {
     position: absolute;
     top: 0;
     left: 0;
@@ -150,15 +145,15 @@
     height: 100%;
 }
 
-.cover-light{
-    background: rgba(255, 255, 255, .5);
+.cover-light {
+    background: rgba(255, 255, 255, 0.5);
 }
 
-.cover-dark{
-    background: rgba(0, 0, 0, .4);
+.cover-dark {
+    background: rgba(0, 0, 0, 0.4);
 }
 
-.no-padding{    
+.no-padding {
     --padding-start: 0;
     --padding-end: 0;
     --padding-top: 0;
@@ -167,6 +162,34 @@
 
 /*Estilos para las listas*/
 
+.customMarker {
+    position: absolute;
+    cursor: pointer;
+    background: transparent;
+    width: 80px;
+    height: 80px;
+    /* -width/2 */
+    margin-left: -40px;
+    
+    /* -height + arrow */
+    margin-top: -88px;
+    border-radius: 100%;
+    padding: 0px;
+}
 
+.img-iconxD {
+    box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.4);
+    width: 70px;
+    height: 70px;
+    margin: 4px;
+    border-radius: 100%;
+}
 
-
+.img-iconxD2{
+    height: 22px;
+    width: 22px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -3px;
+    left: 28.5px;
+}

@@ -33,8 +33,7 @@ export class LoginPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-   let token = await this.authService.getCsrfToken();
-   alert(JSON.stringify(token));
+   
   }  
 
   async onSubmit() {    
@@ -50,9 +49,7 @@ export class LoginPage implements OnInit {
       await loading.dismiss();      
       this.router.navigateByUrl('tabs', {replaceUrl: true});
     }, async (err) =>{
-
       await loading.dismiss();      
-      alert(JSON.stringify(err));
       this.presentToast('error al iniciar sesión.', 'danger');
       this.error.message = err.error.message;
       this.error.errors = err.error.errors;

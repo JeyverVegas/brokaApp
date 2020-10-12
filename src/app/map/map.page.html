@@ -1,7 +1,13 @@
 <app-top-bar></app-top-bar>
 
 <ion-content>
-  <div style="height: 100%;" #googlemap>
+  <div *ngIf="!cargado" class="ion-text-center" style="display: flex; height: 100%;">
+    <div style="margin: auto;">
+      <ion-spinner name="crescent" style="height: 90px; width: 90px;" color="secondary"></ion-spinner>
+      <h1>Cargando Mapa</h1>
+    </div>
+  </div>
+  <div [class.show]="cargado" class="hidden" style="height: 100%;" #googlemap>
 
   </div>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

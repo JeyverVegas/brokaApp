@@ -1,25 +1,31 @@
 <ion-app>
-  <ion-menu swipeGesture="false" side="end" menuId="first" contentId="main" (ionWillOpen)="updateUser()">    
+  <ion-menu swipeGesture="false" side="end" menuId="first" contentId="main" (ionWillOpen)="updateUser()">
     <ion-content>
       <div class="menu-header-bg"></div>
-      
-      <div class="header-content">
-        <img src="{{usuario.perfilImg}}" alt="">
-        <ion-label color="light">
-          <h2>{{usuario.name}}</h2>
-          <p>{{usuario.email}}</p>
-        </ion-label>
-      </div>
+      <ion-menu-toggle>
+        <div class="header-content" routerLink="tabs/tabs/usuario" routerDirection="forward" (click)="playSound()">
+          <img *ngIf="user.profile.image !== ''; else invitadoImg" src="{{user.profile.image}}">
+          <ng-template #invitadoImg>
+            <ion-icon name="person-circle-outline" class="img-user" color="light">
+            </ion-icon>
+          </ng-template>
+          <ion-label color="light">
+            <h2>{{user.profile.firstname}} {{user.profile.lastname}}</h2>
+            <p>{{user.email}}</p>
+          </ion-label>
+        </div>        
+      </ion-menu-toggle>
 
       <ion-menu-toggle>
-        <ion-item mode ="md" *ngFor="let page of pages" button lines="none"  (click)="playSound()" routerLink="{{page.url}}" routerDirection="forward" [class.active]="selectedPath === page.url">
+        <ion-item mode="md" *ngFor="let page of pages" button lines="none" (click)="playSound()"
+          routerLink="{{page.url}}" routerDirection="forward" [class.active]="selectedPath === page.url">
           <ion-icon name="{{page.icon}}" slot="start"></ion-icon>
           <ion-label>{{page.name}}</ion-label>
         </ion-item>
       </ion-menu-toggle>
-      
+
       <ion-menu-toggle>
-        <ion-item mode ="md" button lines="none"  (click)="logOut()">
+        <ion-item mode="md" button lines="none" (click)="logOut()">
           <ion-icon name="log-out-outline" slot="start"></ion-icon>
           <ion-label>Cerrar sesión</ion-label>
         </ion-item>

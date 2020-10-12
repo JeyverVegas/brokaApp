@@ -1,562 +1,268 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
+import { ContractType, GetProductsOptions, ProductFilters, ProductRelationships, PropertyFeatures, PropertyType } from '../interface'
+import { LoadingController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductosService {
 
-  private favoritos = [];
+  private productos = new BehaviorSubject([]);
 
-  private descartados = [];
+  filtros: ProductFilters = {};
+  filtrado = false;
+  loading = null;
+  constructor(
+    private http: HttpClient,
+    private authService: AuthenticationService,
+    private loadingCtrl: LoadingController
+  ) { }
 
-  private productos = new BehaviorSubject([
-    {
-      id: 1,
-      nombre: 'Fit Roiz 1350',
-      categoria: {
-        id: 2,
-        nombre: 'Apartamentos'
-      },
-      favorito: false,
-      provincy: 'Buenos Aires',
-      partido: 'Rosario',
-      address: 'Calle Rossini 9',
-      latLng: {
-        lat: -34.609129,
-        lng: -58.426284
-      },    
-      imagenes: [
-        "../../assets/images/inmuebles/inmueble1/1.jpg",
-        "../../assets/images/inmuebles/inmueble1/2.jpg",
-        "../../assets/images/inmuebles/inmueble1/3.jpg",
-        "../../assets/images/inmuebles/inmueble1/4.jpg",
-        "../../assets/images/inmuebles/inmueble1/5.jpg",
-      ],
-      precio: 1000,
-      m2: 40,
-      habitaciones: 3,
-      banos: 2,
-      tipoDeContrato: {
-        id: 2,
-        nombre: 'Venta'
-      },
-      tipoDeVivienda: {
-        id: 2,
-        nombre: 'Casas o chalets'
-      },
-      estado: {
-        id: 2,
-        nombre: 'Buen estado'
-      },
-      tipoAnuncio: {
-        id: 2,
-        nombre: 'De bancos',
-      },
-      planta: {
-        id: 1,
-        nombre: 'última planta',
-      },
-      descripcion: 'Lindo Apartamento, comodo para 6 personas.',
-      caracteristicas: [
-        {
-          id: 1,
-          titulo: 'Ascensor',
-        },
-        {
-          id: 2,
-          titulo: 'Plaza de garaje',
-        },
-        {
-          id: 3,
-          titulo: 'Piscina',
-        },
-        {
-          id: 4,
-          titulo: 'Terraza',
-        },
-        {
-          id: 5,
-          titulo: 'Exterior',
-        },
-      ]
-    },
-    {
-      id: 2,
-      nombre: 'Casa #1',
-      categoria: {
-        id: 1,
-        nombre: 'Viviendas'
-      },
-      favorito: false,
-      provincy: 'Córdoba',
-      partido: 'Gral. San Martín',
-      address: 'Calle #9, Casa #3.',
-      latLng: {
-        lat: -34.595194,
-        lng: -58.389484
-      },
-      imagenes: [
-        "../../assets/images/inmuebles/inmueble2/1.jpg",
-      ],
-      precio: 600,
-      m2: 80,
-      habitaciones: 5,
-      banos: 3,
-      tipoDeContrato: {
-        id: 2,
-        nombre: 'Venta'
-      },
-      tipoDeVivienda: {
-        id: 2,
-        nombre: 'Casas o chalets'
-      },
-      estado: {
-        id: 2,
-        nombre: 'Buen estado'
-      },
-      tipoAnuncio: {
-        id: 2,
-        nombre: 'De bancos',
-      },
-      descripcion: 'Casa de lujo Ubicada en la zona alta de buenos aires, con parqueadero de autos, piscina.',
-      caracteristicas: [
-        {
-          id: 2,
-          titulo: 'Plaza de garaje',
-        },
-        {
-          id: 3,
-          titulo: 'Piscina',
-        },
-        {
-          id: 6,
-          titulo: 'Trastero',
-          filtrar: false
-        },
-        {
-          id: 7,
-          titulo: 'Aire Acondicionado',
-          filtrar: false
-        },
-        {
-          id: 8,
-          titulo: 'Armarios empotrados',
-          filtrar: false
-        },
-        {
-          id: 5,
-          titulo: 'Exterior',
-        },
-      ]
-    },
-    {
-      id: 3,
-      nombre: 'Casa #2',
-      categoria: {
-        id: 1,
-        nombre: 'Viviendas'
-      },
-      favorito: false,
-      provincy: 'Buenos Aires',
-      partido: 'EZEIZA',
-      address: 'Av. Bolivar, Casa #4',
-      latLng: {
-        lat: -34.608405,
-        lng: -58.437978
-      },
-      imagenes: [
-        "../../assets/images/inmuebles/inmueble3/1.jpg",
-      ],
-      precio: 3000,
-      m2: 80,
-      habitaciones: 2,
-      banos: 2,
-      tipoDeContrato: {
-        id: 1,
-        titulo: 'Alquilar'
-      },
-      tipoDeVivienda: {
-        id: 2,
-        nombre: 'Casas o chalets'
-      },
-      estado: {
-        id: 2,
-        nombre: 'Buen estado'
-      },
-      tipoAnuncio: {
-        id: 2,
-        nombre: 'De bancos',
-      },
-      descripcion: 'Casa de lujo Ubicada en la zona alta de palermo, con parqueadero de autos, piscina.',
-      caracteristicas: [
-        {
-          id: 2,
-          titulo: 'Plaza de garaje',
-        },
-        {
-          id: 3,
-          titulo: 'Piscina',
-        },
-        {
-          id: 6,
-          titulo: 'Trastero',
-          filtrar: false
-        },
-        {
-          id: 7,
-          titulo: 'Aire Acondicionado',
-          filtrar: false
-        },
-        {
-          id: 8,
-          titulo: 'Armarios empotrados',
-          filtrar: false
-        },
-        {
-          id: 5,
-          titulo: 'Exterior',
-        },
-      ]
-    },
-    {
-      id: 4,
-      nombre: 'Local #1',
-      categoria: {
-        value: 4,
-        nombre: 'Locales'
-      },
-      favorito: false,
-      provincy: 'Córdoba',
-      partido: 'Gral. Roca',
-      address: 'Calle #5, C.C. "Alto Palermo".',
-      latLng: {
-        lat: -34.594487,
-        lng: -58.432593
-      },
-      imagenes: [
-        "../../assets/images/inmuebles/inmueble4/1.jpg",
-        "../../assets/images/inmuebles/inmueble4/2.jpg",
-        "../../assets/images/inmuebles/inmueble4/3.jpg",
-      ],
-      precio: 6000,
-      m2: 60,
-      tipoDeContrato: {
-        id: 1,
-        titulo: 'Alquilar'
-      },
-      estado: {
-        id: 2,
-        nombre: 'Buen estado'
-      },
-      tipoAnuncio: {
-        id: 2,
-        nombre: 'De bancos',
-      },
-      descripcion: 'Local grande, ubicado en el C.C. Metropolis.',
-      caracteristicas: [
-        {
-          id: 7,
-          titulo: 'Aire Acondicionado',
-          filtrar: false
-        },
-        {
-          id: 8,
-          titulo: 'Armarios empotrados',
-          filtrar: false
-        },
-      ]
-    },
-
-  ]);
-
-  filtros = {
-    mostrarTodo: true,
-    categoria: '1',
-    precios: {
-      lower: this.getMaxAndMin().minPrecio,
-      upper: this.getMaxAndMin().maxPrecio
-    },
-
-    m2: {
-      lower: this.getMaxAndMin().minM2,
-      upper: this.getMaxAndMin().maxM2
-    },
-
-    habitaciones: {
-      lower: this.getMaxAndMin().minHabitaciones,
-      upper: this.getMaxAndMin().maxHabitaciones
-    },
-    banos: {
-      lower: this.getMaxAndMin().minBanos,
-      upper: this.getMaxAndMin().maxBanos
-    },
-    tipoDeContrato: [
-      {
-        id: 1,
-        titulo: 'Alquilar',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'Venta',
-        filtrar: false
-      },
-      {
-        id: 3,
-        titulo: 'Compartir',
-        filtrar: false
-      },
-      {
-        id: 4,
-        titulo: 'Vacacional',
-        filtrar: false
-      },
-      {
-        id: 5,
-        titulo: 'Traspaso',
-        filtrar: false
-      },
-      {
-        id: 6,
-        titulo: 'Ópcion a compra',
-        filtrar: false
-      },
-    ],
-    tipoDeVivienda: [
-      {
-        id: 1,
-        titulo: 'Pisos',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'Casas o chalets',
-        filtrar: false
-      },
-      {
-        id: 3,
-        titulo: 'Casas rústicas',
-        filtrar: false
-      },
-      {
-        id: 4,
-        titulo: 'Dúplex',
-        filtrar: false
-      },
-      {
-        id: 5,
-        titulo: 'Ático',
-        filtrar: false
-      },
-    ],
-    estados: [
-      {
-        id: 1,
-        titulo: 'Obra nueva',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'Buen estado',
-        filtrar: false
-      },
-      {
-        id: 3,
-        titulo: 'A reformar',
-        filtrar: false
-      },
-    ],
-    caracteristicas: [
-      {
-        id: 1,
-        titulo: 'Ascensor',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'Plaza de garaje',
-        filtrar: false
-      },
-      {
-        id: 3,
-        titulo: 'Piscina',
-        filtrar: false
-      },
-      {
-        id: 4,
-        titulo: 'Terraza',
-        filtrar: false
-      },
-      {
-        id: 5,
-        titulo: 'Exterior',
-        filtrar: false
-      },
-      {
-        id: 6,
-        titulo: 'Trastero',
-        filtrar: false
-      },
-      {
-        id: 7,
-        titulo: 'Aire Acondicionado',
-        filtrar: false
-      },
-      {
-        id: 8,
-        titulo: 'Armarios empotrados',
-        filtrar: false
-      },
-      {
-        id: 9,
-        titulo: 'Jardín',
-        filtrar: false
-      },
-    ],
-    tipoAnuncio: [
-      {
-        id: 1,
-        titulo: 'Con visita virtual',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'De bancos',
-        filtrar: false
-      }
-    ],
-    planta: [
-      {
-        id: 1,
-        titulo: 'última planta',
-        filtrar: false
-      },
-      {
-        id: 2,
-        titulo: 'Plantas intermedias',
-        filtrar: false
-      },
-      {
-        id: 3,
-        titulo: 'Bajos',
-        filtrar: false
-      }
-    ]
-  }
-
-  inmobiliarias = [
-    {
-      id: 1,
-      img: '../../assets/images/logo_inmobiliaria1.png',
-      nombre: 'Inmobiliaria A'
-    },
-    {
-      id: 2,
-      img: '../../assets/images/logo_inmobiliaria2.png',
-      nombre: 'Inmobiliaria B'
-    },
-    {
-      id: 3,
-      img: '../../assets/images/logo_inmobiliaria3.png',
-      nombre: 'Inmobiliaria C'
-    },
-    {
-      id: 4,
-      img: '../../assets/images/logo_inmobiliaria4.png',
-      nombre: 'Inmobiliaria D'
-    },
-    {
-      id: 5,
-      img: '../../assets/images/logo_inmobiliaria5.png',
-      nombre: 'Inmobiliaria E'
-    },
-    {
-      id: 6,
-      img: '../../assets/images/logo_inmobiliaria6.png',
-      nombre: 'Inmobiliaria F'
-    }
-  ];
-
-  constructor() { }
-
-  getMaxAndMin() {
+  getMaxAndMin(properties) {
     return {
-      maxPrecio: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
-      minPrecio: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.precio !== 'undefined') { return o.precio; } else { return false } })),
+      price: {
+        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.price !== 'undefined' && o.price !== null) { return o.price; } else { return false } })),
+        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.price !== 'undefined' && o.price !== null) { return o.price; } else { return false } })),
+      },
 
-      maxM2: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
-      minM2: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.m2 !== 'undefined') { return o.m2; } else { return false } })),
+      size:{
+        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.square_meters !== 'undefined' && o.square_meters !== null) { return o.square_meters; } else { return false } })),
+        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.square_meters !== 'undefined' && o.square_meters !== null) { return o.square_meters; } else { return false } })),
+      },
 
-      maxHabitaciones: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
-      minHabitaciones: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.habitaciones !== 'undefined') { return o.habitaciones; } else { return false } })),
-
-      maxBanos: Math.max.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
-      minBanos: Math.min.apply(Math, this.productos.getValue().map(function (o) { if (typeof o.banos !== 'undefined') { return o.banos; } else { return false } })),
+      rooms:{
+        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.rooms !== 'undefined' && o.rooms !== null) { return o.rooms; } else { return false } })),
+        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.rooms !== 'undefined' && o.rooms !== null) { return o.rooms; } else { return false } })),
+      },
+      bathrooms:{
+        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.bathrooms !== 'undefined' && o.bathrooms !== null) { return o.bathrooms; } else { return false } })),
+        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.bathrooms !== 'undefined' && o.bathrooms !== null) { return o.bathrooms; } else { return false } })),
+      }      
     }
   }
 
-  addFiltros(filtros) {
-    Object.assign(this.filtros, filtros);
-    if (!this.filtros.mostrarTodo) {
-      console.log('estoy filtrando.');
-    } else {
-      console.log('no estoy filtrando.');
-    }
-  }
-
-  getFiltros() {
-    return this.filtros;
-  }
-
-  getInmobiliarias(){
-    return this.inmobiliarias;
-  }
-
-  getFavoritos() {
-    return this.favoritos;
-  }
-
-  getDescartados() {
-    return this.descartados;
-  }
-
-  addProductFavorito(product) {
-    this.favoritos.push(product);
-  }
-
-  getFavoritosProducts() {
-    this.productos.getValue().map(producto => {
-      this.favoritos.some(favorito => producto.id === favorito);
+  getPropertyType(): Promise<PropertyType[]>{
+    return new Promise((resolve) =>{
+      this.http.get(this.authService.api + '/property-types', {
+        headers: this.authService.authHeader
+      }).subscribe((response: {data:PropertyType[]}) =>{        
+        resolve(response.data);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
     });
-
-
   }
 
-  removeProductFavorito(product) {
-    for (let [index, p] of this.favoritos.entries()) {
-      if (product.id === p.id) {
-        this.favoritos.splice(index, 1);
-      }
-    }
-  }
-
-  descartarProducto(product) {
-    for (let [index, p] of this.productos.getValue().entries()) {
-      if (product.id === p.id) {
-        this.descartados.push(product);
-        this.productos.getValue().splice(index, 1);
-        console.log(this.productos.getValue());
-      }
-    }
-  }
-
-  getProducts() {
-    this.productos.getValue().forEach(producto => {
-      producto.favorito = this.favoritos.some(favorito => producto.id === favorito.id);
-      return producto;
+  getContractType(): Promise<ContractType[]>{
+    return new Promise((resolve) =>{
+      this.http.get(this.authService.api + '/contract-types', {
+        headers: this.authService.authHeader
+      }).subscribe((response: {data:ContractType[]}) =>{        
+        resolve(response.data);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
     });
+  }
 
+  getPropertyStatuses(): Promise<PropertyType[]>{
+    return new Promise((resolve) =>{
+      this.http.get(this.authService.api + '/property-statuses', {
+        headers: this.authService.authHeader
+      }).subscribe((response: {data:PropertyType[]}) =>{        
+        resolve(response.data);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
+    });
+  }
+
+  getPropertyFeatures(): Promise<PropertyFeatures[]>{
+    return new Promise((resolve) =>{
+      this.http.get(this.authService.api + '/property-features', {
+        headers: this.authService.authHeader
+      }).subscribe((response: {data:PropertyFeatures[]}) =>{        
+        resolve(response.data);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
+    });
+  }
+
+  async presentLoading(){
+    this.loading = await this.loadingCtrl.create({
+      spinner: 'bubbles',
+      message: 'Cargando productos...'
+    });
+    await this.loading.present();
+  }
+
+  async getProducts(options?: GetProductsOptions){
+    
+    if (typeof options === 'undefined' || options === null){
+      options = {
+        relationships: [],
+        filters: {}
+      };
+    }
+    await this.presentLoading();
+    if(this.filtrado){
+      this.productos.next(await this.findProducts({relationships: options.relationships, filters: this.filtros}));
+    }else{
+      
+      this.productos.next(await this.findProducts({relationships: options.relationships}));
+    }
+    await this.loading.dismiss();
     return this.productos;
   }
+
+  findProducts(options?: GetProductsOptions) {    
+
+    if (typeof options === 'undefined' || options === null){
+      options = {
+        relationships: [],
+        filters: {}
+      };
+    }
+
+    const filters: ProductFilters = {
+      name: '',
+      type: [],
+      contractType: [],
+      status: [],
+      hasAnyFeatures: [],
+      realEstateAgency: [],
+      sizeBetween: [0, 9999999999999],
+      roomsBetween: [0, 999999999999], 
+      bathroomsBetween: [0, 999999999999],
+      ...options.filters
+    };
+        
+    return new Promise<[]>((resolve) =>{
+      this.http.get(this.authService.api + '/properties', {
+        headers: this.authService.authHeader,
+        params: {
+          include: this.getProductRelationships(options.relationships),
+          'filter[name]': filters.name,
+          'filter[type]': filters.type?.join(','),
+          'filter[contract_type]': filters.contractType?.join(','),
+          'filter[size_between]': filters.sizeBetween ? filters.sizeBetween?.join(',') : '',
+          'filter[rooms_between]': filters.roomsBetween ? filters.roomsBetween?.join(',') : '',
+          'filter[bathrooms_between]': filters.bathroomsBetween ? filters.bathroomsBetween?.join(',') : '',
+          'filter[status]': filters.status?.join(','),
+          'filter[has_any_features]': filters.hasAnyFeatures?.join(','),
+          'filter[real_estate_agency]': filters.realEstateAgency?.join(','),
+        }
+      }).subscribe((response: {data: []}) =>{ 
+        resolve(response.data);
+      }, async error => {
+        await this.loading.dismiss();
+        alert(JSON.stringify(error));
+      })
+    });
+  }
+
+  getProductsFavorites(relationships?: Array<ProductRelationships>){
+    if (typeof relationships === 'undefined' || relationships === null){
+      relationships = [];
+    }
+
+    return new Promise<[]>((resolve) =>{
+      this.http.get(this.authService.api + '/properties/favorites', {
+        headers: this.authService.authHeader,
+        params: {
+          include: this.getProductRelationships(relationships)
+        }
+    }).subscribe((response: {data:any}) =>{
+      resolve(response.data);
+    }, e =>{
+      console.log(e);
+    });    
+  });
 }
+
+  /* async returnProducts(){
+    const loading = await this.loadingCtrl.create({
+      message: 'Cargando..',
+      spinner: 'bubbles'
+    });
+    await loading.present();
+    if(this.filtrado){
+      this.productos = await this.getProducts({relationships: [], filters: this.filtros});
+    }else{
+      this.productos = await this.getProducts();
+    }    
+    
+    loading.dismiss();
+
+    return this.productos;
+  } */
+
+  /* getProducts(options?: GetProductsOptions) {
+    if (typeof options === 'undefined' || options === null){
+      options = {
+        relationships: [],
+        filters: {}
+      };
+    }
+
+    const filters: ProductFilters = {
+      name: '',
+      type: [],
+      contractType: [],
+      status: [],
+      hasAnyFeatures: [],
+      realEstateAgency: [],
+      sizeBetween: [0, 999999],
+      roomsBetween: [0, 999999], 
+      bathroomsBetween: [0, 99999],
+      ...options.filters
+    };
+        
+    return new Promise<[]>((resolve) =>{
+      this.http.get(this.authService.api + '/properties', {
+        headers: this.authService.authHeader,
+        params: {
+          include: this.getProductRelationships(options.relationships),
+          'filter[name]': filters.name,
+          'filter[type]': filters.type?.join(','),
+          'filter[contract_type]': filters.contractType?.join(','),
+          'filter[size_between]': filters.sizeBetween ? filters.sizeBetween?.join(',') : '',
+          'filter[rooms_between]': filters.roomsBetween ? filters.roomsBetween?.join(',') : '',
+          'filter[bathrooms_between]': filters.bathroomsBetween ? filters.bathroomsBetween?.join(',') : '',
+          'filter[status]': filters.status?.join(','),
+          'filter[has_any_features]': filters.hasAnyFeatures?.join(','),
+          'filter[real_estate_agency]': filters.realEstateAgency?.join(','),
+        }
+      }).subscribe((response: {data: []}) =>{ 
+        resolve(response.data);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
+    });
+  } */
+
+  private getProductRelationships(aditionalRels?: Array<ProductRelationships>) {
+    const relationships:Array<ProductRelationships> = ['images', 'prices.currency', 'address.state', 'address.city', 'features', 'type', 'status', 'favorite_to_count'];
+
+    relationships.push(...aditionalRels);
+
+    return relationships.join(',');
+  }
+
+  addFavoriteProduct(id: number){
+    return this.http.post(this.authService.api + '/properties/favorites', {property_id: id}, {
+      headers: this.authService.authHeader
+    }).toPromise();
+  }
+
+  removeFavoriteProduct(id: number){
+    return this.http.delete(this.authService.api + '/properties/favorites/' + id, {
+      headers: this.authService.authHeader
+    }).toPromise();
+  }
+}
+

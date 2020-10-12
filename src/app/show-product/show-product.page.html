@@ -18,49 +18,49 @@
 
 <ion-content>
   <ion-slides #sliderRef pager="true" class="slider-img" [options]="slideOpts">
-    <ion-slide *ngFor="let image of producto.imagenes" style="background: url({{image}}); background-size: 100% 100%;" (click)="openPreview(image)">
+    <ion-slide *ngFor="let image of producto.images" style="background: url({{image.url}}); background-size: 100% 100%;" (click)="openPreview(image.url)">
     </ion-slide>
   </ion-slides>
 
   <ion-grid>
     <ion-row class="ion-align-items-center">
       <ion-col>
-        <h1>
-          <ion-text color="medium">{{producto.precio}}$</ion-text>
-        </h1>
+        <h4 *ngFor="let price of producto.prices">
+          <ion-text color="medium">{{price.price_value}} {{price.currency.code}}</ion-text>
+        </h4>
       </ion-col>
-      <ion-col style="display: flex; align-self: flex-end;">
+      <ion-col style="display: flex;">
         <ion-button fill="clear" color="secondary">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
         <ion-button fill="clear" color="secondary" (click)="openShared()">
           <ion-icon slot="icon-only" name="share-social"></ion-icon>
         </ion-button>
-        <ion-button *ngIf="!producto.favorito" fill="clear" color="secondary" (click)="addToFavorite()">
+        <ion-button *ngIf="!producto.is_favorite" fill="clear" color="secondary" (click)="addToFavorite()">
           <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
         </ion-button>
-        <ion-button *ngIf="producto.favorito" fill="clear" color="secondary" (click)="removeFromFavorite()">
+        <ion-button *ngIf="producto.is_favorite" fill="clear" color="secondary" (click)="removeFromFavorite()">
           <ion-icon slot="icon-only" name="heart" color="danger"></ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>
     <ion-row class="ion-align-items-center">
-      <ion-col *ngIf="producto.habitaciones" class="ion-text-center ion-align-self-end">
+      <ion-col *ngIf="producto.rooms" class="ion-text-center ion-align-self-end">
         <img class="img-icon" src="../../assets/icon/habitaciones.PNG" alt="">
         <p class="attribute-description">
-          <ion-text color="medium">{{producto.habitaciones}} Habitaciones</ion-text>
+          <ion-text color="medium">{{producto.rooms}} Habitaciones</ion-text>
         </p>
       </ion-col>
-      <ion-col *ngIf="producto.banos" class="ion-text-center ion-align-self-end">
+      <ion-col *ngIf="producto.bathrooms" class="ion-text-center ion-align-self-end">
         <img class="img-icon" src="../../assets/icon/banos.PNG" alt="">
         <p class="attribute-description">
-          <ion-text color="medium">{{producto.banos}} Baños</ion-text>
+          <ion-text color="medium">{{producto.bathrooms}} Baños</ion-text>
         </p>
       </ion-col>
-      <ion-col *ngIf="producto.m2" class="ion-text-center ion-align-self-end">
+      <ion-col *ngIf="producto.square_meters" class="ion-text-center ion-align-self-end">
         <img class="img-icon" src="../../assets/icon/M2.PNG" alt="">
         <p class="attribute-description">
-          <ion-text color="medium">{{producto.m2}} m2</ion-text>
+          <ion-text color="medium">{{producto.square_meters}} m2</ion-text>
         </p>
       </ion-col>
     </ion-row>
@@ -68,10 +68,10 @@
 
   <div class="ion-text-center">
     <p>
-      <ion-text color="medium"><b>{{producto.nombre}} en {{producto.address}}</b></ion-text>
+      <ion-text color="medium"><b>{{producto.name}} en {{producto.address.address}}</b></ion-text>
     </p>
     <p>
-      <ion-text color="medium">{{producto.partido}}, {{producto.provincy}}</ion-text>
+      <ion-text color="medium">{{producto.address.city.name}}, {{producto.address.state.name}}.</ion-text>
     </p>
     <ion-button color="secondary" shape="round" fill="clear" size="large" (click)="playSound();">
       <ion-icon name="location-outline" slot="start"></ion-icon>
@@ -80,8 +80,8 @@
   </div>
 
   <div class="ion-text-center">
-    <ion-chip color="secondary" *ngFor="let caracteristica of producto.caracteristicas">
-      <ion-label color="secondary">{{caracteristica.titulo}}</ion-label>
+    <ion-chip color="secondary" *ngFor="let feature of producto.features">
+      <ion-label color="secondary">{{feature.name}}</ion-label>
     </ion-chip>
   </div>
 
@@ -92,7 +92,7 @@
     </h2>
     <ion-grid>
       <!--Fila de tipo de Propiedad-->
-      <ion-row *ngIf="producto.tipoDeVivienda" class="ion-align-items-center">
+      <ion-row *ngIf="producto.type" class="ion-align-items-center">
         <ion-col style="display: flex; align-items: center;">
           <img class="img-icon-start" src="../../assets/icon/propiedad.PNG" alt="">
           <ion-label color="medium">
@@ -100,12 +100,12 @@
           </ion-label>
         </ion-col>
         <ion-col>
-          <ion-text color="medium">{{producto.tipoDeVivienda.nombre}}</ion-text>
+          <ion-text color="medium">{{producto.type.name}}.</ion-text>
         </ion-col>
       </ion-row>
 
       <!--Fila de Estado-->
-      <ion-row *ngIf="producto.estado" class="ion-align-items-center">
+      <ion-row *ngIf="producto.status" class="ion-align-items-center">
         <ion-col style="display: flex; align-items: center;">
           <img class="img-icon-start" src="../../assets/icon/estado.PNG" alt="">
           <ion-label color="medium">
@@ -113,7 +113,7 @@
           </ion-label>
         </ion-col>
         <ion-col>
-          <ion-text color="medium">{{producto.estado.nombre}}</ion-text>
+          <ion-text color="medium">{{producto.status.name}}.</ion-text>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -127,39 +127,40 @@
       <ion-text color="medium"><b>Descripción</b></ion-text>
     </h4>
     <p>
-      <ion-text color="medium">{{producto.descripcion}}</ion-text>
+      <ion-text color="medium">{{producto.description}}</ion-text>
     </p>
   </div>
 
-  <!--CONTENEDOR DE LAS IMAGENES-->
+  <!--CONTENEDOR DE LAS images-->
   <div style="display: flex;">
     <!--Si solo hay una imagen-->
-    <div *ngIf="producto.imagenes.length == 1">
-      <img class="img-full" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
+    <div *ngIf="producto.images.length == 1">
+      <img class="img-full" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
     </div>
 
-    <!--Si hay 2 imagenes-->
-    <div *ngIf="producto.imagenes.length == 2">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
+    <!--Si hay 2 images-->
+    <div *ngIf="producto.images.length == 2">
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
     </div>
 
-    <!--Si hay 3 imagenes-->
-    <div *ngIf="producto.imagenes.length == 3">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
-      <img class="img-full" src="{{producto.imagenes[2]}}" alt="" (click)="openPreview(producto.imagenes[2])">
+    <!--Si hay 3 images-->
+    <div *ngIf="producto.images.length == 3">
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
+      <img class="img-full" src="{{producto.images[2].url}}" alt="" (click)="openPreview(producto.images[2].url)">
     </div>
 
-    <!--Si hay 4 imagenes o mas-->
-    <div *ngIf="producto.imagenes.length > 3" class="ion-text-center">
-      <img class="img-height img-1" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
-      <img class="img-height img-2" src="{{producto.imagenes[1]}}" alt="" (click)="openPreview(producto.imagenes[1])">
-      <img class="img-height img-3" src="{{producto.imagenes[2]}}" alt="" (click)="openPreview(producto.imagenes[2])">
-      <img class="img-height img-4" src="{{producto.imagenes[3]}}" alt="" (click)="openPreview(producto.imagenes[3])">
-      <ion-button color="tertiary" spand="block" fill="clear" (click)="playSound();">
+    <!--Si hay 4 images o mas-->
+    <div *ngIf="producto.images.length > 3" class="ion-text-center">
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
+      <img class="img-height img-3" src="{{producto.images[2].url}}" alt="" (click)="openPreview(producto.images[2].url)">
+      <img class="img-height img-4" src="{{producto.images[3].url}}" alt="" (click)="openPreview(producto.images[3].url)">
+      
+      <ion-button color="primary" spand="block" fill="clear" (click)="playSound();">
         <ion-icon name="camera-outline" slot="start"></ion-icon>
-        Ver las {{producto.imagenes.length}} imágenes
+        Ver las {{producto.images.length}} imágenes
       </ion-button>
     </div>
   </div>
@@ -172,8 +173,8 @@
       <ion-text color="medium"><b>Información del precio</b></ion-text>
     </h4>
     <ion-grid>
-      <!--Fila de tipo de Propiedad-->
-      <ion-row *ngIf="producto.tipoDeVivienda" class="ion-align-items-center">
+      <!--Fila de tipo de Info de Precio-->
+      <ion-row *ngIf="producto.prices" class="ion-align-items-center">
         <ion-col style="display: flex; align-items: center;">
           <img class="img-icon-start" src="../../assets/icon/price.PNG" alt="">
           <ion-label color="medium">
@@ -181,12 +182,12 @@
           </ion-label>
         </ion-col>
         <ion-col>
-          <ion-text color="medium">{{producto.precio}} $</ion-text>
+          <p *ngFor="let price of producto.prices"><ion-text color="medium">{{price.price_value}} - {{price.currency.code}} </ion-text></p>
         </ion-col>
       </ion-row>
 
       <!--Fila de Estado-->
-      <ion-row *ngIf="producto.estado" class="ion-align-items-center">
+      <!-- <ion-row *ngIf="producto.estado" class="ion-align-items-center">
         <ion-col style="display: flex; align-items: center;">
           <img class="img-icon-start" src="../../assets/icon/price-comunity.PNG" alt="">
           <ion-label color="medium">
@@ -194,7 +195,7 @@
           </ion-label>
         </ion-col>
         <ion-col></ion-col>
-      </ion-row>
+      </ion-row> -->
     </ion-grid>
   </div>
 
@@ -208,8 +209,8 @@
 
     <p>
       <ion-text color="medium">
-        <span *ngIf="producto.tipoDeVivienda">{{producto.tipoDeVivienda.nombre}}</span> <span *ngIf="producto.address"> en {{producto.address}}</span> <br>
-        <span *ngIf="producto.partido">{{producto.partido}}</span><span *ngIf="producto.partido && producto.provincy">, </span> <span *ngIf="producto.provincy">{{producto.provincy}}</span>         
+        <span *ngIf="producto.type">{{producto.type.name}}</span> <span *ngIf="producto.address"> en {{producto.address.address}}</span> <br>
+        <span *ngIf="producto.address.city">{{producto.address.city.name}}</span><span *ngIf="producto.address.city && producto.address.state">, </span> <span *ngIf="producto.address.state">{{producto.address.state.name}}</span>.
       </ion-text>
     </p>    
   </div>

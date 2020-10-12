@@ -44,7 +44,8 @@ export class UsuarioPage implements OnInit {
 
   ngOnInit() {    
     this.silenciar = this.smartAudio.getMute();
-    this.user = this.authService.user.getValue();
+    this.user = this.authService.user;
+    console.log(this.authService.token);
   }
 
   playSound(){

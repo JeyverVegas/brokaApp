@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
@@ -16,37 +16,22 @@ export class BuscarPage implements OnInit {
   productos = new BehaviorSubject([]);
   filtro = new BehaviorSubject([]);
 
-  
+
 
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
-    private smartAudio: SmartAudioService 
+    private smartAudio: SmartAudioService,
+    private toastController: ToastController
   ) { }
 
-  ngOnInit() {
-    this.productos = this.productosService.getProducts();
+  async ngOnInit() {
+    this.productos = await this.productosService.getProducts();    
     this.initializedItems();
   }
 
   initializedItems() {
     this.filtro.next(this.productos.getValue());
-  }
-
-  filtrar(ev) {
-    this.initializedItems();
-
-    const valor = ev.target.value;
-
-    if (!valor) {
-      return
-    }    
-
-      this.filtro.next(this.filtro.getValue().filter(producto => {
-        if (producto.nombre && valor) {
-          return (producto.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1);
-        }
-      }))    
   }
 
   async openProduct(producto) {
@@ -57,27 +42,53 @@ export class BuscarPage implements OnInit {
         producto: producto
       }
     });
-
     modal.present();
+  }
+
+  filtrar(ev) {
+    this.initializedItems();
+
+    const valor = ev.target.value;
+
+    if (!valor) {
+      return
+    }
+
+    this.filtro.next(this.filtro.getValue().filter(producto => {
+      if (producto.name && valor) {
+        return (producto.name.toLowerCase().indexOf(valor.toLowerCase()) > -1);
+      }
+    }));
   }
 
   addToFavorite(producto) {
     this.playSound();
-    producto.favorito = !producto.favorito;
-    this.productosService.addProductFavorito(producto);
+    this.productosService.addFavoriteProduct(producto.id).then(response => {
+      this.presentToast(producto.name + ' ha sido añadido a favoritos.', 'success');
+      producto.is_favorite = true;
+      producto.favorite_to_count++;
+    }).catch(error => {
+      this.presentToast(error.error.errors.property_id[0], 'danger');
+    });
   }
 
   removeFromFavorite(producto) {
     this.playSound();
-    producto.favorito = !producto.favorito;
-    this.productosService.removeProductFavorito(producto);
+    this.productosService.removeFavoriteProduct(producto.id).then(response => {
+      this.presentToast(producto.name + ' ha sido removido de favoritos', 'success');
+      producto.is_favorite = false;
+      producto.favorite_to_count--;
+    }).catch(error => {
+      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
+      console.log(error);
+    });
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
-  async openPreview(img){
+  async openPreview(img) {
     const modal = await this.modalCtrl.create({
       component: ImageModalPage,
       cssClass: 'b_transparent',
@@ -87,6 +98,23 @@ export class BuscarPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color,
+      mode: 'ios'
+    });
+    toast.present();
+  }
+
+  async doRefresh(event) {
+    this.productos = await this.productosService.getProducts();
+    this.initializedItems();
+    event.target.complete();
   }
 
 }

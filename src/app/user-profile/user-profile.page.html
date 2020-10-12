@@ -9,9 +9,10 @@
         <ion-row>
             <ion-col size="4">
                 <img *ngIf="user.profile.image !== ''; else invitadoImg" src="{{user.profile.image}}" alt=""
-                    (click)="uploadImage()">
+                    (click)="selectImage()" class="redonda">
                 <ng-template #invitadoImg>
-                    <ion-icon name="person-circle-outline" class="img-user" color="light"></ion-icon>
+                    <ion-icon (click)="selectImage()" name="person-circle-outline" class="img-user" color="light">
+                    </ion-icon>
                 </ng-template>
             </ion-col>
             <ion-col size="8">
@@ -51,47 +52,53 @@
 </ion-header>
 
 <ion-content>
+    <div class="ion-padding">
+        <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>  
+    </div>
+    
     <ion-slides (ionSlideWillChange)="slidesChanged($event)" #slidesconfig>
         <ion-slide class="ion-padding ion-text-center" style="display: block;">
-            <h2>
-                <ion-text color="medium">
-                    Información Personal
-                </ion-text>
-            </h2>
-            <ion-item mode="md">
-                <ion-label position="floating" color="primary">Nombre</ion-label>
-                <ion-input [(ngModel)]="user.profile.firstname"></ion-input>
-            </ion-item>
-            <ion-item mode="md">
-                <ion-label position="floating" color="primary">Apellido</ion-label>
-                <ion-input [(ngModel)]="user.profile.lastname"></ion-input>
-            </ion-item>
-            <ion-item mode="md">
-                <ion-label position="floating" color="primary">Telefono</ion-label>
-                <ion-input [(ngModel)]="user.profile.phone"></ion-input>
-            </ion-item>
-            <br>
-            <ion-item mode="md">                
-                <ion-textarea [(ngModel)]="user.profile.bio" placeholder="Biografía..."></ion-textarea>
-            </ion-item>
+            <form (ngSubmit)="onSubmit()">
+                <h2>
+                    <ion-text color="medium">
+                        Información Personal
+                    </ion-text>
+                </h2>
+                <ion-item mode="md">
+                    <ion-label position="floating" color="primary">Nombre</ion-label>
+                    <ion-input [(ngModel)]="user.profile.firstname" name="firstname"></ion-input>
+                </ion-item>
+                <ion-item mode="md">
+                    <ion-label position="floating" color="primary">Apellido</ion-label>
+                    <ion-input [(ngModel)]="user.profile.lastname" name="lastname"></ion-input>
+                </ion-item>
+                <ion-item mode="md">
+                    <ion-label position="floating" color="primary">Telefono</ion-label>
+                    <ion-input [(ngModel)]="user.profile.phone" name="phone"></ion-input>
+                </ion-item>
+                <br>
+                <ion-item mode="md">
+                    <ion-textarea [(ngModel)]="user.profile.bio" placeholder="Biografía..." name="bio"></ion-textarea>
+                </ion-item>
+            </form>
         </ion-slide>
 
         <ion-slide class="ion-padding ion-text-center" style="display: block;">
             <h2>
                 <ion-text color="medium">
                     Ubicación
-                </ion-text>
+                </ion-text>                
             </h2>
-            <ion-item>
+            <ion-item>                
                 <ion-label color="primary" position="floating">Provincia</ion-label>
-                <ion-select [(ngModel)]="user.address.state.id" okText="Ok" cancelText="cancelar" interface="alert">
-                    <ion-select-option value="1">Buenos Aires</ion-select-option>
+                <ion-select [(ngModel)]="user.address.state"  [compareWith]="compareWithFn" okText="Ok" cancelText="cancelar">
+                    <ion-select-option *ngFor="let state of states" [value]="state">{{state.name}}</ion-select-option>
                 </ion-select>
             </ion-item>
             <ion-item>
                 <ion-label color="primary" position="floating">Partido</ion-label>
-                <ion-select [(ngModel)]="user.address.city.id" okText="Ok" cancelText="cancelar" interface="alert">
-                    <ion-select-option value="1">Gral. San Martín</ion-select-option>
+                <ion-select [(ngModel)]="user.address.city"  [compareWith]="compareWithFn" okText="Ok" cancelText="cancelar">
+                    <ion-select-option *ngFor="let city of cities" [value]="city">{{city.name}}</ion-select-option>
                 </ion-select>
             </ion-item>
             <ion-item mode="md">
@@ -111,17 +118,25 @@
                     Configuración
                 </ion-text>
             </h2>
-            <ion-item>                
+            <ion-item>
                 <ion-label class="ion-text-wrap">Silenciar Botones</ion-label>
-                <ion-checkbox color="success" slot="start" mode="md" (ionChange)="toggleSound()" [(ngModel)]="silenciar">
+                <ion-checkbox color="success" slot="start" mode="md" (ionChange)="toggleSound()"
+                    [(ngModel)]="silenciar">
                 </ion-checkbox>
             </ion-item>
         </ion-slide>
     </ion-slides>
+
 </ion-content>
 
-<ion-footer class="ion-text-center">    
-    <ion-button class="color_primario" mode="ios" (click)="save()">
+<ion-footer class="ion-text-center ion-no-border">
+    <ion-button *ngIf="slideNumber == 0" class="color_primario" mode="ios" (click)="saveProfile()">
         guardar cambios
+    </ion-button>
+    <ion-button *ngIf="slideNumber == 1" class="color_primario" mode="ios" (click)="saveAddress()">
+        guardar dirección
+    </ion-button>
+    <ion-button *ngIf="slideNumber == 2" class="color_primario" mode="ios" (click)="save()">
+        guardar configuración
     </ion-button>
 </ion-footer>

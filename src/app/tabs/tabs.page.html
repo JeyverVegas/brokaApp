@@ -17,7 +17,9 @@
       <ion-icon name="chatbubble-outline"></ion-icon>      
     </ion-tab-button>
 
-    <ion-tab-button mode="md"  tab="usuario" (click)="playSound()">
+    <ion-tab-button mode="md"  tab="usuario" (click)="playSound()" class="animate__animated animate__infinite"
+    [class.animate__pulse]="user.profile == undefined" style="position: relative;">
+      <ion-badge *ngIf="user.profile == undefined" color="danger"></ion-badge>
       <ion-icon name="person"></ion-icon>      
     </ion-tab-button>
   </ion-tab-bar>

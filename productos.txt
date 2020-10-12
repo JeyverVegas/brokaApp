@@ -1,0 +1,259 @@
+private productos = new BehaviorSubject([
+    {
+      id: 1,
+      nombre: 'Fit Roiz 1350',
+      categoria: {
+        id: 2,
+        nombre: 'Apartamentos'
+      },
+      favorito: false,
+      provincy: 'Buenos Aires',
+      partido: 'Rosario',
+      address: 'Calle Rossini 9',
+      latLng: {
+        lat: -34.609129,
+        lng: -58.426284
+      },    
+      imagenes: [
+        "../../assets/images/inmuebles/inmueble1/1.jpg",
+        "../../assets/images/inmuebles/inmueble1/2.jpg",
+        "../../assets/images/inmuebles/inmueble1/3.jpg",
+        "../../assets/images/inmuebles/inmueble1/4.jpg",
+        "../../assets/images/inmuebles/inmueble1/5.jpg",
+      ],
+      precio: 1000,
+      m2: 40,
+      habitaciones: 3,
+      banos: 2,
+      tipoDeContrato: {
+        id: 2,
+        nombre: 'Venta'
+      },
+      tipoDeVivienda: {
+        id: 2,
+        nombre: 'Casas o chalets'
+      },
+      estado: {
+        id: 2,
+        nombre: 'Buen estado'
+      },
+      tipoAnuncio: {
+        id: 2,
+        nombre: 'De bancos',
+      },
+      planta: {
+        id: 1,
+        nombre: 'última planta',
+      },
+      descripcion: 'Lindo Apartamento, comodo para 6 personas.',
+      caracteristicas: [
+        {
+          id: 1,
+          titulo: 'Ascensor',
+        },
+        {
+          id: 2,
+          titulo: 'Plaza de garaje',
+        },
+        {
+          id: 3,
+          titulo: 'Piscina',
+        },
+        {
+          id: 4,
+          titulo: 'Terraza',
+        },
+        {
+          id: 5,
+          titulo: 'Exterior',
+        },
+      ]
+    },
+    {
+      id: 2,
+      nombre: 'Casa #1',
+      categoria: {
+        id: 1,
+        nombre: 'Viviendas'
+      },
+      favorito: false,
+      provincy: 'Córdoba',
+      partido: 'Gral. San Martín',
+      address: 'Calle #9, Casa #3.',
+      latLng: {
+        lat: -34.595194,
+        lng: -58.389484
+      },
+      imagenes: [
+        "../../assets/images/inmuebles/inmueble2/1.jpg",
+      ],
+      precio: 600,
+      m2: 80,
+      habitaciones: 5,
+      banos: 3,
+      tipoDeContrato: {
+        id: 2,
+        nombre: 'Venta'
+      },
+      tipoDeVivienda: {
+        id: 2,
+        nombre: 'Casas o chalets'
+      },
+      estado: {
+        id: 2,
+        nombre: 'Buen estado'
+      },
+      tipoAnuncio: {
+        id: 2,
+        nombre: 'De bancos',
+      },
+      descripcion: '  ',
+      caracteristicas: [
+        {
+          id: 2,
+          titulo: 'Plaza de garaje',
+        },
+        {
+          id: 3,
+          titulo: 'Piscina',
+        },
+        {
+          id: 6,
+          titulo: 'Trastero',
+          filtrar: false
+        },
+        {
+          id: 7,
+          titulo: 'Aire Acondicionado',
+          filtrar: false
+        },
+        {
+          id: 8,
+          titulo: 'Armarios empotrados',
+          filtrar: false
+        },
+        {
+          id: 5,
+          titulo: 'Exterior',
+        },
+      ]
+    },
+    {
+      id: 3,
+      nombre: 'Casa #2',
+      categoria: {
+        id: 1,
+        nombre: 'Viviendas'
+      },
+      favorito: false,
+      provincy: 'Buenos Aires',
+      partido: 'EZEIZA',
+      address: 'Av. Bolivar, Casa #4',
+      latLng: {
+        lat: -34.608405,
+        lng: -58.437978
+      },
+      imagenes: [
+        "../../assets/images/inmuebles/inmueble3/1.jpg",
+      ],
+      precio: 3000,
+      m2: 80,
+      habitaciones: 2,
+      banos: 2,
+      tipoDeContrato: {
+        id: 1,
+        titulo: 'Alquilar'
+      },
+      tipoDeVivienda: {
+        id: 2,
+        nombre: 'Casas o chalets'
+      },
+      estado: {
+        id: 2,
+        nombre: 'Buen estado'
+      },
+      tipoAnuncio: {
+        id: 2,
+        nombre: 'De bancos',
+      },
+      descripcion: 'Casa de lujo Ubicada en la zona alta de palermo, con parqueadero de autos, piscina.',
+      caracteristicas: [
+        {
+          id: 2,
+          titulo: 'Plaza de garaje',
+        },
+        {
+          id: 3,
+          titulo: 'Piscina',
+        },
+        {
+          id: 6,
+          titulo: 'Trastero',
+          filtrar: false
+        },
+        {
+          id: 7,
+          titulo: 'Aire Acondicionado',
+          filtrar: false
+        },
+        {
+          id: 8,
+          titulo: 'Armarios empotrados',
+          filtrar: false
+        },
+        {
+          id: 5,
+          titulo: 'Exterior',
+        },
+      ]
+    },
+    {
+      id: 4,
+      nombre: 'Local #1',
+      categoria: {
+        value: 4,
+        nombre: 'Locales'
+      },
+      favorito: false,
+      provincy: 'Córdoba',
+      partido: 'Gral. Roca',
+      address: 'Calle #5, C.C. "Alto Palermo".',
+      latLng: {
+        lat: -34.594487,
+        lng: -58.432593
+      },
+      imagenes: [
+        "../../assets/images/inmuebles/inmueble4/1.jpg",
+        "../../assets/images/inmuebles/inmueble4/2.jpg",
+        "../../assets/images/inmuebles/inmueble4/3.jpg",
+      ],
+      precio: 6000,
+      m2: 60,
+      tipoDeContrato: {
+        id: 1,
+        titulo: 'Alquilar'
+      },
+      estado: {
+        id: 2,
+        nombre: 'Buen estado'
+      },
+      tipoAnuncio: {
+        id: 2,
+        nombre: 'De bancos',
+      },
+      descripcion: 'Local grande, ubicado en el C.C. Metropolis.',
+      caracteristicas: [
+        {
+          id: 7,
+          titulo: 'Aire Acondicionado',
+          filtrar: false
+        },
+        {
+          id: 8,
+          titulo: 'Armarios empotrados',
+          filtrar: false
+        },
+      ]
+    },
+
+  ]);

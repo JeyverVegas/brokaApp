@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SmartAudioService } from './servicios/smart-audio.service';
 import { AuthenticationService } from './servicios/authentication.service';
 import { Router, RouterEvent } from '@angular/router';
+import { Usuario } from './interface';
 
 @Component({
   selector: 'app-root',
@@ -14,20 +15,9 @@ import { Router, RouterEvent } from '@angular/router';
 })
 export class AppComponent{
 
-  usuario = {
-    name: 'Jane',
-    email: null,
-    direccion: 'RECOLECTA C.A.B.A',
-    descripcion: 'Necesito apartamento, preferiblemente cerca del alto palermo para facilidad en mi empleo.',
-    perfilImg: '../../assets/images/user.PNG',
-    images: [
-      '../../assets/images/user(2).PNG',
-      '../../assets/images/user(3).PNG',
-      '../../assets/images/user(4).PNG',
-      '../../assets/images/user(5).PNG',
-      '../../assets/images/user(6).PNG'
-    ]
-  }
+  user = {
+    profile: {firstname: 'Invitado', image: ''}
+  } as Usuario;
 
   selectedPath = null;
 
@@ -101,7 +91,10 @@ export class AppComponent{
   }
 
   updateUser(){
-    this.usuario.email = this.authService.user.getValue().email;
+    if(this.authService.user.profile !== null){
+      this.user.profile = this.authService.user.profile
+    }
+    this.user.email = this.authService.user.email;
   }
   
   playSound(){

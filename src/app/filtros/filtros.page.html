@@ -5,44 +5,54 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-item>
+  <!-- <ion-item>
     <ion-label class="ion-text-wrap">Mostrar todos</ion-label>
-    <ion-checkbox color="success" slot="end" [(ngModel)]="filtros.mostrarTodo"></ion-checkbox>
-  </ion-item>
+    <ion-checkbox color="success" slot="end" [(ngModel)]="showAll"></ion-checkbox>
+  </ion-item> -->
 
   <ion-item>
     <ion-label position="floating" color="success">Categoria</ion-label>
-    <ion-select cancelText='cancelar' okText='aceptar' [interfaceOptions]="customAlertOptions" placeholder="Select One" [(ngModel)]="filtros.categoria">
-      <ion-select-option color="success" class="brown-option" value="{{categoria.value}}" *ngFor="let categoria of categorias">{{categoria.nombre}}</ion-select-option>      
+    <ion-select cancelText='cancelar' okText='aceptar' multiple="true" [interfaceOptions]="customAlertOptions"
+      [(ngModel)]="valueOfType">
+      <ion-select-option color="success" class="brown-option" value="{{type.id}}" *ngFor="let type of propertyTypes">
+        {{type.name}}</ion-select-option>
     </ion-select>
   </ion-item>
-  
-  <h3 class="ion-text-center">Tipo de Contrato</h3>
 
+  <h3 class="ion-text-center">Tipo de Contrato</h3>  
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let filtroContrato of filtros.tipoDeContrato">
+      <ion-col size="6" *ngFor="let contracttype of contractTypes">
         <ion-item>
-          <ion-label class="ion-text-wrap">{{filtroContrato.titulo}}</ion-label>
-          <ion-checkbox color="success" slot="end" [(ngModel)]="filtroContrato.filtrar"></ion-checkbox>
-        </ion-item>
+          <ion-label class="ion-text-wrap">{{contracttype.name}}</ion-label>
+          <ion-checkbox
+            color="success"
+            slot="end"
+            (ionChange)="addContractType($event)"
+            [checked]="filtros.contractType.includes(contracttype.id)"
+            [value]="contracttype.id"
+          ></ion-checkbox>
+        </ion-item>        
       </ion-col>
     </ion-row>
   </ion-grid>
 
 
+  <!-- <ion-item>
+    <ion-label position="floating"><b>Precio:</b> {{valuesOfRange.price.lower}}$ - {{valuesOfRange.price.upper}}$
+    </ion-label>
+    <ion-range color="success" dualKnobs="true" min="{{rangeBetweens.price.min}}" max="{{rangeBetweens.price.max}}"
+      pin="true" step="1" snaps="true" [(ngModel)]="valuesOfRange.price" ticks="true"></ion-range>
+  </ion-item> -->
+
   <ion-item>
-    <ion-label position="floating"><b>Precio:</b> {{filtros.precios.lower}}$ - {{filtros.precios.upper}}$</ion-label>
-    <ion-range color="success" dualKnobs="true" min="{{minPrecio}}" max="{{maxPrecio}}" pin="true"
-      step="{{stepsPrecios}}" snaps="true" [(ngModel)]="filtros.precios" ticks="true"></ion-range>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating"><b>Tamaño:</b> {{filtros.m2.lower}}m2 - {{filtros.m2.upper}}m2</ion-label>
-    <ion-range color="success" dualKnobs="true" min="{{minM2}}" max="{{maxM2}}" pin="true" [(ngModel)]="filtros.m2"
-      snaps="true" step="{{stepsM2}}" ticks="true"></ion-range>
+    <ion-label position="floating"><b>Tamaño:</b> {{valuesOfRange.size.lower}}m2 - {{valuesOfRange.size.upper}}m2
+    </ion-label>
+    <ion-range color="success" dualKnobs="true" min="{{rangeBetweens.size.min}}" max="{{rangeBetweens.size.max}}"
+      pin="true" [(ngModel)]="valuesOfRange.size" snaps="true" step="1" ticks="true"></ion-range>
   </ion-item>
 
-  <h3 class="ion-text-center">Tipo de Vivienda</h3>
+  <!-- <h3 class="ion-text-center">Tipo de Vivienda</h3>
 
   <ion-grid>
     <ion-row>
@@ -53,34 +63,40 @@
         </ion-item>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 
 
   <h3 class="ion-text-center">Habitaciones</h3>
 
   <ion-item>
-    <ion-label class="ion-text-center" position="floating">{{filtros.habitaciones.lower}} -
-      {{filtros.habitaciones.upper}}</ion-label>
-    <ion-range color="success" dualKnobs="true" min="{{minHabitaciones}}" max="{{maxHabitaciones}}" pin="true"
-      [(ngModel)]="filtros.habitaciones" snaps="true" step="1" ticks="true"></ion-range>
+    <ion-label class="ion-text-center" position="floating">{{valuesOfRange.rooms.lower}} - {{valuesOfRange.rooms.upper}}
+    </ion-label>
+    <ion-range color="success" dualKnobs="true" min="{{rangeBetweens.rooms.min}}" max="{{rangeBetweens.rooms.max}}"
+      pin="true" [(ngModel)]="valuesOfRange.rooms" snaps="true" step="1" ticks="true"></ion-range>
   </ion-item>
 
   <h3 class="ion-text-center">Baños</h3>
 
   <ion-item>
-    <ion-label class="ion-text-center" position="floating">{{filtros.banos.lower}} - {{filtros.banos.upper}}</ion-label>
-    <ion-range color="success" dualKnobs="true" min="{{minBanos}}" max="{{maxBanos}}" pin="true"
-      [(ngModel)]="filtros.banos" snaps="true" step="1" ticks="true"></ion-range>
+    <ion-label class="ion-text-center" position="floating">{{valuesOfRange.bathrooms.lower}} -
+      {{valuesOfRange.bathrooms.upper}}</ion-label>
+    <ion-range color="success" dualKnobs="true" min="{{rangeBetweens.bathrooms.min}}"
+      max="{{rangeBetweens.bathrooms.max}}" pin="true" [(ngModel)]="valuesOfRange.bathrooms" snaps="true" step="1"
+      ticks="true"></ion-range>
   </ion-item>
 
   <h3 class="ion-text-center">Estado</h3>
 
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let filtroEstado of filtros.estados">
+      <ion-col size="6" *ngFor="let propertyStatus of propertyStatuses">
         <ion-item>
-          <ion-label class="ion-text-wrap">{{filtroEstado.titulo}}</ion-label>
-          <ion-checkbox color="success" slot="end" [(ngModel)]="filtroEstado.filtrar"></ion-checkbox>
+          <ion-label class="ion-text-wrap">{{propertyStatus.name}}</ion-label>
+          <ion-checkbox color="success" slot="end"
+            (ionChange)="addStatus($event)"
+            [checked]="filtros.status.includes(propertyStatus.id)"
+            [value]="propertyStatus.id">
+          </ion-checkbox>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -90,16 +106,21 @@
 
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let filtroCaracteristica of filtros.caracteristicas">
+      <ion-col size="6" *ngFor="let feature of features">
         <ion-item>
-          <ion-label class="ion-text-wrap">{{filtroCaracteristica.titulo}}</ion-label>
-          <ion-checkbox color="success" slot="end" [(ngModel)]="filtroCaracteristica.filtrar"></ion-checkbox>
+          <ion-label class="ion-text-wrap">{{feature.name}}</ion-label>
+          <ion-checkbox color="success" slot="end"
+            (ionChange)="addFeature($event)"
+            [checked]="filtros.hasAnyFeatures.includes(feature.id)"
+            [value]="feature.id">
+          >
+        </ion-checkbox>
         </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
 
-  <h3 class="ion-text-center">Tipo de Anuncio</h3>
+  <!-- <h3 class="ion-text-center">Tipo de Anuncio</h3>
 
   <ion-grid>
     <ion-row>
@@ -110,9 +131,9 @@
         </ion-item>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 
-  <h3 class="ion-text-center">Planta</h3>
+  <!-- <h3 class="ion-text-center">Planta</h3>
 
   <ion-grid>
     <ion-row>
@@ -123,7 +144,7 @@
         </ion-item>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
   <br>
   <br>
 </ion-content>

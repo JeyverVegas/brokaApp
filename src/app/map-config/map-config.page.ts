@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { ModalController } from '@ionic/angular';
 
 declare var google: any;
 @Component({
@@ -16,7 +17,8 @@ export class MapConfigPage implements OnInit {
   location = { lat: -34.6083, lng: -58.3712 }
   cargado = false;
   constructor(
-    private geolocation : Geolocation
+    private geolocation : Geolocation,
+    private modalCtrl: ModalController
   ) { }
 
   async ngOnInit() {
@@ -86,7 +88,7 @@ export class MapConfigPage implements OnInit {
   }
 
   saveLocation(){
-    console.log(this.location);
+    this.modalCtrl.dismiss(this.location);
   }
 
 

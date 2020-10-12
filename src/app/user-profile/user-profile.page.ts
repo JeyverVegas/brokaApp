@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { File } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ActionSheetController, IonSlides, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
-import { Usuario } from '../interface';
+import { ActionSheetController, IonSlides, LoadingController, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
+import { City, State, Usuario } from '../interface';
 import { MapConfigPage } from '../map-config/map-config.page';
+import { AddressService } from '../servicios/address.service';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
@@ -16,7 +17,7 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 })
 export class UserProfilePage implements OnInit {
 
-  
+
 
   @ViewChild('slidesconfig', { static: true }) protected slides: IonSlides;
   @ViewChild('mapconfig', { static: true }) protected map: ElementRef;
@@ -27,7 +28,7 @@ export class UserProfilePage implements OnInit {
       lastname: '',
       bio: '',
       phone: '',
-      image: '',      
+      image: '',
     },
     address: {
       id: 1,
@@ -43,11 +44,21 @@ export class UserProfilePage implements OnInit {
       latitude: null,
       longitude: null,
     }
-  }; 
+  };
+
+  error = {
+    message: '',
+    errors: {},
+    displayError: false
+  }
+
+  cities = [] as City[];
+  states = [] as State[];
 
   newUserImage = {
     name: '',
-    filePath: ''
+    filePath: '',
+    blob: null
   }
   slideNumber = 0;
 
@@ -56,6 +67,7 @@ export class UserProfilePage implements OnInit {
     private modalCtrl: ModalController,
     private smartAudio: SmartAudioService,
     private authService: AuthenticationService,
+    private addressService: AddressService,
     private actionSheetController: ActionSheetController,
     private camera: Camera,
     private file: File,
@@ -63,53 +75,110 @@ export class UserProfilePage implements OnInit {
     private platform: Platform,
     private webview: WebView,
     private ref: ChangeDetectorRef,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingCtrl: LoadingController
   ) { }
 
   async ngOnInit() {
-    if(this.authService.user.getValue().profile !== null){
-      Object.assign(this.user, this.authService.user.getValue());    
-    }    
+    console.log(this.authService.token);
+    console.log(this.authService.user);
+    let loading = await this.loadingCtrl.create({
+      message: 'Cargando datos...',
+      spinner: 'bubbles'
+    });
+
+    await loading.present();
+
+    this.cities = await this.addressService.getCities();
+    this.states = await this.addressService.getStates();
+
+    if (this.authService.user.profile !== null) {
+      Object.assign(this.user.profile, this.authService.user.profile);      
+    }
+
+    if (this.authService.user.address !== null) {
+      this.user.address = this.authService.user.address;
+    } else {
+      this.user.address = {
+        id: 1,
+        state: this.states[0],
+        city: this.cities[0],
+        address: '',
+        latitude: null,
+        longitude: null,
+      }
+    }
+    loading.dismiss();
   }
 
-  changeSlide(){      
-    this.slides.slideTo(Number(this.slideNumber));    
+
+  setState(event) {
+    let valor = Number(event.target.value);
+    let state = this.states.filter(state => {
+      if (state.id && valor) {
+        return (state.id == valor);
+      }
+    });
+
+    this.user.address.state = state[0];
   }
 
-  async slidesChanged(event){    
+  setCity(event) {
+    let valor = Number(event.target.value);
+    let city = this.cities.filter(city => {
+      if (city.id && valor) {
+        return (city.id == valor);
+      }
+    });
+
+    this.user.address.city = city[0];
+  }
+
+  compareWithFn = (o1, o2) => {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  };
+
+
+
+  changeSlide() {
+    this.slides.slideTo(Number(this.slideNumber));
+  }
+
+  async slidesChanged(event) {
     this.slideNumber = await this.slides.getActiveIndex();
   }
 
-  goBack(){
+  goBack() {
     this.playSound();
     this.navCtrl.back();
   }
 
-  async openMap(){
+  async openMap() {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: MapConfigPage,      
+      component: MapConfigPage,
     });
 
     modal.present();
 
-    modal.onWillDismiss().then(latLng =>{
-      console.log(latLng);
+    modal.onWillDismiss().then(response => {
+      this.user.address.latitude = response.data.lat;
+      this.user.address.longitude = response.data.lng;
     });
   }
 
-  toggleSound(){
+  toggleSound() {
     this.playSound();
     this.smartAudio.toggleSound();
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
-   /*SELECCIONAR ORIGEN DE LA IMAGEN*/
-   async selectImage() {
-    this.playSound();    
+  /*SELECCIONAR ORIGEN DE LA IMAGEN*/
+  async selectImage() {
+    this.playSound();
     const actionSheet = await this.actionSheetController.create({
       header: "Cargar desde:",
       buttons: [{
@@ -181,13 +250,33 @@ export class UserProfilePage implements OnInit {
   /*ACTUALIZO LA IMAGEN DEL USUARIO CON LA URL DE LA IMAGEN EN EL EQUIPO*/
   updateStoredImages(name) {
     let filePath = this.file.dataDirectory + name;
-    
+
     this.user.profile.image = this.pathForImage(filePath);
-    
+
     this.ref.detectChanges(); // trigger change detection cycle
 
     this.newUserImage.name = name;
-    this.newUserImage.filePath = filePath;    
+    this.newUserImage.filePath = filePath;
+
+    this.file.resolveLocalFilesystemUrl(this.newUserImage.filePath)
+      .then(entry => {
+        (<FileEntry>entry).file(file => this.readFile(file))
+      })
+      .catch(err => {
+        this.presentToast('Error while reading file.', 'danger');
+      });
+  }
+
+  readFile(file: any) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imgBlob = new Blob([reader.result], {
+        type: file.type
+      });
+      this.newUserImage.blob = imgBlob;
+      this.newUserImage.name = file.name;
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   /*CONVIERTO LA URL NATIVA A URL DE NAVEGADOR*/
@@ -210,22 +299,105 @@ export class UserProfilePage implements OnInit {
     toast.present();
   }
 
-  async save(){
+  async saveProfile() {
+    const loading = await this.loadingCtrl.create({
+      message: 'cargando...',
+      spinner: 'bubbles'
+    });
+
+    await loading.present();
 
     const formData = new FormData();
     formData.append('firstname', this.user.profile.firstname);
     formData.append('lastname', this.user.profile.lastname);
     formData.append('bio', this.user.profile.bio);
     formData.append('phone', this.user.profile.phone);
-    this.authService.updateProfile(formData).subscribe(async (response) =>{
-      console.log('hello');
-      console.log(response);
-    }, async (error) =>{
-      console.log('jeyver error');
-      console.log(error);
-    });
-    
+    console.log(formData.get('firstname'))
+    console.log(formData.get('lastname'))
 
+    if (this.authService.user.profile === null) {
+      if (this.newUserImage.blob !== null) {
+        formData.append('image', this.newUserImage.blob, this.newUserImage.name);
+      }      
+      this.authService.addProfile(formData).subscribe(async (response) => {
+        await loading.dismiss();
+        this.error.displayError = false;
+        this.presentToast('El usuario ha sido actualizado exitosamente.', 'success');
+      }, async (error) => {
+        await loading.dismiss();
+        this.error.message = error.error.message;
+        this.error.errors = error.error.errors;
+        this.error.displayError = true;
+        this.presentToast('Error al actualizar el usuario.', 'danger');
+      });
+    }
+    else{      
+      if (this.newUserImage.blob !== null) {
+        formData.append('image', this.newUserImage.blob, this.newUserImage.name);
+      }
+      formData.append('_method', 'put');
+      this.authService.updateProfile(formData).subscribe(async (response) => {
+        await loading.dismiss();
+        this.presentToast('El usuario ha sido actualizado exitosamente.', 'success');
+
+      }, async (error) => {
+        await loading.dismiss();        
+        this.error.message = error.error.message;
+        this.error.errors = error.error.errors;
+        this.error.displayError = true;        
+        this.presentToast('Error al actualizar el usuario.', 'danger');
+      });
+    }
   }
 
+  async saveAddress() {
+
+    const loading = await this.loadingCtrl.create({
+      message: 'cargando...',
+      spinner: 'bubbles'
+    });
+
+    loading.present();
+
+    let address = {
+      latitude: this.user.address.latitude,
+      longitude: this.user.address.longitude,
+      address: this.user.address.address,
+      state_id: this.user.address.state.id,
+      city_id: this.user.address.city.id
+    }
+
+    if (this.authService.user.address === null) {
+      console.log('soy nulo');
+
+      this.authService.addAddress(address).subscribe(async (response) => {
+
+        await loading.dismiss();
+        this.presentToast('La dirección ha sido guardada.', 'success');
+      }, async (error) => {
+        this.error.message = error.error.message;
+        this.error.errors = error.error.errors;
+        this.error.displayError = true;
+        this.presentToast('Error al guardar la dirección', 'danger');
+        await loading.dismiss();
+
+      });
+    } else {      
+      this.authService.updateAddress(address).subscribe(async (response) => {
+        await loading.dismiss();
+        this.presentToast('La dirección ha sido Actualizada.', 'success');
+      }, async (error) => {
+        console.log(error);
+        this.error.message = error.error.message;
+        this.error.errors = error.error.errors;
+        this.error.displayError = true;
+        this.presentToast('Error al actualizar la dirección', 'danger');
+        await loading.dismiss();
+
+      });
+    }
+
+
+
+  }
 }

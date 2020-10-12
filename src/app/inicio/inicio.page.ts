@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonSlides, ModalController } from '@ionic/angular';
+import { AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
-import { AuthenticationService } from '../servicios/authentication.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
@@ -16,7 +15,7 @@ import { ShowProductPage } from '../show-product/show-product.page';
 export class InicioPage implements OnInit {
 
   productos = new BehaviorSubject([]);
-  favoritos = [];
+  
   slideOpts = {
     direction: 'vertical',
     pagination: {
@@ -32,20 +31,21 @@ export class InicioPage implements OnInit {
   };
 
   @ViewChild('slideHome', { static: true }) protected slides: IonSlides;
-    
+
   constructor(
     private productosService: ProductosService,
-    private modalCtrl: ModalController,   
-    private smartAudio: SmartAudioService ,
-    private authService: AuthenticationService
-  ) { }  
+    private modalCtrl: ModalController,
+    private smartAudio: SmartAudioService,
+    private alertCtrl: AlertController,
+    private toastController: ToastController
+  ) { }
 
-  ngOnInit() {    
-    this.productos = this.productosService.getProducts();
-    this.slides.update();    
+  async ngOnInit() {
+    this.slides.update();
+    this.productos = await this.productosService.getProducts();    
   }
 
-  async openProduct(producto){
+  async openProduct(producto) {
     this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
@@ -57,10 +57,13 @@ export class InicioPage implements OnInit {
     modal.present();
   }
 
-  async abriFiltros(){
+  async abriFiltros() {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage
+      component: FiltrosPage,
+      componentProps: {
+        minMax: this.productosService.getMaxAndMin(await this.productosService.findProducts())
+      }
     });
 
     modal.present();
@@ -77,13 +80,43 @@ export class InicioPage implements OnInit {
     modal.present();
   }
 
-  descartar(product){
-    this.playSound();    
-    this.productosService.descartarProducto(product);
+  async descartar(product) {
+    this.playSound();
+    const alerta = await this.alertCtrl.create({
+      header: '¿Estas Seguro?',
+      message: 'desea descartar esta propiedad: ' + product.name,
+      buttons: [
+        {
+          text: 'No',          
+        },
+        {
+          text: 'Si',
+          handler: () =>{
+            this.presentToast('La propiedad... ' + product.name + ', ha sido descartada', 'secondary');
+          }
+        }
+      ]
+    });
+    await alerta.present();
   }
 
-  playSound(){
+  async doRefresh(event) {
+    this.productos = await this.productosService.getProducts();
+    event.target.complete();
+  }
+
+  playSound() {
     this.smartAudio.play('tabSwitch');
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color
+    });
+    toast.present();
   }
 
 }

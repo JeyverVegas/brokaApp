@@ -2,6 +2,10 @@ ion-content{
     position: relative;
 }
 
+.hidden{
+    display: none;
+}
+
 .description-container{
     position: absolute;
     bottom: 0;
@@ -25,4 +29,18 @@ ion-content{
     height: 50px;
     width: 50px;                
     --border-radius: 100% !important;
+}
+
+.house-img{
+    animation: levitar 1.5s alternate infinite;
+}
+
+@keyframes levitar{
+    from{
+        transform: translateY(0);
+    }
+
+    to{
+        transform: translateY(-40px);
+    }
 }

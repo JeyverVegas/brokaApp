@@ -43,7 +43,7 @@ export class SmartAudioService {
       this.nativeAudio.preloadSimple(key, asset).then((res)=>{
         
       }).catch((err)=>{
-        alert(err);
+        //alert(err);
       });
 
       let audio = {
@@ -72,7 +72,7 @@ export class SmartAudioService {
         this.nativeAudio.play(audio.key).then((res) => {
           
         }, (err) => {
-          alert(err);
+          //alert(err);
         });
   
       }

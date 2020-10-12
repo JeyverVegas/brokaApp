@@ -8,6 +8,7 @@ import { MapPageRoutingModule } from './map-routing.module';
 
 import { MapPage } from './map.page';
 import { ComponentsModule } from '../components/components.module';
+import { ShowProductPageModule } from '../show-product/show-product.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { ComponentsModule } from '../components/components.module';
     FormsModule,
     IonicModule,
     MapPageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    ShowProductPageModule
   ],
   declarations: [MapPage]
 })

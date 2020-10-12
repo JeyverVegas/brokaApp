@@ -2,6 +2,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { FiltrosPage } from 'src/app/filtros/filtros.page';
+import { ProductosService } from 'src/app/servicios/productos.service';
 import { SmartAudioService } from 'src/app/servicios/smart-audio.service';
 
 @Component({
@@ -17,7 +18,8 @@ export class TopBarComponent implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private smartAudio : SmartAudioService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private productosService: ProductosService
   ) { }
 
   ngOnInit() {
@@ -26,7 +28,10 @@ export class TopBarComponent implements OnInit {
   async abriFiltros(){
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage
+      component: FiltrosPage,
+      componentProps: {
+        minMax: this.productosService.getMaxAndMin(await this.productosService.findProducts())
+      }
     });
 
     modal.present();

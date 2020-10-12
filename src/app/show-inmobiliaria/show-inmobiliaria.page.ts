@@ -31,7 +31,7 @@ export class ShowInmobiliariaPage implements OnInit {
     this.inmobiliaria = this.navParams.get('inmobiliaria');
     console.log(this.inmobiliaria);
     this.crearMapa();
-    this.productos = this.productosService.getProducts();
+    //this.productos = this.productosService.getProducts();
   }
 
   closeModal(){

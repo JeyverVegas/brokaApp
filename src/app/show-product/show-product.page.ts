@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActionSheetController, IonSlides, ModalController, NavParams } from '@ionic/angular';
+import { ActionSheetController, IonSlides, ModalController, NavParams, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -39,7 +39,8 @@ export class ShowProductPage implements OnInit {
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
     private productosService: ProductosService,
-    private smartAudio: SmartAudioService
+    private smartAudio: SmartAudioService,
+    private toastController: ToastController
   ) { }
 
   ionViewDidEnter() {
@@ -47,7 +48,8 @@ export class ShowProductPage implements OnInit {
   }
 
   ngOnInit() {
-    this.producto = this.navParams.get('producto');        
+    this.producto = this.navParams.get('producto');
+    console.log(this.producto);
     this.crearMapa();
   }
 
@@ -57,9 +59,10 @@ export class ShowProductPage implements OnInit {
 
   crearMapa() {
     var map = new google.maps.Map(this.map.nativeElement, {
-      center: { lat: -34.609129, lng: -58.426284 }, 
+      center: {lat: Number(this.producto.address.latitude), lng: Number(this.producto.address.longitude)}, 
       zoom: 10,      
       mapTypeControl: false,
+      zoomControl: true,
       scaleControl: false,
       streetViewControl: false,
       rotateControl: false,
@@ -67,14 +70,14 @@ export class ShowProductPage implements OnInit {
     });
 
     var marker = new google.maps.Marker({
-      position: {lat: -34.609129, lng: -58.426284},
+      position: {lat: Number(this.producto.address.latitude), lng: Number(this.producto.address.longitude)},
       map: map,      
       title: 'hola',
       label: {        
         color: "#222428",
         fontSize: "14px",
         fontWeight: 'bold',
-        text: this.producto.nombre
+        text: this.producto.name
       },
       icon: {
         url: '../../assets/icon/marker.png',
@@ -122,19 +125,41 @@ export class ShowProductPage implements OnInit {
 
   descartar(){    
     this.playSound();
-    this.productosService.descartarProducto(this.producto);
+    //this.productosService.descartarProducto(this.producto);
   }
 
-  addToFavorite(){
+  addToFavorite() {
     this.playSound();
-    this.producto.favorito = !this.producto.favorito;
-    this.productosService.addProductFavorito(this.producto);
+    this.productosService.addFavoriteProduct(this.producto.id).then(response => {      
+      this.presentToast(this.producto.name + ' ha sido añadido a favoritos.', 'success');
+      this.producto.is_favorite = true;
+      this.producto.favorite_to_count++;
+    }).catch(error => {
+      this.presentToast(error.error.errors.property_id[0], 'danger');
+    });
   }
 
-  removeFromFavorite(){
-    this.playSound();
-    this.producto.favorito = !this.producto.favorito;
-    this.productosService.removeProductFavorito(this.producto);
+  removeFromFavorite() {
+    this.playSound();    
+    this.productosService.removeFavoriteProduct(this.producto.id).then(response => {
+      this.presentToast(this.producto.name + ' ha sido removido de favoritos.', 'success');
+      this.producto.is_favorite = false;
+      this.producto.favorite_to_count--;      
+    }).catch(error => {
+      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
+      console.log(error);
+    });
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color,
+      mode: 'ios'
+    });
+    toast.present();
   }
 
   async openPreview(img){

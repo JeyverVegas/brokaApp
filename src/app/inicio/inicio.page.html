@@ -1,9 +1,12 @@
 <ion-content>
-    <div class="menu-buttons">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <div class="menu-buttons" *ngIf="productos.getValue().length > 0">
         <ion-grid>
             <ion-row>
                 <ion-col class="ion-text-center" size="4">
-                    <ion-button mode="md" size="small" fill="clear" color="light" (click)="abriFiltros()">
+                    <ion-button mode="md" size="small" fill="clear" color="light" color="light" (click)="abriFiltros()">
                         <ion-icon slot="start" name="options-outline"></ion-icon>
                         FILTRAR
                     </ion-button>
@@ -24,14 +27,31 @@
             </ion-row>
         </ion-grid>
     </div>
-    <ion-slides #slideHome pager="true" style="height: 100%;" [options]="slideOpts">
+
+    <div class="ion-text-center ion-padding" style="margin-top: 100px" *ngIf="productos.getValue().length === 0">
+        <img class="house-img" style="max-width: 70%;" src="../../assets/images/house.png" alt="">
+        <p>
+            <ion-text color="medium">
+                En este momento no tenemos inmuebles o inmobiliarias que coincidan
+                con los filtros si desea puede pulsar el boton de filtros y cambiarlos
+                para obtener resultados... ;)
+            </ion-text>
+        </p>
+        <ion-button class="color_primario animate__animated animate__infinite animate__pulse" mode="ios" (click)="abriFiltros()">
+            <ion-icon slot="start" name="options-outline"></ion-icon>
+            Cambiar filtros
+        </ion-button>
+    </div>
+
+    <ion-slides [class.hidden]="productos.getValue().length == 0" #slideHome pager="true" style="height: 100%;"
+        [options]="slideOpts">
         <ion-slide *ngFor="let producto of productos | async"
-            style="background: url({{producto.imagenes[0]}}); background-size: 100% 100%; position: relative;">
+            style="background: url({{producto.images[0].url}}); background-size: 100% 100%; position: relative;">
             <div class="description-container">
                 <div class="ion-activatable ripple-parent" style="position: relative;" (click)="openProduct(producto)">
 
-                    <h3 style="color: white;">{{producto.nombre}}</h3>
-                    <p style="color: white;">{{producto.descripcion}}</p>
+                    <h3 style="color: white;">{{producto.name}}</h3>
+                    <p style="color: white;">{{producto.description}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>

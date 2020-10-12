@@ -1,5 +1,5 @@
 .menu-header-bg{    
-    height: 180px;
+    height: 200px;
     width: 350px;
     background: #59C16A;
     background: linear-gradient(90deg, #59C16A 0%, #93eae5 100%);
@@ -17,11 +17,11 @@
     left: 15px;
     display: flex;
     align-items: center;
-    img{
-        width: 70px;
-        height: 70px;
+    img, ion-icon{
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
-        margin-right: 5px;
+        margin-right: 10px;
     }
 
     h2{

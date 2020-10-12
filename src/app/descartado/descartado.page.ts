@@ -19,7 +19,7 @@ export class DescartadoPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.descartados = this.productosService.getDescartados();
+    //this.descartados = this.productosService.getDescartados();
   }
 
   async openPreview(img){
