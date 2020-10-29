@@ -23,7 +23,7 @@
             <img class="img-list" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
           </ion-col>
           <ion-col style="position: relative;" size="7" class="ion-align-self-center ion-activatable ripple-parent" (click)="openProduct(producto)">
-            <h4 style="margin: 0;"><ion-text color="dark">{{producto.name}}</ion-text></h4>
+            <h4 style="margin: 0;"><ion-text color="dark">{{(producto.name.length>20)? (producto.name | slice:0:20)+'...':(producto.name)}}</ion-text></h4>
   
             <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
               <img class="img-icon-start" src="../../assets/icon/banos.PNG" alt="">

@@ -121,7 +121,7 @@ export class FiltrosPage implements OnInit {
 
       this.valuesOfRange.rooms.lower = this.productosService.filtros.roomsBetween[0];
       this.valuesOfRange.rooms.upper = this.productosService.filtros.roomsBetween[1];
-
+      
       this.valuesOfRange.bathrooms.lower = this.productosService.filtros.bathroomsBetween[0];
       this.valuesOfRange.bathrooms.upper = this.productosService.filtros.bathroomsBetween[1];
 
@@ -131,7 +131,7 @@ export class FiltrosPage implements OnInit {
 
       this.filtros.status = this.productosService.filtros.status;
 
-      this.filtros.hasAnyFeatures = this.productosService.filtros.status;
+      this.filtros.hasAnyFeatures = this.productosService.filtros.hasAnyFeatures;
     }
 
 

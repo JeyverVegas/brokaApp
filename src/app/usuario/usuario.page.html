@@ -8,7 +8,7 @@
             <ng-template #invitadoImg>
                 <ion-icon name="person-circle-outline" class="img-user" color="primary"></ion-icon>
             </ng-template>
-            <ion-button size="small" class="button-edit color_primario" (click)="selectImage('user')">
+            <ion-button *ngIf="user.profile && user.profile.image;" size="small" class="button-edit color_primario" (click)="selectImage('usuario')">
                 <ion-icon name="add" slot="icon-only"></ion-icon>
             </ion-button>
         </div>

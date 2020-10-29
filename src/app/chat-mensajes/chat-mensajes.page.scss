@@ -15,12 +15,12 @@
 
 .mi-mensaje{
     color: white;
-    background: #79cd8a; 
+    background: var(--ion-color-primary); 
 }
 
 .otro-mensaje{
     color: white;
-    background: #6dcec1;
+    background: var(--ion-color-secondary);
 }
 
 .time{

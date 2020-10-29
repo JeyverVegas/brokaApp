@@ -33,8 +33,7 @@ export class FavoritosPage implements OnInit {
     });
     await loading.present();
     this.favoritos = await this.productosService.getProductsFavorites();
-    loading.dismiss();
-    console.log(this.favoritos);
+    loading.dismiss();    
   }
 
   async openProduct(producto){
@@ -67,8 +66,7 @@ export class FavoritosPage implements OnInit {
       producto.is_favorite = false;
       producto.favorite_to_count--;
     }).catch(error => {
-      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
-      console.log(error);
+      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');      
     });
   }
 

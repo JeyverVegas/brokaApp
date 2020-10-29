@@ -9,6 +9,8 @@ import { MapPageRoutingModule } from './map-routing.module';
 import { MapPage } from './map.page';
 import { ComponentsModule } from '../components/components.module';
 import { ShowProductPageModule } from '../show-product/show-product.module';
+import { FiltrosPageModule } from '../filtros/filtros.module';
+import { MapOptionsPageModule } from '../map-options/map-options.module';
 
 @NgModule({
   imports: [
@@ -17,7 +19,9 @@ import { ShowProductPageModule } from '../show-product/show-product.module';
     IonicModule,
     MapPageRoutingModule,
     ComponentsModule,
-    ShowProductPageModule
+    ShowProductPageModule,
+    FiltrosPageModule,
+    MapOptionsPageModule
   ],
   declarations: [MapPage]
 })

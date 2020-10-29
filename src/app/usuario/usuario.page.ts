@@ -4,13 +4,14 @@ import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { ActionSheetController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { HttpClient } from '@angular/common/http';
-import { finalize } from 'rxjs/operators';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { Usuario } from '../interface';
+import { Storage } from '@ionic/storage';
+
+const USER_DATA = 'user-data';
 
 @Component({
   selector: 'app-usuario',
@@ -20,6 +21,8 @@ import { Usuario } from '../interface';
 export class UsuarioPage implements OnInit {
 
   user = {} as Usuario;
+
+  profileImages = [];
 
   silenciar = false;
 
@@ -35,17 +38,15 @@ export class UsuarioPage implements OnInit {
     private file: File,
     private filePath: FilePath,
     private platform: Platform,
-    private ref: ChangeDetectorRef,
-    private http: HttpClient,    
+    private ref: ChangeDetectorRef,  
     private smartAudio: SmartAudioService,
     private modalCtrl: ModalController,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private storage: Storage
   ) { }
 
-  ngOnInit() {    
-    this.silenciar = this.smartAudio.getMute();
-    this.user = this.authService.user;
-    console.log(this.authService.token);
+  ngOnInit() {        
+    this.user = this.authService.user;       
   }
 
   playSound(){
@@ -54,6 +55,7 @@ export class UsuarioPage implements OnInit {
 
   async logOut() {    
     this.playSound();
+
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
       message: 'cerrando sesion',
@@ -77,16 +79,6 @@ export class UsuarioPage implements OnInit {
       let converted = this.webview.convertFileSrc(img);
       return converted;
     }
-  }
-
-  async presentToast(text, color) {
-    const toast = await this.toastController.create({
-      message: text,
-      position: 'bottom',
-      duration: 3000,
-      color: color
-    });
-    toast.present();
   }
 
   /*SELECCIONAR ORIGEN DE LA IMAGEN*/
@@ -167,8 +159,6 @@ export class UsuarioPage implements OnInit {
     
     if(this.target == 'usuario'){
       this.user.profile.image = this.pathForImage(filePath);
-    }else{
-      //this.user.profile.profile_images.push(this.pathForImage(filePath))
     }
     this.ref.detectChanges(); // trigger change detection cycle
 
@@ -196,7 +186,13 @@ export class UsuarioPage implements OnInit {
         type: file.type
       });
       /*UNA VEZ AGREGO LA IMAGEN AL INPUT DE TIPO FILE, INSERTO EL INPUT DENTRO DEL FORMULARIO*/
-      formData.append('file', imgBlob, file.name);
+      if(this.target == 'usuario'){
+        formData.append('image', imgBlob, file.name);
+        formData.append('_method', 'put');
+      }else{        
+        formData.append('images[]', imgBlob);
+      }  
+      
       this.uploadImageData(formData);
     };
     reader.readAsArrayBuffer(file);
@@ -205,24 +201,55 @@ export class UsuarioPage implements OnInit {
   /*UNA VEZ EL FORMULARIO ESTA CREADO COMIENZA LA SUBIDA DE LA IMAGEN AL SERVIDOR POR MEDIO DE UNA PETICION HTTP DE TIPO POST*/
   async uploadImageData(formData: FormData) {
     const loading = await this.loadingCtrl.create({
-      message: 'Subiendo imagen...',
+      spinner: 'lines',
+      message: 'Cargando Imagen.'
     });
-    await loading.present();
-
-    this.http.post("http://192.168.0.100/upload-image/upload.php", formData)
-      .pipe(
-        finalize(() => {
-          loading.dismiss();
-        })
-      )
-      .subscribe(res => {
-        if (res['success']) {
-          this.presentToast('La Imagen se ha cargado correctamente.', 'primary');
-        } else {
-          this.presentToast('Ha fallado la carga de la imagen.', 'danger');
-        }
+    loading.present(); 
+    if(this.target == 'usuario'){
+      this.authService.updateProfileImage(formData, this.user.profile.id).then((response: {data:any}) =>{        
+        this.user.profile = response.data;        
+        this.authService.user.profile = this.user.profile;
+        this.storage.set(USER_DATA, this.user);
+        this.ref.detectChanges()
+        loading.dismiss();
+        this.presentToast('la imagen de usuario ha sido actualizada.', 'secondary', false);
+      }).catch(err =>{        
+        loading.dismiss();
+        this.presentToast('Ha ocurrido un error al actualizar la imagen', 'danger', false);
       });
+      loading.dismiss();
+    }else{
+      this.authService.updateGalleryImages(formData).then((response: {data:any[]}) =>{        
+        this.user.profile.profile_images.push(response.data[0]);
+        this.authService.user = this.user;
+        this.storage.set(USER_DATA, this.user);
+        this.ref.detectChanges();
+        loading.dismiss();
+        this.presentToast('la imagen ha sido añadida exitosamente ;).', 'secondary', false);
+      }).catch(err =>{        
+        this.presentToast('Ha ocurrido un error al añadir la imagen', 'danger', false);
+        loading.dismiss();
+      });
+    }
   }  
+
+  async presentToast(mensaje:string, color:string, redireciona?:boolean, urlPath?:string){
+    const toast = await this.toastController.create({
+      message: mensaje,
+      color: color,
+      duration: 3000,
+      mode: 'ios',
+      buttons: ['Ok']
+    });
+
+    toast.present();
+
+    if(redireciona){
+      toast.onDidDismiss().then(() =>{
+        this.router.navigateByUrl(urlPath, {replaceUrl: true});
+      });
+    }
+  }
   
   async openPreview(img){
     const modal = await this.modalCtrl.create({

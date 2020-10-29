@@ -1,17 +1,21 @@
 <app-top-bar></app-top-bar>
 
 <ion-content class="ion-padding">
-    <p>Matchs</p>
-    <ion-list>
-        <ion-item button *ngFor="let chat of chats" (click)="openChat(chat)">
-            <ion-avatar slot="start">
-              <img src="{{chat.usuario.img}}">
-            </ion-avatar>
-            <ion-label>
-              <h3>{{chat.usuario.nombre}}</h3>
-              <p>{{chat.ultMensaje}}</p>
-            </ion-label>
-            <ion-badge color="success" slot="end" *ngIf="chat.contador > 0">{{chat.contador}}</ion-badge>
-          </ion-item>          
-    </ion-list>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" mode="ios">
+    <ion-refresher-content
+    refreshingText="Cargando..."></ion-refresher-content>
+  </ion-refresher>
+  <p>Matchs</p>
+  <ion-list>
+    <ion-item button *ngFor="let chat of chats" (click)="openChat(chat)">
+      <ion-avatar slot="start">
+        <img src="../../assets/images/house.png">
+      </ion-avatar>
+      <ion-label>
+        <h3>{{chat.name}}</h3>
+        <p>{{chat.updated_at | date:'dd/MM/yyyy, hh:mm aa'}}</p>
+      </ion-label>
+      <ion-badge color="success" slot="end" *ngIf="chat.contador > 0">{{chat.contador}}</ion-badge>
+    </ion-item>
+  </ion-list>
 </ion-content>

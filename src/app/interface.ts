@@ -1,4 +1,5 @@
 export interface Usuario {
+    id?: number;
     email?: string;
     created_at?: Date;
     updated_at?: Date;
@@ -68,7 +69,11 @@ export type ProductRelationships =
   'prices.currency' |
   'address.state' |
   'address.city' |
-  'favorite_to_count';
+  'favorite_to_count' |
+  'realEstateAgency' |
+  'realEstateAgency.address' |
+  'realEstateAgency.address.city' |
+  'realEstateAgency.address.state';
 
 export type GetProductsOptions = {
   relationships?: Array<ProductRelationships>;

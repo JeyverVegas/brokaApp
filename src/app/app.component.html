@@ -4,13 +4,18 @@
       <div class="menu-header-bg"></div>
       <ion-menu-toggle>
         <div class="header-content" routerLink="tabs/tabs/usuario" routerDirection="forward" (click)="playSound()">
-          <img *ngIf="user.profile.image !== ''; else invitadoImg" src="{{user.profile.image}}">
+          <img *ngIf="user.profile && user.profile.image; else invitadoImg" src="{{user.profile.image}}">
           <ng-template #invitadoImg>
             <ion-icon name="person-circle-outline" class="img-user" color="light">
             </ion-icon>
           </ng-template>
           <ion-label color="light">
-            <h2>{{user.profile.firstname}} {{user.profile.lastname}}</h2>
+            <h2 *ngIf="user.profile && user.profile.firstname && user.profile.lastname; else invitadoName">
+              {{user.profile.firstname}} {{user.profile.lastname}}
+            </h2>
+            <ng-template #invitadoName>
+              <h2>Invitado</h2>
+            </ng-template>
             <p>{{user.email}}</p>
           </ion-label>
         </div>        

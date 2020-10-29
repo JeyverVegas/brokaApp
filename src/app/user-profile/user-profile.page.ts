@@ -109,6 +109,7 @@ export class UserProfilePage implements OnInit {
       }
     }
     loading.dismiss();
+    console.log(this.user);
   }
 
 
@@ -377,8 +378,8 @@ export class UserProfilePage implements OnInit {
       }, async (error) => {
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
-        this.error.displayError = true;
-        this.presentToast('Error al guardar la dirección', 'danger');
+        //this.error.displayError = true;
+        this.presentToast(this.firstError, 'danger');
         await loading.dismiss();
 
       });
@@ -396,8 +397,14 @@ export class UserProfilePage implements OnInit {
 
       });
     }
+  }
 
+  public get errorList() {
+    return Object.entries(this.error.errors)
+      .reduce((acum, [_, value]) => acum.concat(value), []);
+  }
 
-
+  public get firstError() {
+    return this.errorList[0];
   }
 }

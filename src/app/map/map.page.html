@@ -8,17 +8,9 @@
     </div>
   </div>
   <div [class.show]="cargado" class="hidden" style="height: 100%;" #googlemap>
-
-  </div>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button class="color_primario" (click)="goBack()">
-      <ion-icon name="checkmark-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
-  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-    <ion-fab-button color="danger" (click)="goBack()">
-      <ion-icon name="close"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+    
+  </div>  
+  <ion-button class="color_primario button-option" shape="round" mode="ios" (click)="openOptions()">
+    Opciones
+  </ion-button>  
 </ion-content>

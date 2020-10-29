@@ -50,8 +50,8 @@
             <div class="description-container">
                 <div class="ion-activatable ripple-parent" style="position: relative;" (click)="openProduct(producto)">
 
-                    <h3 style="color: white;">{{producto.name}}</h3>
-                    <p style="color: white;">{{producto.description}}</p>
+                    <h3 style="color: white;">{{(producto.name.length>50)? (producto.name | slice:0:50)+'...':(producto.name)}}</h3>
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">{{(producto.description.length>60)? (producto.description | slice:0:60)+'...':(producto.description)}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
@@ -67,10 +67,10 @@
                     <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="playSound()">
                         <ion-icon slot="icon-only" color="warning" name="star"></ion-icon>
                     </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="playSound()">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="initChat(producto)">
                         <ion-icon slot="icon-only" color="success" name="checkmark"></ion-icon>
                     </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="playSound()">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" routerLink="/tabs/tabs/buscar" routerDirection="forward">
                         <ion-icon slot="icon-only" color="primary" name="list"></ion-icon>
                     </ion-button>
                 </ion-buttons>

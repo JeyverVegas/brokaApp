@@ -1,0 +1,13 @@
+.house-img{
+    animation: levitar 1.5s alternate infinite;
+}
+
+@keyframes levitar{
+    from{
+        transform: translateY(0);
+    }
+
+    to{
+        transform: translateY(-40px);
+    }
+}

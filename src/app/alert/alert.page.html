@@ -1,20 +1,31 @@
 <ion-content class="ion-text-center contenedor">
   <div style="display: flex; height: 100%;">
     <div style="margin: auto;">
-      <ion-icon *ngIf="!guardarBusqueda" style="font-size: xx-large;" color="medium" name="notifications"></ion-icon>      
-      <ion-icon *ngIf="guardarBusqueda" style="font-size: xx-large;" color="primary" name="checkmark-circle-outline"></ion-icon>
-    <p style="margin: 5px 0;">
-      <ion-text color="medium">
-        ¿Te avisamos si hay <b>novedades</b>? <br>
-        Recibe <b>notificaciones</b> de esta búsqueda
-      </ion-text>
-    </p>    
-    <ion-button *ngIf="!guardarBusqueda" color="secondary" class="sombra_no" (click)="guardarBusqueda = !guardarBusqueda; playSound()">
-      Guardar Búsqueda
-    </ion-button>
-    <ion-button *ngIf="guardarBusqueda" color="secondary" class="sombra_no" (click)="closeModal()">
-      ¡Búsqueda Guardada!
-    </ion-button>
-    </div>    
+      <ion-icon *ngIf="!guardarBusqueda" style="font-size: xx-large;" color="medium" name="notifications"></ion-icon>
+      <ion-icon *ngIf="guardarBusqueda" style="font-size: xx-large;" color="primary" name="checkmark-circle-outline">
+      </ion-icon>
+      <p style="margin: 5px 0;">
+        <ion-text color="medium">
+          ¿Te avisamos si hay <b>novedades</b>? <br>
+          Recibe <b>notificaciones</b> de esta búsqueda
+        </ion-text>
+      </p>
+      <ion-item *ngIf="!guardarBusqueda" style="margin-bottom: 3px;">
+        <ion-label color="medium">Nombre:</ion-label>
+        <ion-input [(ngModel)]="name" style="font-weight: bold;" (ionChange)="tipiando($event)"></ion-input>
+      </ion-item>
+      <p *ngIf="guardarBusqueda">
+        <ion-text color="medium">
+          Se ha guardado la busqueda: <b>{{name}}</b>.
+        </ion-text>
+      </p>
+      <ion-button *ngIf="!guardarBusqueda" [disabled]="!canSave" color="secondary" class="sombra_no"
+        (click)="saveSearch()">
+        Guardar Búsqueda
+      </ion-button>
+      <ion-button *ngIf="guardarBusqueda" color="secondary" class="sombra_no" (click)="closeModal()">
+        ¡Búsqueda Guardada!
+      </ion-button>
+    </div>
   </div>
 </ion-content>

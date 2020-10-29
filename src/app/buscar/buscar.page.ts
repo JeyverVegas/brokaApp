@@ -13,8 +13,8 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class BuscarPage implements OnInit {
 
-  productos = new BehaviorSubject([]);
-  filtro = new BehaviorSubject([]);
+  productos = [];
+  filtro = [];
 
 
 
@@ -26,12 +26,22 @@ export class BuscarPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.productos = await this.productosService.getProducts();    
-    this.initializedItems();
+
+  }
+
+  async ionViewDidEnter() {
+    this.productosService.getProducts().then(products => {
+      products.subscribe(productos => {        
+        this.productos = productos;
+        this.initializedItems();
+      })
+    }).catch(err => {
+      console.log(err);
+    })    
   }
 
   initializedItems() {
-    this.filtro.next(this.productos.getValue());
+    this.filtro = this.productos;
   }
 
   async openProduct(producto) {
@@ -54,11 +64,11 @@ export class BuscarPage implements OnInit {
       return
     }
 
-    this.filtro.next(this.filtro.getValue().filter(producto => {
+    this.filtro = this.filtro.filter(producto => {
       if (producto.name && valor) {
         return (producto.name.toLowerCase().indexOf(valor.toLowerCase()) > -1);
       }
-    }));
+    });
   }
 
   addToFavorite(producto) {
@@ -112,9 +122,15 @@ export class BuscarPage implements OnInit {
   }
 
   async doRefresh(event) {
-    this.productos = await this.productosService.getProducts();
-    this.initializedItems();
-    event.target.complete();
+    this.productosService.getProducts().then(products => {
+      products.subscribe(productos => {
+        this.productos = productos;
+        this.initializedItems();
+        event.target.complete();
+      })
+    }).catch(err => {
+      console.log(err);
+    })    
   }
 
 }

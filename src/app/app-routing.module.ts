@@ -49,8 +49,10 @@ const routes: Routes = [
     loadChildren: () => import('./user-profile/user-profile.module').then( m => m.UserProfilePageModule),
     canLoad: [AuthGuard]
   },
- 
- 
+  {
+    path: 'new-password',
+    loadChildren: () => import('./new-password/new-password.module').then( m => m.NewPasswordPageModule)
+  },  
 ];
 @NgModule({
   imports: [

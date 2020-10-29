@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActionSheetController, IonSlides, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, NavParams, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -40,7 +40,9 @@ export class ShowProductPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private productosService: ProductosService,
     private smartAudio: SmartAudioService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController
   ) { }
 
   ionViewDidEnter() {
@@ -48,8 +50,7 @@ export class ShowProductPage implements OnInit {
   }
 
   ngOnInit() {
-    this.producto = this.navParams.get('producto');
-    console.log(this.producto);
+    this.producto = this.navParams.get('producto');    
     this.crearMapa();
   }
 
@@ -59,7 +60,7 @@ export class ShowProductPage implements OnInit {
 
   crearMapa() {
     var map = new google.maps.Map(this.map.nativeElement, {
-      center: {lat: Number(this.producto.address.latitude), lng: Number(this.producto.address.longitude)}, 
+      center: {lat: this.producto.address.latitude, lng: this.producto.address.longitude}, 
       zoom: 10,      
       mapTypeControl: false,
       zoomControl: true,
@@ -70,7 +71,7 @@ export class ShowProductPage implements OnInit {
     });
 
     var marker = new google.maps.Marker({
-      position: {lat: Number(this.producto.address.latitude), lng: Number(this.producto.address.longitude)},
+      position: {lat: this.producto.address.latitude, lng: this.producto.address.longitude},
       map: map,      
       title: 'hola',
       label: {        
@@ -121,12 +122,7 @@ export class ShowProductPage implements OnInit {
     });
 
     actionSheet.present();
-  }
-
-  descartar(){    
-    this.playSound();
-    //this.productosService.descartarProducto(this.producto);
-  }
+  }  
 
   addToFavorite() {
     this.playSound();
@@ -151,6 +147,46 @@ export class ShowProductPage implements OnInit {
     });
   }
 
+  async descartar() {
+    this.playSound();
+    const alerta = await this.alertCtrl.create({
+      header: '¿Estas Seguro?',
+      message: 'desea descartar esta propiedad: ' + this.producto.name,
+      buttons: [
+        {
+          text: 'No',
+          handler: () =>{
+            this.playSound();
+          }
+        },
+        {
+          text: 'Si',
+          handler: async () =>{
+              this.playSound();
+              const loading = await this.loadingCtrl.create({
+                spinner: 'dots',
+                message: 'Cargando...'
+              });
+              loading.present();
+              this.productosService.discardProduct(this.producto.id).then(response => {
+                loading.dismiss().then(()=>{
+                  this.modalCtrl.dismiss();
+                  this.presentToast('La propiedad... ' + this.producto.name + ', ha sido descartada', 'secondary');
+                  this.productosService.getProducts();
+                });                
+              }).catch(error => {
+                console.log(error);
+                loading.dismiss().then(()=>{
+                  this.presentToast(error.error.errors.property_id[0], 'danger');
+                });                
+              });                        
+          }
+        }
+      ]
+    });
+    await alerta.present();
+  }
+
   async presentToast(text, color) {
     const toast = await this.toastController.create({
       message: text,
@@ -173,5 +209,6 @@ export class ShowProductPage implements OnInit {
 
     modal.present();
   }
+
 
 }

@@ -1,0 +1,61 @@
+<app-top-bar></app-top-bar>
+
+<ion-content class="ion-padding">
+  <div *ngIf="busquedas.length > 0; else cerobusqueda">
+    <h2>
+      <ion-text color="medium">
+        Mis busquedas
+      </ion-text>
+    </h2>  
+    <div class="ion-text-right">      
+      <ion-button fill="outline" color="danger" mode="ios" size="small" (click)="presentAlert()">
+        eliminar todas
+        <ion-icon slot="end" name="trash-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="outline" color="tertiary" mode="ios" size="small" (click)="uploadSearch()">
+        Subir a la nube
+        <ion-icon slot="end" name="cloud-upload-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="outline" color="primary" mode="ios" size="small" (click)="downloadSearch()">
+        Descargar Busquedas
+        <ion-icon slot="end" name="cloud-download-outline"></ion-icon>
+      </ion-button>
+    </div>  
+    <ion-list>
+      <ion-card *ngFor="let busqueda of busquedas" mode="ios">
+        <ion-item button lines="none" detail="false">
+          <ion-label class="ion-text-wrap">
+            <h3>{{busqueda.nameSearch}}</h3>
+            <p>filtros: 12</p>
+            <p><b>{{busqueda.createdAt | date:'short'}}</b></p>
+          </ion-label>
+          <ion-buttons slot="end">            
+            <ion-button color="danger" (click)="delete(busqueda)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button color="primary" (click)="apply(busqueda)">
+              <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>              
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+      </ion-card>    
+    </ion-list>
+  </div>  
+  <ng-template #cerobusqueda>
+    <div class="ion-text-center ion-padding" style="margin-top: 40px">
+      <img class="house-img" style="max-width: 70%;" src="../../assets/images/findplace.png" alt="">
+      <p>
+          <ion-text color="medium">
+              No hay busquedas registradas en el dispositivo si desea guardar una busqueda por favor vaya a la pantalla de <a routerLink="/tabs/tabs/inicio" routerDirection="forward"><b>inicio</b></a>
+              y presione el boton de <b>"Guardar búsqueda"</b>. O si prefiere puede descargar sus busquedas en la nube:
+          </ion-text>
+      </p>      
+      <div class="ion-text-center">
+        <ion-button fill="outline" color="primary" mode="ios" (click)="downloadSearch()">
+          Descargar Mis Busquedas
+          <ion-icon slot="end" name="cloud-download-outline"></ion-icon>
+        </ion-button>
+      </div>      
+  </div>
+  </ng-template>
+</ion-content>

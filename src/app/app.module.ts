@@ -16,18 +16,25 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Facebook } from '@ionic-native/facebook/ngx';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { ImageModalPageModule } from './image-modal/image-modal.module';
+import { MapOptionsPageModule } from './map-options/map-options.module';
+
+
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule, 
-    IonicModule.forRoot(), 
+    IonicModule.forRoot(),     
+    IonicStorageModule.forRoot(),    
     AppRoutingModule,
-    IonicStorageModule.forRoot(),
     HttpClientModule,
-    ImageModalPageModule,    
+    ImageModalPageModule,
+    MapOptionsPageModule,    
   ],
   providers: [
     StatusBar,
@@ -41,7 +48,10 @@ import { ImageModalPageModule } from './image-modal/image-modal.module';
     WebView,
     FilePath,
     NativeAudio,
-    Geolocation
+    Geolocation,
+    Facebook,
+    GooglePlus,
+    OneSignal,    
   ],
   bootstrap: [AppComponent]
 })

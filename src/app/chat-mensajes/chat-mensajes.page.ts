@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { ActionSheetController, IonContent, LoadingController, ModalController, NavParams, Platform, ToastController } from '@ionic/angular';
 import { finalize } from 'rxjs/operators';
+import { AuthenticationService } from '../servicios/authentication.service';
+import { ChatService } from '../servicios/chat.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
@@ -14,14 +16,9 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
   styleUrls: ['./chat-mensajes.page.scss'],
 })
 export class ChatMensajesPage implements OnInit {
-
-  usuario = null;
-
-  me = {
-    id: 7,
-    nombre: 'Jesus Vicuña',
-    img: '../../assets/images/logo_inmobiliaria6.png',
-  };
+   
+  @Input() usuario: any;
+  @Input() chat: any;  
 
   nuevoMensaje = '';
 
@@ -31,8 +28,7 @@ export class ChatMensajesPage implements OnInit {
 
   @ViewChild(IonContent) content: IonContent;
 
-  constructor(
-    private navParams: NavParams,
+  constructor(    
     private modalCtrl: ModalController,
     private webview: WebView,
     private actionSheetController: ActionSheetController,
@@ -42,45 +38,66 @@ export class ChatMensajesPage implements OnInit {
     private platform: Platform,
     private ref: ChangeDetectorRef,
     private http: HttpClient,
+    private authService: AuthenticationService,
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private smartAudio: SmartAudioService
+    private smartAudio: SmartAudioService,
+    private chatService: ChatService
   ) { }
 
-  ngOnInit() {
-    this.usuario = this.navParams.get('usuario');
-    console.log(this.usuario);
-    this.mensajes = [
-      {
-        usuario: this.me,
-        mensaje: 'buenas tardes',
-        createdAt: 1554090856000
-      },
-      {
-        usuario: this.usuario,
-        mensaje: 'buenas tardes, un gusto saludarle ¿como estas?',
-        createdAt: 1554090956000
-      },
-      {
-        usuario: this.me,
-        mensaje: 'bien, bien quisiera consultarle acerca de...',
-        createdAt: 1554091056000
-      }
-    ]
+  async ngOnInit() {
+    const loading = await this.loadingCtrl.create({
+      spinner: 'dots',
+      message: 'Cargando Mensajes'
+    });
+    loading.present();
+    this.http.get(this.authService.api + '/chats/'+ this.chat.id + '/messages', { headers: this.authService.authHeader}).toPromise()
+    .then((response: any) =>{
+      this.chat.messages = response.data;      
+      this.chat.messages.sort((a, b) => {
+        return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+      });            
+      setTimeout(() => {
+        this.content.scrollToBottom(200);
+      });      
+      loading.dismiss();
+    }).catch(err =>{
+      loading.dismiss();
+      console.log(err);
+    })
+  }
+
+  doRefresh(event){
+    this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: any)=>{
+      let oldMessages:[any] = response.data;
+      oldMessages.sort((a, b) => {
+        return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+      });      
+      this.chat.messages.unshift(...oldMessages);      
+      event.target.complete();
+    }).catch(error =>{
+      console.log(error);
+    });    
   }
 
   enviarMensaje() {
-    this.playSound();
-    this.mensajes.push({
-      mensaje: this.nuevoMensaje,
-      createdAt: new Date().getTime(),
-      usuario: this.me
-    });
-    this.nuevoMensaje = "";
+    this.playSound();    
 
-    setTimeout(() => {
-      this.content.scrollToBottom(200);
-    })
+    let newMessage = {
+      content: this.nuevoMensaje,
+      chat_id: this.chat.id
+    }
+
+    this.chatService.sendMessage(newMessage).then((response: any) => {      
+      this.chat.messages.push(response.data);
+      setTimeout(() => {
+        this.content.scrollToBottom(200);
+      });
+    }).catch(err =>{
+      console.log(err);
+    });
+
+    this.nuevoMensaje = "";
   }
 
   /*CONVIERTO LA URL NATIVA A URL DE NAVEGADOR*/

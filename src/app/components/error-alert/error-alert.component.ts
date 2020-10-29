@@ -20,4 +20,7 @@ export class ErrorAlertComponent implements OnInit {
       .reduce((acum, [_, value]) => acum.concat(value), []);
   }
 
+  public get getFirstError() {
+    return this.errorList[0];
+  }
 }

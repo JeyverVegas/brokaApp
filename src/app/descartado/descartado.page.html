@@ -1,44 +1,76 @@
 <app-top-bar></app-top-bar>
 
 <ion-content class="ion-padding">
-  <h1>Mis descartados</h1>
-  <ion-grid class="ion-padding">      
-    <ion-row style="position: relative;" *ngFor="let producto of descartados">
-      <ion-col size="5" class="ion-align-self-center">
-        <img class="img-list" src="{{producto.imagenes[0]}}" alt="" (click)="openPreview(producto.imagenes[0])">
-      </ion-col>
-      <ion-col style="position: relative;" size="6" class="ion-align-self-center ion-activatable ripple-parent">
-        <h4 style="margin: 0;"><ion-text color="dark">{{producto.nombre}}</ion-text></h4>
+  <ng-template #descartados1>
+    <div class="ion-text-center">
+      <ion-icon name="thumbs-up" color="primary" style="font-size: 50vw;"></ion-icon>
+      <br>
+      <br>
+      <p>
+        <ion-text color="medium">Al parecer no hay anuncios descartados.</ion-text>
+      </p>
+      <ion-button class="color_primario" mode="ios" routerLink="/tabs/tabs/inicio" routerDirection="forward"
+        (click)="playSound()">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Volver al inicio.
+      </ion-button>
+    </div>
+  </ng-template>
+  <div *ngIf="descartados.length > 0; else descartados1">
+    <h1>Mis descartados</h1>
+    <ion-grid class="ion-padding">
+      <ion-row style="position: relative;" *ngFor="let producto of descartados">
+        <ion-col size="5" class="ion-align-self-center">
+          <img class="img-list" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
+          <div class="cover cover-light"></div>
+        </ion-col>
+        <ion-col style="position: relative;" size="6" class="ion-align-self-center ion-activatable ripple-parent">
+          <h4 style="margin: 0;">
+            <ion-text color="dark">{{(producto.name.length>20)? (producto.name | slice:0:20)+'...':(producto.name)}}</ion-text>
+          </h4>
 
-        <div class="atribute-container" *ngIf="producto.banos" style="display: flex; align-items: center;">
-          <img class="img-icon-start" src="../../assets/icon/banos.PNG" alt="">
-          <p><ion-text color="medium">Baños: {{producto.banos}}</ion-text></p>
-        </div>          
+          <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
+            <img class="img-icon-start" src="../../assets/icon/banos.PNG" alt="">
+            <p>
+              <ion-text color="medium">Baños: {{producto.bathrooms}}</ion-text>
+            </p>
+          </div>
 
-        <div class="atribute-container" *ngIf="producto.m2" style="display: flex; align-items: center;">
-          <img class="img-icon-start" src="../../assets/icon/M2.PNG" alt="">
-          <p><ion-text color="medium">{{producto.m2}}m2</ion-text></p>
-        </div>
+          <div class="atribute-container" *ngIf="producto.square_meters" style="display: flex; align-items: center;">
+            <img class="img-icon-start" src="../../assets/icon/M2.PNG" alt="">
+            <p>
+              <ion-text color="medium">{{producto.square_meters}}m2</ion-text>
+            </p>
+          </div>
 
-        <div class="atribute-container" *ngIf="producto.tipoDeVivienda" style="display: flex; align-items: center;">
-          <img class="img-icon-start" src="../../assets/icon/propiedad.PNG" alt="">
-          <p><ion-text color="medium">{{producto.tipoDeVivienda.nombre}}</ion-text></p>
-        </div>
-        
-        <div class="price-container" *ngIf="producto.precio">
-          <p class="price"><ion-text color="secondary">${{producto.precio}}</ion-text></p>
-          <ion-button color="dark" fill="clear">
-            219 <ion-icon slot="end" name="heart" color="danger"></ion-icon>
-          </ion-button>            
-        </div>
-        <ion-ripple-effect></ion-ripple-effect>
-      </ion-col>
-      <ion-col size="1" class="ion-align-self-center">
-        <ion-button class="no-padding" fill="clear" color="dark">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-button>
-      </ion-col>
-      <div class="cover cover-light"></div>      
-    </ion-row>
-  </ion-grid>
+          <div class="atribute-container" *ngIf="producto.type" style="display: flex; align-items: center;">
+            <img class="img-icon-start" src="../../assets/icon/propiedad.PNG" alt="">
+            <p>
+              <ion-text color="medium">{{producto.type.name}}</ion-text>
+            </p>
+          </div>
+
+          <div class="price-container" *ngIf="producto.prices">
+            <p class="price">
+              <ion-text color="secondary">{{producto.prices[0].price_value}}{{producto.prices[0].currency.symbol}}
+              </ion-text>
+            </p>
+            <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
+              {{producto.favorite_to_count}} <ion-icon slot="end" name="heart-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button *ngIf="producto.is_favorite" color="dark" fill="clear" (click)="removeFromFavorite(producto)">
+              {{producto.favorite_to_count}} <ion-icon slot="end" name="heart" color="danger"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="cover cover-light"></div>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-col>
+        <ion-col size="1" class="ion-align-self-center">
+          <ion-button class="no-padding" fill="clear" color="dark" (click)="removeDiscard(producto)">
+            <ion-icon name="reload-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

@@ -1,8 +1,8 @@
 .menu-header-bg{    
     height: 200px;
     width: 350px;
-    background: #59C16A;
-    background: linear-gradient(90deg, #59C16A 0%, #93eae5 100%);
+    background: var(--ion-color-primary);
+    background: linear-gradient(90deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
     box-shadow: 0 1px 10px rgba(89, 192, 106, .5);
     transform: rotate(-15deg);
     border-radius: 10px 10px 10px 50px;
@@ -36,9 +36,9 @@
 .active{
     --background: rgba(0, 0, 0, .02);
     border-left: 5px solid;
-    color: #59C16A;
+    color: var(--ion-color-primary);
     ion-icon {
-        color: #59C16A
+        color: var(--ion-color-primary)
     }
 
 }

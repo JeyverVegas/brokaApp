@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { ModalController, NavController } from '@ionic/angular';
+import { AlertController, ModalController, NavController, ToastController } from '@ionic/angular';
+import { error } from 'protractor';
 import { BehaviorSubject } from 'rxjs';
 import { Usuario } from '../interface';
+import { MapOptionsPage } from '../map-options/map-options.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -10,9 +12,10 @@ import { ShowProductPage } from '../show-product/show-product.page';
 
 declare var google: any;
 
-export function CustomMarker(latlng, map, imageSrc, callback = null) {
-  this.latlng_ = latlng;  
+export function CustomMarker(latlng, map, imageSrc, callback = null, user) {
+  this.latlng_ = latlng;
   this.imageSrc = imageSrc;
+  this.user = user;
   this.callback = callback;
   this.setMap(map);
 }
@@ -30,10 +33,12 @@ CustomMarker.prototype.draw = function () {
     div.onclick = () => this.callback && this.callback();
 
     div.className = "animate__animated animate__fadeInDown animate__faster customMarker";
+    if (this.user) {
+      div.style.zIndex = "99999999999";
+    }
 
+    var img = document.createElement("img");
 
-    var img = document.createElement("img");    
-    
     img.src = this.imageSrc;
     img.className = "img-iconxD";
 
@@ -80,10 +85,15 @@ CustomMarker.prototype.getPosition = function () {
 })
 export class MapPage implements OnInit {
 
-  productos = new BehaviorSubject([]);
+  productos = [];
   user: Usuario = null;
   cargado = false;
   currentPosition = null;
+  radius = 10;
+  map = null;
+  markers = [];
+  mapRadius = null;
+  errorLocation = true;
   @ViewChild('googlemap', { static: true }) protected googlemap: ElementRef;
 
   constructor(
@@ -92,60 +102,116 @@ export class MapPage implements OnInit {
     private smartAudio: SmartAudioService,
     public modalCtrl: ModalController,
     private geolocation: Geolocation,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
-    this.user = this.authService.user;
-    this.productos = await this.productoService.getProducts();
-    this.geolocation.getCurrentPosition().then(location => {      
-      this.currentPosition = new google.maps.LatLng(location.coords.latitude, location.coords.longitude),
-        this.crearMapa();
-    });
+    
+  }
 
+  ionViewDidEnter() {
+    this.user = this.authService.user;
+    this.productoService.getProducts().then(products => {
+      this.errorLocationAlert(products);
+      products.subscribe(productos => {
+        this.geolocation.getCurrentPosition().then(location => {
+          this.errorLocation = false;
+          this.productos = productos;
+          this.currentPosition = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
+          this.markers = [];
+          this.crearMapa();
+        });
+      }, err => {
+        alert(JSON.stringify(err));
+      })
+    }).catch(err => {
+      alert(JSON.stringify(err));
+    })
+  }
+
+  errorLocationAlert(products) {
+    setTimeout(() => {
+      if (this.errorLocation) {
+        if(this.user.address !== null){
+          alert('heeloo');
+          products.subscribe(productos => {          
+            this.currentPosition = new google.maps.LatLng(this.user.address.latitude, this.user.address.longitude);
+            this.errorLocation = false;
+            this.productos = productos;
+            this.markers = [];
+            this.crearMapa();
+          }, err => {
+            alert(JSON.stringify(err));
+          })
+        }else{
+          this.alertCtrl.create({
+            header: 'Error al obtener su ubícacion actual.',
+            message: 'Ha Ocurrido un error al obtener su ubicacion actual por favor verifique que el "GPS" del telefono este activado, o registre una direccion en la configuracion de la cuenta.',
+            buttons: [
+              {
+                text: 'cerrar mapa.',
+                handler: () => {
+                  this.navCtrl.back();
+                }
+              },
+              {
+                text: 'Añadir Ubicación',
+                handler: () => {
+                  this.navCtrl.navigateForward('/user-profile')
+                }
+              }
+            ]
+          }).then(a => a.present());
+        }        
+      }          
+    }, 10000);
+}
+
+
+async crearMapa() {
+  this.map = new google.maps.Map(this.googlemap.nativeElement, {
+    center: this.currentPosition,
+    zoom: 8,
+    mapTypeControl: false,
+    zoomControl: false,
+    scaleControl: false,
+    streetViewControl: false,
+    fullscreenControl: false
+  });
+
+  if (
+    this.user.profile === null ||
+    this.user.profile === undefined ||
+    this.user.profile.image === null ||
+    this.user.profile.image === undefined ||
+    this.user.profile.image === '') {
+    new CustomMarker(
+      this.currentPosition,
+      this.map,
+      '../../assets/images/user.png',
+      null,
+      true
+    )
+  } else {
+    new CustomMarker(
+      this.currentPosition,
+      this.map,
+      this.user.profile.image,
+      null,
+      true
+    )
   }
 
 
-  async crearMapa() {
-    var map = new google.maps.Map(this.googlemap.nativeElement, {
-      center: this.currentPosition,
-      zoom: 10,
-      mapTypeControl: false,
-      zoomControl: false,
-      scaleControl: false,
-      streetViewControl: false,
-      fullscreenControl: false
-    });
-
-    console.log(this.user.profile);
-
-    if(
-      this.user.profile === null || 
-      this.user.profile === undefined || 
-      this.user.profile.image === null || 
-      this.user.profile.image === undefined ||
-      this.user.profile.image === ''){
-        new CustomMarker(
-          this.currentPosition,
-          map,
-          '../../assets/images/user.png',
-        )
-      }else{
-        new CustomMarker(
-          this.currentPosition,
-          map,
-          this.user.profile.image,
-        )
-      }
-    
-
-    this.productos.getValue().forEach(producto => {
-      new CustomMarker(
-        new google.maps.LatLng(Number(producto.address.latitude), Number(producto.address.longitude)),
-        map,
+  this.productos.forEach(producto => {
+    if ((google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, new google.maps.LatLng(producto.address.latitude, producto.address.longitude)) / 1000) < this.radius) {
+      let marker = new CustomMarker(
+        new google.maps.LatLng(producto.address.latitude, producto.address.longitude),
+        this.map,
         producto.images[0].url,
         () => {
-          this.playSound();          
+          this.playSound();
           this.modalCtrl.create({
             component: ShowProductPage,
             componentProps: {
@@ -153,18 +219,95 @@ export class MapPage implements OnInit {
             }
           })
             .then((m) => m.present());
-        }
+        },
+        false,
       );
-    })
-    this.cargado = true;
-  }
+      this.markers.push(marker);
+    } else {
+      let marker = new CustomMarker(
+        new google.maps.LatLng(producto.address.latitude, producto.address.longitude),
+        null,
+        producto.images[0].url,
+        () => {
+          this.playSound();
+          this.modalCtrl.create({
+            component: ShowProductPage,
+            componentProps: {
+              producto: producto
+            }
+          })
+            .then((m) => m.present());
+        },
+        false,
+      );
+      this.markers.push(marker);
+    }
+  });
 
-  goBack() {
-    this.playSound();
-    this.navCtrl.back();
-  }
+  this.setRadius();
+  this.cargado = true;
+}
 
-  playSound() {
-    this.smartAudio.play('tabSwitch');
+async openOptions() {
+  this.playSound();
+  const modal = await this.modalCtrl.create({
+    component: MapOptionsPage,
+    cssClass: 'map-options-modal',
+    swipeToClose: true,
+    mode: 'ios',
+    componentProps: {
+      radius: this.radius
+    }
+  });
+
+  modal.present();
+  modal.onWillDismiss().then((response: any) => {
+    if (response.data.position) {
+      this.currentPosition = response.data.currentPosition;
+      this.crearMapa();
+    }
+    if (response.data.cerrarMapa) {
+      this.navCtrl.back();
+    }
+    this.radius = response.data.radius;
+    this.mapRadius.setRadius(response.data.radius * 1000);
+    this.setMapOnAll();
+  }).catch(error => {
+    console.log(error);
+  })
+
+}
+
+setMapOnAll() {
+  for (let i = 0; i < this.markers.length; i++) {
+    if ((google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, new google.maps.LatLng(this.markers[i].getPosition().lat(), this.markers[i].getPosition().lng())) / 1000) < this.radius) {
+      this.markers[i].setMap(this.map);
+    } else {
+      this.markers[i].setMap(null);
+    }
   }
+}
+
+setRadius() {
+  let map = this.map;
+  this.mapRadius = new google.maps.Circle({
+    strokeColor: "#001c5b",
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: "#001b5b70",
+    fillOpacity: 0.35,
+    map,
+    center: this.currentPosition,
+    radius: this.radius * 1000,
+  });
+}
+
+goBack() {
+  this.playSound();
+  this.navCtrl.back();
+}
+
+playSound() {
+  this.smartAudio.play('tabSwitch');
+}
 }

@@ -19,7 +19,6 @@ export class TabsPage implements OnInit{
   
   ngOnInit(){
     this.user = this.authService.user;
-    console.log(this.user);
   }
 
   playSound(){
