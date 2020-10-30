@@ -35,3 +35,16 @@
 .div-img-user{
     position: relative;
 }
+
+.remove-button{
+    height: 20px;
+    width: 20px;
+    --border-radius: 100%;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}

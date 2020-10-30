@@ -145,11 +145,15 @@ export class InicioPage implements OnInit {
       message: product.name,
       buttons: [
         {
-          text: 'no'
+          text: 'no',
+          handler: ()=>{
+            this.playSound();
+          }
         },
         {
           text: 'si',
           handler: async () => {
+            this.playSound();
             const loading = await this.loadingCtrl.create({
               spinner: 'dots',
               message: 'Enviando Mensaje.'

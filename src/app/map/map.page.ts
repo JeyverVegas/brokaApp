@@ -180,6 +180,10 @@ async crearMapa() {
     fullscreenControl: false
   });
 
+  this.map.addEventListener('click', (event)=>{
+    console.log(event);
+  })
+
   if (
     this.user.profile === null ||
     this.user.profile === undefined ||
