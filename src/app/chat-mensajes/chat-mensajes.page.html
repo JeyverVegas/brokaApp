@@ -1,14 +1,15 @@
-<ion-header class="ion-no-border color_primario2">
-  <ion-item lines="none b_transparent">
+<ion-header class="ion-no-border">
+  <ion-item lines="none" color="primary">
     <ion-button style="margin-inline-end: 5px;" fill="clear" color="light" slot="start" (click)="closeModal()">
       <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-avatar slot="start">
-      <img src="../../assets/images/house.png" alt="">
+      <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo" class="animate__animated animate__fadeIn"></ion-img>
+      <ion-skeleton-text *ngIf="!cargo && chat.image" animated></ion-skeleton-text>
+      <img src="../../assets/images/user.png" *ngIf="!chat.image">
     </ion-avatar>
     <ion-label color="light">
-      <h3><b>{{chat.name}}</b></h3>
-      <p>Activo hace 3 dias</p>
+      <h3><b>{{chat.name}}</b></h3>      
     </ion-label>
   </ion-item>
 </ion-header>

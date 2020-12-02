@@ -1,0 +1,49 @@
+<app-top-bar></app-top-bar>
+
+<ion-content>
+  <div *ngIf="misMatchs.length < 1" class="no-matchs-container animate__animated animate__fadeIn">
+    <div class="no-matchs-description">
+      <ion-text color="medium">
+        <ion-icon name="sad-outline"></ion-icon>
+        <h3>No hay resultados.</h3>
+        <p>No has logrado matchear con ningún inmueble aún.</p>
+      </ion-text>
+    </div>
+  </div>
+
+  <div *ngIf="misMatchs.length > 0" class="ion-padding">
+    <div class="ion-text-right">
+      <ion-button shape="round" color="danger" fill="outline" size="small" mode="md" (click)="deleteAllMatchs()">
+        <ion-icon name="close" slot="start"></ion-icon>
+        Eliminar todos los matchs
+      </ion-button>
+    </div>
+    <br>
+    <ion-list class="animate__animated animate__fadeInUp">
+      <ion-item *ngFor="let match of misMatchs">
+        <ion-thumbnail slot="start">
+          <ion-img [class.hidden]="!cargo" (click)="openPreview(match.property.images[0].url)" (ionImgDidLoad)="cargo = !cargo" [src]="match.property.images[0].url" class="animate__animated animate__fadeIn"></ion-img>
+          <ion-skeleton-text *ngIf="!cargo" animated></ion-skeleton-text>
+        </ion-thumbnail>
+        <ion-label>
+          <p>{{match.status}}</p>
+          <h3>{{match.property.name}}</h3>
+          <p>
+            <ion-icon name="call-outline" slot="start"></ion-icon> {{match.property.realEstateAgency.phone}}
+          </p>
+          <p>
+            <ion-icon name="person" slot="start"></ion-icon> {{match.property.realEstateAgency.name}}
+          </p>
+          <ion-buttons>
+            <ion-button size="small" color="danger" (click)="deleteMatch(match)">
+              <ion-icon slot="start" name="close"></ion-icon> Eliminar
+            </ion-button>
+            <ion-button size="small" color="success" (click)="openChat(match)">
+              <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon> Mensaje
+            </ion-button>
+          </ion-buttons>
+        </ion-label>
+      </ion-item>
+    </ion-list>  
+  </div>  
+</ion-content>

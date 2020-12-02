@@ -39,6 +39,10 @@ const routes: Routes = [
         path: 'mis-busquedas',
         loadChildren: () => import('../mis-busquedas/mis-busquedas.module').then( m => m.MisBusquedasPageModule)
       },      
+      {
+        path: 'mis-matchs',
+        loadChildren: () => import('../mis-matchs/mis-matchs.module').then(m => m.MisMatchsPageModule)
+      },
     ]
   },
   {

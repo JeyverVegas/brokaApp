@@ -13,9 +13,9 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class BuscarPage implements OnInit {
 
-  productos = [];
+  productos = new BehaviorSubject([]);
   filtro = [];
-
+  refrescando: any = null;
 
 
   constructor(
@@ -30,18 +30,17 @@ export class BuscarPage implements OnInit {
   }
 
   async ionViewDidEnter() {
-    this.productosService.getProducts().then(products => {
-      products.subscribe(productos => {        
-        this.productos = productos;
-        this.initializedItems();
-      })
-    }).catch(err => {
-      console.log(err);
-    })    
+    this.productos = this.productosService.getProducts();
+    this.initializedItems();    
   }
 
   initializedItems() {
-    this.filtro = this.productos;
+    this.productos.subscribe(productos => {
+      this.filtro = productos;
+      if(this.refrescando){
+        this.refrescando.complete();
+      }
+    });
   }
 
   async openProduct(producto) {
@@ -122,15 +121,8 @@ export class BuscarPage implements OnInit {
   }
 
   async doRefresh(event) {
-    this.productosService.getProducts().then(products => {
-      products.subscribe(productos => {
-        this.productos = productos;
-        this.initializedItems();
-        event.target.complete();
-      })
-    }).catch(err => {
-      console.log(err);
-    })    
+    this.refrescando = event.target;
+    this.productosService.getProducts();
   }
 
 }

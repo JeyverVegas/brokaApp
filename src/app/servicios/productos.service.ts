@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
-import { ContractType, GetProductsOptions, ProductFilters, ProductRelationships, PropertyFeatures, PropertyType } from '../interface'
-import { LoadingController } from '@ionic/angular';
+import { ContractType, ProductFilters, ProductRelationships, PropertyFeatures, PropertyType } from '../interface'
+import { LoadingController, ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -11,37 +11,38 @@ import { LoadingController } from '@ionic/angular';
 export class ProductosService {
 
   private productos = new BehaviorSubject([]);
-
+  private total = new BehaviorSubject(0);
   filtros: ProductFilters = {};
-  filtrado = false;
+  filtrado = false;  
   loading = null;
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
   ) { }
 
-  getMaxAndMin(properties) {
-    return {
-      price: {
-        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.price !== 'undefined' && o.price !== null) { return o.price; } else { return false } })),
-        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.price !== 'undefined' && o.price !== null) { return o.price; } else { return false } })),
-      },
-
-      size: {
-        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.square_meters !== 'undefined' && o.square_meters !== null) { return o.square_meters; } else { return false } })),
-        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.square_meters !== 'undefined' && o.square_meters !== null) { return o.square_meters; } else { return false } })),
-      },
-
-      rooms: {
-        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.rooms !== 'undefined' && o.rooms !== null) { return o.rooms; } else { return false } })),
-        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.rooms !== 'undefined' && o.rooms !== null) { return o.rooms; } else { return false } })),
-      },
-      bathrooms: {
-        min: Math.min.apply(Math, properties.map(function (o) { if (typeof o.bathrooms !== 'undefined' && o.bathrooms !== null) { return o.bathrooms; } else { return false } })),
-        max: Math.max.apply(Math, properties.map(function (o) { if (typeof o.bathrooms !== 'undefined' && o.bathrooms !== null) { return o.bathrooms; } else { return false } })),
+  onLoad() {
+    this.authService.isAuthenticated.subscribe(isLogin => {
+      if (!isLogin) {
+        this.filtros.type = null;
+        this.filtros.contractType = null;
+        this.filtros.sizeBetween = null;
+        this.filtros.roomsBetween = null;
+        this.filtros.bathroomsBetween = null;
+        this.filtros.environmentsBetween = null;
+        this.filtros.status = null;
+        this.filtros.hasAnyFeatures = null;
+        this.filtros.realEstateAgency = null;
+        this.filtros.radius = null;
+        this.filtros.city = null;
+        this.filtros.state = null;
+        this.filtros.priceBetween = null;
+        this.filtros.currency = null;
+        return;
       }
-    }
+
+    })
   }
 
   getPropertyType(): Promise<PropertyType[]> {
@@ -92,91 +93,120 @@ export class ProductosService {
     });
   }
 
-  async presentLoading() {
-    this.loading = await this.loadingCtrl.create({
-      spinner: 'bubbles',
-      message: 'Cargando productos...'
-    });
-    await this.loading.present();
-  }
-
-  uploadSearch(search){
+  uploadSearch(search) {
     return this.http.post(this.authService.api + '/profile/search-parameters', search, {
       headers: this.authService.authHeader
     }).toPromise();
   }
 
-  downloadSearch(){
+  downloadSearch() {
     return this.http.get(this.authService.api + '/profile/search-parameters', {
       headers: this.authService.authHeader
     }).toPromise();
   }
 
-  async getProducts(options?: GetProductsOptions) {
-
-    if (typeof options === 'undefined' || options === null) {
-      options = {
-        relationships: [],
-        filters: {}
-      };
-    }
-    await this.presentLoading();
-    if (this.filtrado) {
-      this.productos.next(await this.findProducts({ relationships: options.relationships, filters: this.filtros }));
-    } else {
-
-      this.productos.next(await this.findProducts({ relationships: options.relationships }));
-    }
-    await this.loading.dismiss();
+  getProducts() {
+    this.findProducts();
     return this.productos;
   }
 
-  findProducts(options?: GetProductsOptions) {
+  async findProducts(relationships?) {
+    
+    this.loading = await this.loadingCtrl.create({
+      message: 'Cargando productos...',
+      spinner: 'bubbles'
+    });
 
-    if (typeof options === 'undefined' || options === null) {
-      options = {
-        relationships: [],
-        filters: {}
-      };
+    this.loading.present();
+
+    if (!relationships) {
+      relationships = [];
     }
 
-    const filters: ProductFilters = {
-      name: '',
-      type: [],
-      contractType: [],
-      status: [],
-      hasAnyFeatures: [],
-      realEstateAgency: [],
-      sizeBetween: [0, 9999999999999],
-      roomsBetween: [0, 999999999999],
-      bathroomsBetween: [0, 999999999999],
-      ...options.filters
-    };
-
-    return new Promise<[]>((resolve) => {
-      this.http.get(this.authService.api + '/properties', {
-        headers: this.authService.authHeader,
-        params: {
-          include: this.getProductRelationships(options.relationships),
-          'filter[name]': filters.name,
-          'filter[type]': filters.type?.join(','),
-          'filter[contract_type]': filters.contractType?.join(','),
-          'filter[size_between]': filters.sizeBetween ? filters.sizeBetween?.join(',') : '',
-          'filter[rooms_between]': filters.roomsBetween ? filters.roomsBetween?.join(',') : '',
-          'filter[bathrooms_between]': filters.bathroomsBetween ? filters.bathroomsBetween?.join(',') : '',
-          'filter[status]': filters.status?.join(','),
-          'filter[has_any_features]': filters.hasAnyFeatures?.join(','),
-          'filter[real_estate_agency]': filters.realEstateAgency?.join(','),
-        }
-      }).subscribe((response: { data: [] }) => {
-        resolve(response.data);
-      }, async error => {
-        await this.loading.dismiss();
-        console.log(error);
-        alert(JSON.stringify(error));
-      })
-    });
+    this.http.get(this.authService.api + '/properties' + this.getFilters(), {
+      headers: this.authService.authHeader,
+      params: {
+        include: this.getProductRelationships(relationships)
+      }
+    }).subscribe((response: { data: [], meta: any }) => {      
+      this.productos.next(response.data);
+      this.total.next(response.meta.total);
+      this.loading.dismiss();
+    }, async error => {
+      await this.loading.dismiss();
+      this.presentToast('Ha ocurrido un error', 'danger');
+      console.log(error);      
+    })
   }
+
+  getTotal(){
+    return this.total;
+  }
+
+  getFilters() {
+    var queryString = '?';
+    try {
+      if (this.filtros.type) {
+        queryString = queryString + 'filter[type]=' + this.filtros.type.join(',') + '&';
+      }
+
+      if (this.filtros.contractType) {
+        queryString = queryString + 'filter[contract_type]=' + this.filtros.contractType.join(',') + '&';
+      }
+
+      if (this.filtros.sizeBetween) {
+        queryString = queryString + 'filter[size_between]=' + this.filtros.sizeBetween.join(',') + '&';
+      }
+
+      if (this.filtros.roomsBetween) {
+        queryString = queryString + 'filter[rooms_between]=' + this.filtros.roomsBetween.join(',') + '&';
+      }
+
+      if (this.filtros.bathroomsBetween) {
+        queryString = queryString + 'filter[bathrooms_between]=' + this.filtros.bathroomsBetween.join(',') + '&';
+      }
+
+      if (this.filtros.environmentsBetween) {
+        queryString = queryString + 'filter[environments_between]=' + this.filtros.environmentsBetween.join(',') + '&';
+      }
+
+      if (this.filtros.status) {
+        queryString = queryString + 'filter[status]=' + this.filtros.status.join(',') + '&';
+      }
+
+      if (this.filtros.hasAnyFeatures) {
+        queryString = queryString + 'filter[has_any_features]=' + this.filtros.hasAnyFeatures.join(',') + '&';
+      }
+
+      if (this.filtros.realEstateAgency) {
+        queryString = queryString + 'filter[real_estate_agency]=' + this.filtros.realEstateAgency.join(',') + '&';
+      }
+
+      if (this.filtros.radius) {
+        queryString = queryString + 'filter[radius]=' + this.filtros.radius.join(',') + '&';
+      }
+
+      if (this.filtros.state) {
+        queryString = queryString + 'filter[state]=' + this.filtros.state + '&';
+        if (this.filtros.city) {
+          queryString = queryString + 'filter[city]=' + this.filtros.city + '&';
+        }
+      }
+
+      if (this.filtros.currency && this.filtros.priceBetween) {
+        queryString = queryString + 'filter[price_between]=' + this.filtros.currency + this.filtros.priceBetween.join(',') + '&';
+      }
+
+      queryString = queryString.slice(0, -1);
+            
+      return queryString;
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error', 'danger');
+      console.log(error);
+    }
+  }
+
+
 
   getProductsFavorites(relationships?: Array<ProductRelationships>) {
     if (typeof relationships === 'undefined' || relationships === null) {
@@ -247,6 +277,20 @@ export class ProductosService {
         console.log(e);
       });
     });
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      color: color,
+      buttons: [
+        {
+          text: 'ok'
+        }
+      ],
+      duration: 3000
+    });
+    toast.present();
   }
 }
 

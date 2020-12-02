@@ -16,7 +16,7 @@ export class ChatService {
   Pusher = Pusher;
   private _echo:Echo = null;
 
-  chats = new BehaviorSubject([]);
+  private chats = new BehaviorSubject([]);
 
   constructor(
     private authService: AuthenticationService,
@@ -66,20 +66,16 @@ export class ChatService {
     return this._echo;
   }
 
+  returnChats(){
+    return this.chats;
+  }
 
-  async getChats() {
-    const loading = await this.loadingCtrl.create({
-      spinner: 'dots',
-      message: 'Cargando Chats...'
-    });
-    loading.present();
+  async getChats() {        
     this.http.get(this.authService.api + '/chats', {
       headers: this.authService.authHeader
     }).toPromise().then((response: any) => {      
-      this.chats.next(response.data);
-      loading.dismiss();
+      this.chats.next(response.data);      
     }).catch(err => {
-      loading.dismiss();
       console.log(err);
     });
   }

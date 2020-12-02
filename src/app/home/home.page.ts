@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
@@ -9,14 +10,17 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 export class HomePage implements OnInit {
 
   constructor(
+    private router: Router,
     private smartAudio: SmartAudioService
   ) { }
 
   ngOnInit() {
   }
 
-  playSound() {
+
+  next() {
     this.smartAudio.play('tabSwitch');
+    this.router.navigateByUrl('login', {replaceUrl: true});    
   }
 
 }

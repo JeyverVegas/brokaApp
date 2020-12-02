@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { error } from 'protractor';
+import { BehaviorSubject } from 'rxjs';
 import { ChatMensajesPage } from '../chat-mensajes/chat-mensajes.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
@@ -14,7 +15,7 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 export class ChatPage implements OnInit {
 
     
-  chats = [];
+  chats = new BehaviorSubject([]);
 
   constructor(
     private modalCtrl: ModalController,
@@ -23,17 +24,12 @@ export class ChatPage implements OnInit {
     private authService: AuthenticationService,    
   ) { }
 
-  ngOnInit() {    
-    
+  ngOnInit() {        
   }
 
   ionViewWillEnter(){    
+    this.chats = this.chatService.returnChats();
     this.chatService.getChats();    
-    this.chatService.chats.subscribe(chats =>{
-      this.chats = chats;      
-    }, error =>{
-      console.log(error);
-    });
   }
 
   doRefresh(event){

@@ -7,15 +7,18 @@
   </ion-refresher>
   <p>Matchs</p>
   <ion-list>
-    <ion-item button *ngFor="let chat of chats" (click)="openChat(chat)">
+    <ion-item button *ngFor="let chat of chats | async" (click)="openChat(chat)">
       <ion-avatar slot="start">
-        <img src="../../assets/images/house.png">
+        <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo" class="animate__animated animate__fadeIn"></ion-img>
+        <ion-skeleton-text *ngIf="!cargo && chat.image" animated></ion-skeleton-text>
+        <img src="../../assets/images/user.png" *ngIf="!chat.image">
       </ion-avatar>
       <ion-label>
         <h3>{{chat.name}}</h3>
+        <p>{{chat.messages[0].content}}</p>
         <p>{{chat.updated_at | date:'dd/MM/yyyy, hh:mm aa'}}</p>
       </ion-label>
-      <ion-badge color="success" slot="end" *ngIf="chat.contador > 0">{{chat.contador}}</ion-badge>
+      <ion-badge color="success" slot="end" *ngIf="chat.unread_messages_count > 0">{{chat.unread_messages_count}}</ion-badge>
     </ion-item>
   </ion-list>
 </ion-content>

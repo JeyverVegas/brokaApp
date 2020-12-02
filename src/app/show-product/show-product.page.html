@@ -1,12 +1,12 @@
-<ion-header class="ion-no-border color_primario2 ion-text-center">
-  <ion-toolbar class="b_transparent">
+<ion-header class="ion-no-border ion-text-center">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
     <ion-button color="light" (click)="closeModal()">
       <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
 
-    <img class="img-logo-menu logo-white ion-margin-top" src="../../../assets/images/logo.png" alt="">
+    <img class="img-logo-menu ion-margin-top" src="../../../assets/images/logo.png" alt="">
 
     <ion-buttons slot="end">
       <ion-button color="light" (click)="playSound()">
@@ -22,28 +22,7 @@
     </ion-slide>
   </ion-slides>
 
-  <ion-grid>
-    <ion-row class="ion-align-items-center">
-      <ion-col>
-        <h4 *ngFor="let price of producto.prices">
-          <ion-text color="medium">{{price.price_value}} {{price.currency.code}}</ion-text>
-        </h4>
-      </ion-col>
-      <ion-col style="display: flex;">
-        <ion-button fill="clear" color="secondary" (click)="descartar()">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="secondary" (click)="openShared()">
-          <ion-icon slot="icon-only" name="share-social"></ion-icon>
-        </ion-button>
-        <ion-button *ngIf="!producto.is_favorite" fill="clear" color="secondary" (click)="addToFavorite()">
-          <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
-        </ion-button>
-        <ion-button *ngIf="producto.is_favorite" fill="clear" color="secondary" (click)="removeFromFavorite()">
-          <ion-icon slot="icon-only" name="heart" color="danger"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
+  <ion-grid>    
     <ion-row class="ion-align-items-center">
       <ion-col *ngIf="producto.rooms" class="ion-text-center ion-align-self-end">
         <img class="img-icon" src="../../assets/icon/habitaciones.PNG" alt="">

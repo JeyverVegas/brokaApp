@@ -8,6 +8,7 @@ import { AuthenticationService } from './servicios/authentication.service';
 import { Router, RouterEvent } from '@angular/router';
 import { Usuario } from './interface';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
+import { ChatService } from './servicios/chat.service';
 
 @Component({
   selector: 'app-root',
@@ -54,17 +55,17 @@ export class AppComponent {
       url: '/tabs/tabs/descartado'
     },
     {
-      name: 'Mis Inmobiliarias',
-      icon: 'home-outline',
+      name: 'Mis Matchs',
+      icon: 'checkbox-outline',
       active: false,
-      url: '/tabs/tabs/inmobiliarias'
+      url: '/tabs/tabs/mis-matchs'
     },
-    {
+    /* {
       name: 'Contacte con nosotros',
       icon: 'call-outline',
       active: false,
       url: ''
-    },
+    }, */
   ]
 
 
@@ -78,6 +79,7 @@ export class AppComponent {
     private loadingCtrl: LoadingController,
     private oneSignal: OneSignal,
     private alertCtrl: AlertController,
+    private chatService: ChatService
   ) {
     this.initializeApp();
     this.router.events.subscribe((event: RouterEvent) => {
@@ -91,6 +93,12 @@ export class AppComponent {
       this.splashScreen.hide();
       this.smartAudio.preload('tabSwitch', 'assets/audios/click.mp3');
       this.smartAudio.preload('chatsound', 'assets/audios/chatsound.mp3');
+      this.authService.isAuthenticated.subscribe(isLogin =>{
+        if(isLogin){
+          this.chatService.getChats();
+        }
+      })
+      
       if (this.platform.is('cordova')) {
         this.setupPush();
       }

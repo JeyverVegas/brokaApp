@@ -72,18 +72,14 @@ export class ShowProductPage implements OnInit {
 
     var marker = new google.maps.Marker({
       position: {lat: this.producto.address.latitude, lng: this.producto.address.longitude},
-      map: map,      
-      title: 'hola',
+      map: map,            
       label: {        
-        color: "#222428",
-        fontSize: "14px",
+        color: "#ff5f90",
+        fontSize: "16px",
         fontWeight: 'bold',
         text: this.producto.name
       },
-      icon: {
-        url: '../../assets/icon/marker.png',
-        labelOrigin: new google.maps.Point(73, 15),      
-      }
+      icon: '../../assets/icon/marker.png',
     });
   }
 

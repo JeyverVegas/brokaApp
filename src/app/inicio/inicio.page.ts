@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
@@ -15,25 +15,13 @@ import { ShowProductPage } from '../show-product/show-product.page';
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
 })
-export class InicioPage implements OnInit {
+export class InicioPage {
 
   productos = new BehaviorSubject([]);
-
+  total = new BehaviorSubject(0);
   slideOpts = {
     direction: 'vertical',
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      dynamicBullets: true,
-      dynamicMainBullets: 4,
-      clickable: true,
-      renderBullet: function (index) {
-        return '<span class="swiper-pagination-bullet swiper-pagination-bullet-active-main custom-bullets-inicio">' + (index + 1) + '</span>';
-      }
-    }
   };
-
-  @ViewChild('slideHome', { static: true }) protected slides: IonSlides;
 
   constructor(
     private productosService: ProductosService,
@@ -47,15 +35,13 @@ export class InicioPage implements OnInit {
     private router: Router
   ) { }
 
-  async ngOnInit() {
-
-  }
-
   async ionViewDidEnter() {
-    //alert(JSON.stringify(this.authService.user));
-    this.slides.update();
-    this.productos = await this.productosService.getProducts();
-    console.log(this.productos.getValue());
+    this.productos = this.productosService.getProducts();
+    this.total = this.productosService.getTotal();
+    console.log(this.authService.user)
+    console.log(this.productos.subscribe(valor => {
+      console.log(valor);
+    }));
   }
 
   async openProduct(producto) {
@@ -70,13 +56,20 @@ export class InicioPage implements OnInit {
     modal.present();
   }
 
+  findPrice(prices: any[]) {
+    var price = null;
+    if (this.productosService.filtros.currency) {
+      price = prices.find(price => price.currency.id == this.productosService.filtros.currency);
+    } else {
+      price = prices[0];
+    }
+    return price;
+  }
+
   async abriFiltros() {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage,
-      componentProps: {
-        minMax: this.productosService.getMaxAndMin(await this.productosService.findProducts())
-      }
+      component: FiltrosPage
     });
 
     modal.present();
@@ -118,7 +111,6 @@ export class InicioPage implements OnInit {
               for (let [index, p] of this.productos.getValue().entries()) {
                 if (p.id === product.id) {
                   this.productos.getValue().splice(index, 1);
-                  this.slides.update();
                 }
               }
               loading.dismiss().then(() => {
@@ -138,50 +130,70 @@ export class InicioPage implements OnInit {
   }
 
   async initChat(product) {
-
     this.playSound();
-    this.alertCtrl.create({
-      header: '¿Desea intentar matchear este anuncio?',
-      message: product.name,
-      buttons: [
-        {
-          text: 'no',
-          handler: ()=>{
-            this.playSound();
-          }
-        },
-        {
-          text: 'si',
-          handler: async () => {
-            this.playSound();
-            const loading = await this.loadingCtrl.create({
-              spinner: 'dots',
-              message: 'Enviando Mensaje.'
-            });
-            loading.present();
-            let mensaje = {
-              content: 'Hola buenos dias quisiera matchear ' + product.name,
-              recipient_id: product.realEstateAgency.user_id
-            }
-            this.http.post(this.authService.api + '/chats', mensaje, {
-              headers: this.authService.authHeader
-            }).toPromise().then(async (response: any) => {
-              await loading.dismiss();
-              this.router.navigateByUrl('/tabs/tabs/chat');
-            }).catch(async err => {
-              await loading.dismiss();
-              console.log(err);
-            })
-          }
-        }
-      ]
-    }).then(a => a.present());
 
+    if (this.authService.user.profile && this.authService.user.address) {
+      this.alertCtrl.create({
+        header: '¿Desea intentar matchear este anuncio?',
+        message: product.name,
+        buttons: [
+          {
+            text: 'no',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'si',
+            handler: async () => {
+              this.playSound();
+              const loading = await this.loadingCtrl.create({
+                spinner: 'dots',
+                message: 'Enviando Mensaje.'
+              });
+              loading.present();
+              let mensaje = {
+                content: 'Hola buenos dias quisiera matchear ' + product.name,
+                recipient_id: product.realEstateAgency.user_id
+              }
+              this.http.post(this.authService.api + '/chats', mensaje, {
+                headers: this.authService.authHeader
+              }).toPromise().then(async (response: any) => {
+                await loading.dismiss();
+                this.router.navigateByUrl('/tabs/tabs/chat');
+              }).catch(async err => {
+                await loading.dismiss();
+                console.log(err);
+              })
+            }
+          }
+        ]
+      }).then(a => a.present());
+    } else {
+      this.alertCtrl.create({
+        header: 'Debe completar primero su perfil',
+        message: 'Para poder matchear una propiedad primero debe completar su perfil ;).',
+        buttons: [
+          {
+            text: 'SEGUIR MIRANDO',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'COMPLETAR PERFIL',
+            handler: async () => {
+              this.playSound();
+              this.router.navigateByUrl('/user-profile');
+            }
+          }
+        ]
+      }).then(a => a.present());
+    }
   }
 
   async doRefresh(event) {
     this.productos = await this.productosService.getProducts();
-    this.slides.update();
     event.target.complete();
   }
 
