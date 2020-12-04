@@ -23,6 +23,46 @@
     background: var(--ion-color-secondary);
 }
 
+.various-img-container{
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    flex-flow: wrap;
+}
+
+.chat-img-container{
+    position: relative; 
+    height: 35vw;
+    width: 30vw; 
+    margin-bottom: 5px;
+    background-position: center center;
+    background-size: 100% 100%;
+    border-radius: 5px;
+}
+
+.chat-file-container{
+    display: flex;
+    align-items: center;
+    background-color: hsla(0,0%,100%,.6);
+    padding: .5rem;
+    border-radius: .75rem;
+    color: #000;
+}
+
+.more-img-button{
+    background: rgba(0, 0, 0, .5);
+    color: white;
+    display: flex;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    div{
+        margin: auto;
+    }
+}
+
 .time{
     color: #ffffff;
     float: right;

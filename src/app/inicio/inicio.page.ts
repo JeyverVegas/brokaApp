@@ -35,7 +35,7 @@ export class InicioPage {
     private router: Router
   ) { }
 
-  async ionViewDidEnter() {
+  ionViewDidEnter() {
     this.productos = this.productosService.getProducts();
     this.total = this.productosService.getTotal();
     console.log(this.authService.user)

@@ -97,8 +97,9 @@ export class ChatService {
     });
   }
 
-  sendMessage(newMessage) {    
-    return this.http.post(this.authService.api + '/chats/' + newMessage.chat_id + '/messages', { content: newMessage.content },
+  sendMessage(newMessage: any) {
+
+    return this.http.post(this.authService.api + '/chats/' + newMessage.chat_id + '/messages', newMessage.formData,
       { headers: this.authService.authHeader }).toPromise();
   }
 

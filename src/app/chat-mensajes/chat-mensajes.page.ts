@@ -4,8 +4,10 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/n
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ActionSheetController, IonContent, LoadingController, ModalController, NavParams, Platform, ToastController } from '@ionic/angular';
+import { ActionSheetController, IonContent, IonGrid, LoadingController, ModalController, NavParams, Platform, ToastController } from '@ionic/angular';
 import { finalize } from 'rxjs/operators';
+import { ChatImagesPreviewPage } from '../chat-images-preview/chat-images-preview.page';
+import { SelectFilePage } from '../select-file/select-file.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -21,17 +23,17 @@ export class ChatMensajesPage implements OnInit {
   @Input() chat: any;  
 
   nuevoMensaje = '';
-
+  loadOldMessages = false;
   mensajes = [];
 
   files = [];
 
   @ViewChild(IonContent) content: IonContent;
+  @ViewChild(IonGrid) grid: IonGrid;
 
   constructor(    
     private modalCtrl: ModalController,
-    private webview: WebView,
-    private actionSheetController: ActionSheetController,
+    private webview: WebView,    
     private camera: Camera,
     private file: File,
     private filePath: FilePath,
@@ -56,10 +58,11 @@ export class ChatMensajesPage implements OnInit {
       this.chat.messages = response.data;      
       this.chat.messages.sort((a, b) => {
         return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
-      });            
+      });
       setTimeout(() => {
         this.content.scrollToBottom(200);
-      });      
+      });
+      console.log(this.chat.messages);
       loading.dismiss();
     }).catch(err =>{
       loading.dismiss();
@@ -68,23 +71,80 @@ export class ChatMensajesPage implements OnInit {
   }
 
   doRefresh(event){
-    this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: any)=>{
-      let oldMessages:[any] = response.data;
+    this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: {data: any[]})=>{
+      if(response.data.length < 1){
+        event.target.disabled = true;
+        return;
+      }
+      console.log(response);
+      let oldMessages: any[] = response.data;      
       oldMessages.sort((a, b) => {
-        return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       });      
-      this.chat.messages.unshift(...oldMessages);      
-      event.target.complete();
+      console.log('oldMessages', oldMessages);
+      console.log('chatMessages', this.chat.messages);
+      this.chat.messages.unshift(...oldMessages);
     }).catch(error =>{
       console.log(error);
+    }).finally(() =>{
+      event.target.complete();
     });    
+  }
+
+  logScrollEnd(event){
+    if(event.detail.scrollTop == 0){
+      console.log('hice srcoll');
+      /* this.loadOldMessages = true;
+      this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: any)=>{
+        let oldMessages:[any] = response.data;
+        oldMessages.sort((a, b) => {
+          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+        });
+        console.log(oldMessages)
+        this.chat.messages.unshift(...oldMessages);              
+      }).catch(error =>{
+        console.log(error);
+      }).finally(() =>{
+        this.loadOldMessages = false;
+      });       */
+    }    
+  }
+
+  allIsImage(attachments: any[]){
+    if(attachments){
+      var allimg = false;
+      var re = /(?:\.([^.]+))?$/;
+      attachments.forEach(attachment =>{
+        var extension = re.exec(attachment.url);
+        if( extension[0] == '.jpeg' || extension[0] == '.png' || extension[0] == '.jpg' ) {
+          allimg = true;
+        }else{
+          allimg = false;
+        }
+      })
+      return allimg;
+    }
+  }
+
+  openimagePreview(attachments: []){
+    this.modalCtrl.create({
+      component: ChatImagesPreviewPage,
+      componentProps: {
+        images: attachments,
+        chat: this.chat
+      }
+    }).then(m => m.present());
   }
 
   enviarMensaje() {
     this.playSound();    
 
+    const formData = new FormData();
+
+    formData.append('content', this.nuevoMensaje);
+
     let newMessage = {
-      content: this.nuevoMensaje,
+      formData: formData,
       chat_id: this.chat.id
     }
 
@@ -123,34 +183,44 @@ export class ChatMensajesPage implements OnInit {
   /*SELECCIONAR ORIGEN DEL ARCHIVO*/
   async selectFile() {
     this.playSound();
-    const actionSheet = await this.actionSheetController.create({
-      header: "Adjunte un Archivo:",
-      buttons: [{
-        text: 'Galeria',
-        icon: 'image-outline',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-        }
-      },
-      {
-        text: 'Camara',
-        icon: 'camera-outline',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.CAMERA);
-        }
-      },
-      {
-        text: 'PDF',
-        icon: 'document-outline'
-      },
-      {
-        text: 'Cancel',
-        role: 'cancel'
+    const modal = await this.modalCtrl.create({
+      component: SelectFilePage,
+      id: 'selectfilemodal',
+      cssClass: 'select-file-modal',
+      swipeToClose: true,
+      mode: 'ios',
+      componentProps: {
+        chat: this.chat,
+        content: this.content
       }
-      ]
     });
-    await actionSheet.present();
+    modal.present();
   }
+
+  closeModal() {
+    this.playSound();
+    this.modalCtrl.dismiss();
+  }
+
+  playSound(){
+    this.smartAudio.play('tabSwitch');
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /*OBTENGO LA IMAGEN*/
   takePicture(sourceType: PictureSourceType) {
@@ -273,15 +343,6 @@ export class ChatMensajesPage implements OnInit {
           this.presentToast('Ha fallado la carga de la imagen.', 'danger');
         }
       });
-  }
-
-  closeModal() {
-    this.playSound();
-    this.modalCtrl.dismiss();
-  }
-
-  playSound(){
-    this.smartAudio.play('tabSwitch');
   }
 
 }

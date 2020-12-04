@@ -227,3 +227,42 @@
         border-radius: 25px 25px 0px 0px;
     }   
 }
+
+.select-file-modal{
+    padding: 110% 0% 0 0% !important;
+    .modal-wrapper {
+        border-radius: 25px 25px 0px 0px;
+    }   
+}
+
+.close-header{
+    padding: 15px 25px 25px 25px;
+    background: var(--ion-color-primary);
+}
+
+
+.div-custom{
+    height: 25%;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    border-radius: 40px 40px 0px 0px;
+}
+
+.b-primary{
+    color: var(--ion-color-primary-contrast);
+    background: var(--ion-color-primary);    
+}
+
+.b-secondary{
+    color: var(--ion-color-secondary-contrast);
+    background: var(--ion-color-secondary);
+}
+
+.b-warning{
+    color: var(--ion-color-warning-contrast);
+    background: var(--ion-color-warning);
+}
+

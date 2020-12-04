@@ -1,0 +1,40 @@
+<ion-header class="ion-no-border">
+  <ion-item lines="none" color="primary">
+    <ion-button style="margin-inline-end: 5px;" fill="clear" color="light" slot="start" (click)="closeModal()">
+      <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-avatar slot="start">
+      <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo" class="animate__animated animate__fadeIn"></ion-img>
+      <ion-skeleton-text *ngIf="!cargo && chat.image" animated></ion-skeleton-text>
+      <img src="../../assets/images/user.png" *ngIf="!chat.image">
+    </ion-avatar>
+    <ion-label color="light">
+      <h3><b>{{chat.name}}</b></h3>      
+    </ion-label>
+  </ion-item>
+</ion-header>
+
+<ion-content style="--background: black">
+  <ion-slides #topslides style="height: 100%;" (ionSlideDidChange)="slideChanged()">
+    <ion-slide *ngFor="let img of imagesToShow; let i = index">
+      <ion-img [src]="img" alt="" style="max-width: 100%;"></ion-img>
+    </ion-slide>
+  </ion-slides>
+</ion-content>
+
+<ion-footer class="b-black">
+  <div class="input-container">
+    <ion-textarea [(ngModel)]="mensaje" class="message-input" placeholder="Escribe un mensaje...">
+
+    </ion-textarea>
+    <ion-button slot="end" fill="clear" color="secondary" mode="md" (click)="sendMessage()">
+      <ion-icon name="send" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  
+  <ion-slides #bottomslides [options]="slideOpts" class="slider-bottom">
+    <ion-slide *ngFor="let img of imagesToShow; let i = index" [class.active-img]="i === selectedImg" (click)="slideTo(i)">
+      <ion-img [src]="img" alt="" style="max-width: 90%;"></ion-img>
+    </ion-slide>    
+  </ion-slides>
+</ion-footer>

@@ -1,0 +1,39 @@
+.b-black{
+    background: black;
+}
+
+.input-container{
+    align-items: center; 
+    border-bottom: 1px solid gray; 
+    display: flex; 
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.message-input{
+    color: var(--ion-color-light);        
+}
+
+.message-input::placeholder{
+    color: var(--ion-color-medium);
+}
+
+.slider-bottom{
+    background: black;
+    height: 10vh;
+    ion-slide{
+        ion-img{
+            opacity: .5;
+        }
+    }
+}
+
+
+
+.active-img{
+    border: solid 2px var(--ion-color-secondary);
+    ion-img{
+        opacity: 1 !important;
+    }
+}
+

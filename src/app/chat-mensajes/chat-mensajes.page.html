@@ -4,23 +4,28 @@
       <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-avatar slot="start">
-      <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo" class="animate__animated animate__fadeIn"></ion-img>
+      <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo"
+        class="animate__animated animate__fadeIn"></ion-img>
       <ion-skeleton-text *ngIf="!cargo && chat.image" animated></ion-skeleton-text>
       <img src="../../assets/images/user.png" *ngIf="!chat.image">
     </ion-avatar>
     <ion-label color="light">
-      <h3><b>{{chat.name}}</b></h3>      
+      <h3><b>{{chat.name}}</b></h3>
     </ion-label>
   </ion-item>
 </ion-header>
 
 <ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" mode="ios">
-    <ion-refresher-content
-    refreshingText="Cargando Mensajes..."></ion-refresher-content>
-  </ion-refresher>
+  <ion-infinite-scroll position="top" threshold="100px" (ionInfinite)="doRefresh($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="lines"
+      loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
   <ion-grid>
-    <ion-row *ngFor="let mensaje of chat.messages">
+    <ion-row *ngFor="let mensaje of chat.messages" class="animate__animated animate__fadeInDown animate__faster">
+
       <ion-col size="9" *ngIf="usuario.id !== mensaje.user_id" class="mensaje otro-mensaje">
         <span>{{mensaje.content}}</span>
         <div class="time ion-text-right">
@@ -30,12 +35,38 @@
       </ion-col>
 
       <ion-col offset="3" size="9" *ngIf="usuario.id === mensaje.user_id" class="mensaje mi-mensaje">
+        <div class="ion-text-center" *ngIf="allIsImage(mensaje.attachments) && mensaje.attachments.length == 1">
+          <img style="max-width: 100%; max-height: 40vh;" [src]="mensaje.attachments[0].url">
+        </div>
+        <div class="various-img-container" *ngIf="allIsImage(mensaje.attachments) && mensaje.attachments.length > 1">
+          <div class="chat-img-container" [style.backgroundImage]="'url('+ img.url +')'"
+            *ngFor="let img of mensaje.attachments | slice:0:4; let last = last;"
+            (click)="openimagePreview(mensaje.attachments)">
+            <div *ngIf="last && mensaje.attachments.length > 4" class="ion-activatable ripple-parent more-img-button">
+              <div>
+                <ion-icon name="image" slot="start"></ion-icon>
+                +{{mensaje.attachments.length - 4}}
+              </div>
+              <ion-ripple-effect></ion-ripple-effect>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!allIsImage(mensaje.attachments)">
+          <div class="chat-file-container" *ngFor="let attachment of mensaje.attachments">
+            <img src="../../assets/icon/pdf.png" style="max-width: 150%;" alt="">
+            <p>{{attachment.name}}</p>
+            <ion-button slot="end">
+              <ion-icon name="arrow-down-circle-outline" slot="icon-only"></ion-icon>
+            </ion-button>            
+          </div>  
+        </div>
         <span>{{mensaje.content}}</span>
         <div class="time ion-text-right">
           <br>
           {{mensaje.updated_at | date:'dd/MM/yyyy, hh:mm aa'}}
         </div>
       </ion-col>
+
     </ion-row>
   </ion-grid>
 </ion-content>
@@ -44,23 +75,6 @@
 
 <ion-footer>
   <ion-toolbar>
-    <div *ngIf="files.length > 0" style="display: flex;">
-      <div *ngFor="let file of files" style="margin-right: 10px; position: relative;">
-        <div *ngIf="file.type == 'img'" class="ion-text-center">
-          <img style="width: 70px; height: 70px;" src="{{file.resPath}}" alt="">
-          <ion-button size="small" class="delete-button" style="top: -5px; right: -10px;" color="dark">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </div>
-        <div *ngIf="file.type == 'pdf'" class="ion-text-center">
-          <img style="width: 50px; height: 70px;" src="../../assets/icon/pdf.png" alt="">
-          <p style="margin: 0;">{{file.name}}</p>
-          <ion-button size="small" class="delete-button" style="top: -5px; right: 10px;" color="dark">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </div>
-      </div>
-    </div>
     <ion-buttons slot="start">
       <ion-button expand="block" fill="clear" color="medium" class="mensaje-button" (click)="selectFile()">
         <ion-icon name="add" slot="icon-only"></ion-icon>

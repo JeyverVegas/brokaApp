@@ -21,6 +21,7 @@ import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { ImageModalPageModule } from './image-modal/image-modal.module';
 import { MapOptionsPageModule } from './map-options/map-options.module';
+import { SelectFilePageModule } from './select-file/select-file.module';
 
 
 
@@ -35,6 +36,7 @@ import { MapOptionsPageModule } from './map-options/map-options.module';
     HttpClientModule,
     ImageModalPageModule,
     MapOptionsPageModule,    
+    SelectFilePageModule
   ],
   providers: [
     StatusBar,

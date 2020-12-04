@@ -8,6 +8,8 @@ import { ChatMensajesPageRoutingModule } from './chat-mensajes-routing.module';
 
 import { ChatMensajesPage } from './chat-mensajes.page';
 import { AutosizeModule } from 'ngx-autosize';
+import { SelectFilePageModule } from '../select-file/select-file.module';
+import { ChatImagesPreviewPageModule } from '../chat-images-preview/chat-images-preview.module';
 
 @NgModule({
   imports: [
@@ -15,7 +17,9 @@ import { AutosizeModule } from 'ngx-autosize';
     FormsModule,
     IonicModule,
     ChatMensajesPageRoutingModule,
-    AutosizeModule
+    AutosizeModule,
+    SelectFilePageModule,
+    ChatImagesPreviewPageModule
   ],
   declarations: [ChatMensajesPage]
 })

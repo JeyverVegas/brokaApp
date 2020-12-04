@@ -110,7 +110,7 @@ export class BrokaMarkers extends google.maps.OverlayView {
 
   private div_: HTMLElement | null;
 
-  constructor(latlng, imageSrc, callback?, user?) {
+  constructor(latlng: any, imageSrc: string, callback?: any, user?: boolean) {
     super();
     this.latlng_ = latlng;
     this.imageSrc = imageSrc;
@@ -141,7 +141,7 @@ export class BrokaMarkers extends google.maps.OverlayView {
     this.div_.appendChild(img2);
 
     const panes = this.getPanes();
-    panes.overlayImage.appendChild(this.div_);
+    panes.overlayMouseTarget.appendChild(this.div_);
   }
 
   draw() {
@@ -153,8 +153,11 @@ export class BrokaMarkers extends google.maps.OverlayView {
       this.div_.style.left = point.x + 'px';
       this.div_.style.top = point.y + 'px';
     }
+
+    var me = this;
+
     google.maps.event.addDomListener(this.div_, "click", function (event) {
-      google.maps.event.trigger(null, "click");
+      google.maps.event.trigger(me, "click");
     });
   }
 

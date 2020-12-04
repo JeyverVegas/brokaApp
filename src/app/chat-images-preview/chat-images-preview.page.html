@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-item color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-label>
+      <h3>{{chat.name}}</h3>
+      <p>
+        {{images.length}} fotos {{images[0].created_at | date:'dd'}} de {{images[0].created_at | date:'MMMM'}} de {{images[0].created_at | date:'yyyy'}}
+      </p>
+    </ion-label>
+  </ion-item>
+</ion-header>
+
+<ion-content>
+  <div *ngFor="let img of images" class="image-container">
+    <img style="max-width: 100%;" [src]="img.url" alt="">
+    <div class="hour-display">
+      {{img.created_at | date:'hh:mm aaa'}}
+    </div>
+  </div>  
+</ion-content>

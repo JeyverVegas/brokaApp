@@ -3,7 +3,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
-declare var google:any;
+declare var google: any;
 
 @Component({
   selector: 'app-map-options',
@@ -12,7 +12,7 @@ declare var google:any;
 })
 export class MapOptionsPage implements OnInit {
 
-  @Input() radius: number;  
+  @Input() radius: number;
   constructor(
     private modalCtrl: ModalController,
     private smartAudio: SmartAudioService,
@@ -20,43 +20,43 @@ export class MapOptionsPage implements OnInit {
     private loadingCtrl: LoadingController
   ) { }
 
-  ngOnInit() {    
+  ngOnInit() {
   }
 
-  closeModal(){
+  closeModal() {
     this.playSound();
-    this.modalCtrl.dismiss({position: false, cerrarMapa: false, radius: this.radius});
+    this.modalCtrl.dismiss({ radius: this.radius });
   }
 
-  async meLocation(){
+  async meLocation() {
     this.playSound();
     let loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Obteniendo Ubicación.'
     });
-    loading.present();    
-    this.geolocation.getCurrentPosition().then(location =>{
-      let currentPosition = new google.maps.LatLng(location.coords.latitude, location.coords.longitude)
-      this.modalCtrl.dismiss({currentPosition: currentPosition, position: true, cerrarMapa: false, radius: this.radius}).then(()=>{
+    loading.present();
+    this.geolocation.getCurrentPosition().then(location => {
+      let currentPosition = { lat: location.coords.latitude, lng: location.coords.longitude };
+      this.modalCtrl.dismiss({ currentPosition: currentPosition, radius: this.radius }).then(() => {
         loading.dismiss();
-      });      
-    }).catch(error =>{
+      });
+    }).catch(error => {
       loading.dismiss();
       console.log(error);
     })
   }
 
   addKm() {
-    this.radius++;        
+    this.radius++;
   }
 
   removeKm() {
-    this.radius--;    
+    this.radius--;
   }
 
-  cerrarMapa(){
+  cerrarMapa() {
     this.playSound();
-    this.modalCtrl.dismiss({position: false, cerrarMapa: true, radius: this.radius});
+    this.modalCtrl.dismiss({ cerrarMapa: true });
   }
 
   playSound() {

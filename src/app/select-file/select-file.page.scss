@@ -1,0 +1,21 @@
+.buttons-container{
+    display: flex; 
+    justify-content: space-evenly; 
+    width: 100%;
+}
+
+.div-button{
+    position: relative;    
+    padding: 10px;
+    border-radius: 50%;
+    label{
+        ion-icon{
+            width: 6vh;
+            height: 6vh;
+        }
+    }    
+}
+
+input[type="file"] {
+    display: none;
+}

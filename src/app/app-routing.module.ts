@@ -52,8 +52,7 @@ const routes: Routes = [
   {
     path: 'new-password',
     loadChildren: () => import('./new-password/new-password.module').then(m => m.NewPasswordPageModule)
-  }  
-
+  },  
 ];
 @NgModule({
   imports: [

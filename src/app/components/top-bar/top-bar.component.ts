@@ -28,10 +28,7 @@ export class TopBarComponent implements OnInit {
   async abriFiltros(){
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage,
-      componentProps: {
-        minMax: this.productosService.getMaxAndMin(await this.productosService.findProducts())
-      }
+      component: FiltrosPage,      
     });
 
     modal.present();

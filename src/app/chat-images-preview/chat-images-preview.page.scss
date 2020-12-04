@@ -1,0 +1,15 @@
+.image-container{    
+    position: relative; 
+    margin-bottom: 10px; 
+    text-align: center;
+}
+
+.hour-display{
+    position: absolute; 
+    bottom: 10px; 
+    right: 10px; 
+    background: rgba(0, 0, 0, .5); 
+    color: white; 
+    padding: 5px; 
+    border-radius: 5px;
+}

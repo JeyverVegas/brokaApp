@@ -1,0 +1,40 @@
+<ion-header class="close-header ion-activatable ripple-parent"
+  (click)="closeModal()">
+  <ion-label color="light">
+    toque para cerrar
+    <ion-icon name="caret-down-outline" slot="end"></ion-icon>
+  </ion-label>
+  <ion-ripple-effect></ion-ripple-effect>
+  <div class="div-custom"></div>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>
+    <ion-text color="medium">
+      Seleccione una de las opciones:
+    </ion-text>
+  </p>
+  <br>
+  <div class="buttons-container">
+    <div class="ion-activatable ripple-parent div-button b-warning" (click)="playSound()">
+      <label>
+        <ion-icon name="camera"></ion-icon>
+      </label>      
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="ion-activatable ripple-parent div-button b-primary" (click)="playSound()">
+      <label for="images">
+        <ion-icon name="images"></ion-icon>
+      </label>
+      <input type="file" name="images" id="images" accept="image/png, image/jpeg, image/gif" (change)="showImage($event)" multiple>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+    <div class="ion-activatable ripple-parent div-button b-secondary" (click)="playSound()">
+      <label for="files">
+        <ion-icon name="document" slot="icon-only"></ion-icon>
+      </label>
+      <input type="file" name="files" id="files" accept="application/pdf" (change)="uploadFiles($event)" multiple>
+      <ion-ripple-effect></ion-ripple-effect>
+    </div>
+  </div>  
+</ion-content>
