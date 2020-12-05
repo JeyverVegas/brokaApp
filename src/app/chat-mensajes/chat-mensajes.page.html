@@ -17,9 +17,7 @@
 
 <ion-content>
   <ion-infinite-scroll position="top" threshold="100px" (ionInfinite)="doRefresh($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="lines"
-      loadingText="Cargando...">
+    <ion-infinite-scroll-content loadingSpinner="lines" loadingText="Cargando...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
@@ -36,11 +34,11 @@
 
       <ion-col offset="3" size="9" *ngIf="usuario.id === mensaje.user_id" class="mensaje mi-mensaje">
         <div class="ion-text-center" *ngIf="allIsImage(mensaje.attachments) && mensaje.attachments.length == 1">
-          <img style="max-width: 100%; max-height: 40vh;" [src]="mensaje.attachments[0].url">
+          <img style="max-width: 100%; max-height: 40vh;" [src]="mensaje.attachments[0].url" (click)="openimagePreview(mensaje.attachments)">
         </div>
+
         <div class="various-img-container" *ngIf="allIsImage(mensaje.attachments) && mensaje.attachments.length > 1">
-          <div class="chat-img-container" [style.backgroundImage]="'url('+ img.url +')'"
-            *ngFor="let img of mensaje.attachments | slice:0:4; let last = last;"
+          <div class="chat-img-container" [style.backgroundImage]="'url('+ img.url +')'" *ngFor="let img of mensaje.attachments | slice:0:4; let last = last;"
             (click)="openimagePreview(mensaje.attachments)">
             <div *ngIf="last && mensaje.attachments.length > 4" class="ion-activatable ripple-parent more-img-button">
               <div>
@@ -52,13 +50,17 @@
           </div>
         </div>
         <div *ngIf="!allIsImage(mensaje.attachments)">
-          <div class="chat-file-container" *ngFor="let attachment of mensaje.attachments">
-            <img src="../../assets/icon/pdf.png" style="max-width: 150%;" alt="">
-            <p>{{attachment.name}}</p>
-            <ion-button slot="end">
-              <ion-icon name="arrow-down-circle-outline" slot="icon-only"></ion-icon>
-            </ion-button>            
-          </div>  
+          <ion-item class="chat-file-container" lines="none" *ngFor="let attachment of mensaje.attachments">
+            <img src="../../assets/icon/pdf.png" style="max-width: 15%" slot="start" alt="">
+            <ion-label class="ion-text-wrap" color="light">
+              {{attachment.name}}
+            </ion-label>
+            <ion-buttons slot="end">
+              <ion-button [download]="attachment.url">
+                <ion-icon name="arrow-down-circle-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>          
         </div>
         <span>{{mensaje.content}}</span>
         <div class="time ion-text-right">

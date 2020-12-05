@@ -56,7 +56,7 @@ export interface ProductFilters {
   sizeBetween?: [number, number];
   roomsBetween?: [number, number];
   bathroomsBetween?: [number, number];
-  environmentsBetween?: [number, number];
+  environmentsBetween?: [number?, number?];
   status?: Array<number>;
   hasAnyFeatures?: Array<number>;
   realEstateAgency?: Array<number>;

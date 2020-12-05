@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, NavParams } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonSlides, LoadingController, ModalController, NavParams, ToastController } from '@ionic/angular';
 import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures } from '../interface';
+import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
@@ -15,180 +16,134 @@ export class FiltrosPage implements OnInit {
   contractTypes: ContractType[] = [];
   propertyStatuses: PropertyStatus[] = [];
   features: PropertyFeatures[] = [];
-  showAll = true;
+  provincies = [];
+  partidos = [];  
+  @ViewChild('filtrosslider', { static: true }) protected slides: IonSlides;
 
+  slidesOpts = {
+    allowTouchMove: false
+  }
 
-  rangeBetweens = {
-    price: {
-      min: 0,
-      max: 0
-    },
-    size: {
-      min: 0,
-      max: 0
-    },
-    rooms: {
-      min: 0,
-      max: 0
-    },
-    bathrooms: {
+  minMaxRange: any = {
+    environments: {
       min: 0,
       max: 0
     }
-  }
+  };
 
-  valuesOfRange = {
-    price: {
-      lower: 0,
-      upper: 0
-    },
-    size: {
-      lower: 0,
-      upper: 0
-    },
-    rooms: {
-      lower: 0,
-      upper: 0
-    },
-    bathrooms: {
-      lower: 0,
-      upper: 0
-    }
+  environmentsBetween = {
+    lower: 0,
+    upper: 0
   }
-
-  valueOfType = [];
 
 
   filtros: ProductFilters = {
-    name: '',
-    type: [],
     contractType: [],
-    status: [],
-    hasAnyFeatures: [],
-    realEstateAgency: [],
-    sizeBetween: [0, 999999],
-    roomsBetween: [0, 999999],
-    bathroomsBetween: [0, 99999],
-  };
-
-
-
-
-  customAlertOptions: any = {
-    cssClass: 'hello',
+    type: [],
+    environmentsBetween: [],
+    state: 0,
+    city: 0
   };
 
   constructor(
     private modalCtrl: ModalController,
+    private toastController: ToastController,
     private productosService: ProductosService,
     private smartAudio: SmartAudioService,
     private loadingCtrl: LoadingController,
+    private addressService: AddressService,
     private navParams: NavParams
   ) { }
 
-  async ngOnInit() {
+  async ngOnInit() {    
     const loading = await this.loadingCtrl.create({
-      message: 'Cargando...',
-      spinner: 'bubbles'
+      spinner: 'lines',
+      message: 'Cargando...'
     });
-    await loading.present();
-    this.propertyTypes = await this.productosService.getPropertyType();
-    this.contractTypes = await this.productosService.getContractType();
-    this.propertyStatuses = await this.productosService.getPropertyStatuses();
-    this.features = await this.productosService.getPropertyFeatures();
-    this.rangeBetweens = this.navParams.get('minMax');
-    
-    if (!this.productosService.filtrado) {
+    try {      
+      await loading.present();
+      this.contractTypes = await this.productosService.getContractType();
+      this.propertyTypes = await this.productosService.getPropertyType();
+      this.minMaxRange = await this.productosService.getFiltersRange();
+      this.environmentsBetween.lower = this.minMaxRange.environments.min;
+      this.environmentsBetween.upper = this.minMaxRange.environments.max;
+      this.provincies = await this.addressService.getStates();
 
-      /* this.valuesOfRange.price.lower = await this.navParams.get('minMax').price.min;
-      this.valuesOfRange.price.upper = await this.navParams.get('minMax').price.max;
-      */
-      this.valuesOfRange.size.lower = await this.navParams.get('minMax').size.min;
-      this.valuesOfRange.size.upper = await this.navParams.get('minMax').size.max;
-
-      this.valuesOfRange.rooms.lower = await this.navParams.get('minMax').rooms.min;
-      this.valuesOfRange.rooms.upper = await this.navParams.get('minMax').rooms.max;
-
-      this.valuesOfRange.bathrooms.lower = await this.navParams.get('minMax').bathrooms.min;
-      this.valuesOfRange.bathrooms.upper = await this.navParams.get('minMax').bathrooms.max;
-
-    }else{
-      /* this.valuesOfRange.price.lower = await this.navParams.get('minMax').price.min;
-      this.valuesOfRange.price.upper = await this.navParams.get('minMax').price.max; */
-
-      this.valuesOfRange.size.lower = this.productosService.filtros.sizeBetween[0];
-      this.valuesOfRange.size.upper = this.productosService.filtros.sizeBetween[1];
-
-      this.valuesOfRange.rooms.lower = this.productosService.filtros.roomsBetween[0];
-      this.valuesOfRange.rooms.upper = this.productosService.filtros.roomsBetween[1];
+      console.log(this.provincies);
+      await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      this.presentToast('Ha ocurrido un error al cargar los filtros', 'danger');
+      console.log(error);
       
-      this.valuesOfRange.bathrooms.lower = this.productosService.filtros.bathroomsBetween[0];
-      this.valuesOfRange.bathrooms.upper = this.productosService.filtros.bathroomsBetween[1];
+    }    
+  }
 
-      this.valueOfType = this.productosService.filtros.type.map(n => String(n));
-
-      this.filtros.contractType = this.productosService.filtros.contractType;
-
-      this.filtros.status = this.productosService.filtros.status;
-
-      this.filtros.hasAnyFeatures = this.productosService.filtros.hasAnyFeatures;
-    }
-
-
-    //console.log(this.propertyTypes);
-    //console.log(this.addContractType(1, false));
-    await loading.dismiss();
-
+  goBack(){
+    this.playSound();
+    this.slides.slidePrev();
   }
 
   playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
-  addContractType(event) {
-    if (event.target.checked) {
-      this.filtros.contractType = [Number(event.target.value), ...this.filtros.contractType];
-    } else {
-      this.filtros.contractType = this.filtros.contractType.filter(_id => _id != event.target.value);
+  setcontractType(id: number){
+    this.playSound();
+    this.filtros.contractType[0] = id;
+    this.slides.slideNext();
+  }
+
+  setpropertyType(id: number){
+    this.playSound();
+    this.filtros.type[0] = id;
+    this.slides.slideNext();
+  }
+
+  setEnvironmentsBetween(){
+    this.playSound();
+    this.filtros.environmentsBetween[0] = this.environmentsBetween.lower;
+    this.filtros.environmentsBetween[1] = this.environmentsBetween.upper;
+    this.slides.slideNext();
+  }
+
+  async setState(){
+    if(this.filtros.state != 0){
+      const loading = await this.loadingCtrl.create({
+        spinner: 'lines',
+        message: 'Cargando partidos...'
+      });
+      await loading.present();
+      try {                
+        this.partidos = await this.addressService.getCities(this.filtros.state);
+        await loading.dismiss();
+      } catch (error) {      
+        console.log(error);        
+        await loading.dismiss();
+        this.presentToast('Ha ocurrido un error al cargar los partidos.', 'danger');
+      }      
+    }else{
+      this.filtros.city = 0;
+      this.partidos = [];
     }
   }
 
-  addStatus(event) {
-    if (event.target.checked) {
-      this.filtros.status = [Number(event.target.value), ...this.filtros.status];
-    } else {
-      this.filtros.status = this.filtros.status.filter(_id => _id != event.target.value);
-    }
-  }
-
-  addFeature(event) {
-    if (event.target.checked) {
-      this.filtros.hasAnyFeatures = [Number(event.target.value), ...this.filtros.hasAnyFeatures];
-    } else {
-      this.filtros.hasAnyFeatures = this.filtros.hasAnyFeatures.filter(_id => _id != event.target.value);
-    }
+  setStateCity(){
+    this.playSound();
+    this.slides.slideNext();
   }
 
   async aplicarFiltro() {
-    this.playSound();
-    //Baños
-    this.filtros.bathroomsBetween[0] = this.valuesOfRange.bathrooms.lower;
-    this.filtros.bathroomsBetween[1] = this.valuesOfRange.bathrooms.upper;
-    //habitaciones
-    this.filtros.roomsBetween[0] = this.valuesOfRange.rooms.lower;
-    this.filtros.roomsBetween[1] = this.valuesOfRange.rooms.upper;
-    //Tamaño
-    this.filtros.sizeBetween[0] = this.valuesOfRange.size.lower;
-    this.filtros.sizeBetween[1] = this.valuesOfRange.size.upper;
+    
+  }
 
-    this.filtros.type = this.valueOfType.map(n => Number(n));
-
-    this.productosService.filtros = this.filtros;
-
-    this.productosService.filtrado = true;
-
-    this.productosService.getProducts();
-
-    this.modalCtrl.dismiss();
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color
+    });
+    toast.present();
   }
 }

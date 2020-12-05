@@ -45,6 +45,18 @@ export class ProductosService {
     })
   }
 
+  getFiltersRange(): Promise<any>{
+    return new Promise((resolve) => {
+      this.http.get(this.authService.api + '/ranges', {
+        headers: this.authService.authHeader
+      }).subscribe((response: any) => {
+        resolve(response);
+      }, error => {
+        alert(JSON.stringify(error));
+      })
+    });
+  }
+
   getPropertyType(): Promise<PropertyType[]> {
     return new Promise((resolve) => {
       this.http.get(this.authService.api + '/property-types', {

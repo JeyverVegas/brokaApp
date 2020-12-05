@@ -52,7 +52,11 @@ const routes: Routes = [
   {
     path: 'new-password',
     loadChildren: () => import('./new-password/new-password.module').then(m => m.NewPasswordPageModule)
-  },  
+  },
+  {
+    path: 'filtros',
+    loadChildren: () => import('./filtros/filtros.module').then(m => m.FiltrosPageModule)
+  }  
 ];
 @NgModule({
   imports: [

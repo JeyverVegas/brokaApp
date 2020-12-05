@@ -7,19 +7,19 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root'
 })
 export class AddressService {
-  
-  
+
+
 
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService
   ) { }
 
-  getStates(): Promise<State[]>{
-    return new Promise((resolve) =>{
+  getStates(): Promise<State[]> {
+    return new Promise((resolve) => {
       this.http.get(this.authService.api + '/states', {
         headers: this.authService.authHeader
-      }).subscribe((response: {data:State[]}) =>{        
+      }).subscribe((response: { data: State[] }) => {
         resolve(response.data);
       }, error => {
         alert(JSON.stringify(error));
@@ -27,11 +27,15 @@ export class AddressService {
     });
   }
 
-  getCities(): Promise<City[]>{
-    return new Promise((resolve) =>{
-      this.http.get(this.authService.api + '/cities', {
+  getCities(stateID?: number): Promise<City[]> {
+    return new Promise((resolve) => {
+      let query = this.authService.api + '/cities';
+      /* if (stateID) {
+        query = query + '/' + stateID;
+      } */
+      this.http.get(query, {
         headers: this.authService.authHeader
-      }).subscribe((response: {data:City[]}) =>{        
+      }).subscribe((response: { data: City[] }) => {
         resolve(response.data);
       }, error => {
         alert(JSON.stringify(error));
@@ -39,5 +43,5 @@ export class AddressService {
     });
   }
 
-  
+
 }

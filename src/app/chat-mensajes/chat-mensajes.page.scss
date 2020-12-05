@@ -40,13 +40,14 @@
     border-radius: 5px;
 }
 
-.chat-file-container{
-    display: flex;
-    align-items: center;
-    background-color: hsla(0,0%,100%,.6);
-    padding: .5rem;
-    border-radius: .75rem;
-    color: #000;
+.chat-file-container{        
+    --background: hsla(0,0%,100%,.6);    
+    --border-radius: .75rem;        
+    margin-bottom: 5px;
+    img{
+        max-width: 15%; 
+        margin-right: 5px;
+    }
 }
 
 .more-img-button{

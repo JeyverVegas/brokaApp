@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { IonContent, ModalController } from '@ionic/angular';
+import { AlertController, IonContent, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ChatMessageImagesPage } from '../chat-message-images/chat-message-images.page';
+import { ChatService } from '../servicios/chat.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
 @Component({
@@ -13,10 +14,14 @@ export class SelectFilePage implements OnInit {
 
   imagenes = [];
   @Input() chat: any;
-  @Input() content: IonContent;  
+  @Input() content: IonContent;
   constructor(
     private modalCtrl: ModalController,
-    private smartAudio: SmartAudioService,    
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
+    private smartAudio: SmartAudioService,
+    private chatService: ChatService,    
   ) { }
 
   ngOnInit() {
@@ -32,10 +37,10 @@ export class SelectFilePage implements OnInit {
   }
 
   async showImage(event) {
-    if (event.target.files) {    
+    if (event.target.files) {
       for (let index = 0; index < event.target.files.length; index++) {
         const image = event.target.files[index];
-        let imageUrl = URL.createObjectURL(image);        
+        let imageUrl = URL.createObjectURL(image);
         this.imagenes.push(imageUrl);
       }
 
@@ -48,15 +53,77 @@ export class SelectFilePage implements OnInit {
           content: this.content
         }
       }).then(m => {
-        m.present().then(() =>{
+        m.present().then(() => {
           this.modalCtrl.dismiss(null, null, 'selectfilemodal');
         })
       })
     }
   }
 
-  uploadFiles(event) {
-    console.log(event.target.files)
+  async uploadFiles(event) {
+    if (event.target.files) {
+      const alerta = await this.alertCtrl.create({
+        header: '¿Deseas enviar?',
+        message: event.target.files.length + ' Archivos.',
+        buttons: [
+          {
+            text: 'No',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'Si',
+            handler: async () => {
+              this.playSound();
+              const loading = await this.loadingCtrl.create({
+                spinner: 'lines',
+                message: 'Enviando...'
+              });
+              await loading.present();
+              this.modalCtrl.dismiss();
+              const formData = new FormData();
+              for (let index = 0; index < event.target.files.length; index++) {
+                const pdf = event.target.files[index];
+                formData.append(`attachments[${index}]`, pdf, pdf.name);
+              }
+
+              let newMessage = {
+                chat_id: this.chat.id,
+                formData: formData
+              }
+
+              this.chatService.sendMessage(newMessage).then((response: any) => {
+                this.chat.messages.push(response.data);
+                setTimeout(() => {
+                  this.content.scrollToBottom(200);
+                });
+              }).catch(err =>{
+                console.log(err);
+                this.presentToast('Ha ocurrido un error al enviar el mensaje.', 'danger');
+              }).finally(() => {
+                loading.dismiss();
+              })
+            }
+          }
+        ]
+      });
+      alerta.present();
+    }    
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      color: color,
+      buttons: [
+        {
+          text: 'ok'
+        }
+      ],
+      duration: 3000
+    });
+    toast.present();
   }
 
 }
