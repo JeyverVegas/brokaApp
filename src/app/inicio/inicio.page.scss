@@ -46,6 +46,17 @@ ion-content{
     animation: levitar 1.5s alternate infinite;
 }
 
+.buttons-container{
+    justify-content: space-between; 
+    justify-content: space-between; 
+    width: 100%; 
+    position: absolute; 
+    bottom: 10px; 
+    width: 100%; 
+    left: 0; 
+    padding: 0 20px;
+}
+
 @keyframes levitar{
     from{
         transform: translateY(0);

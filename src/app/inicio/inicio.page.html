@@ -52,17 +52,16 @@
                 </ion-slide>    
             </ion-slides>
             <div class="description-container">
-                <div class="ion-activatable ripple-parent" style="position: relative;" (click)="openProduct(producto)">
+                <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;" (click)="openProduct(producto)">
 
                     <h3 style="color: white;"><ion-icon name="location"></ion-icon> {{(producto.address.address.length>25)? (producto.address.address | slice:0:25)+'...':(producto.address.address)}}</h3>
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Ambientes: {{producto.environments}}</p>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio: {{findPrice(producto.prices).price_value}} {{findPrice(producto.prices).currency.code}}</p>
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio: {{findPrice(producto.prices)?.price_value}} {{findPrice(producto.prices)?.currency?.code}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
                 <br>
-                <ion-buttons
-                    style="justify-content: space-between; justify-content: space-between; width: 100%;">
+                <ion-buttons class="buttons-container">
                     <ion-button color="light" size="large" class="boton-redondo" fill="solid"
                         (click)="descartar(producto)">
                         <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>

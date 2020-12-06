@@ -50,7 +50,7 @@ export class LoginPage implements OnInit {
     
     this.authService.login(this.usuario).subscribe( async (response) =>{
       await loading.dismiss();      
-      this.router.navigateByUrl('tabs', {replaceUrl: true});
+      this.router.navigateByUrl('filtros', {replaceUrl: true});
     }, async (err) =>{      
       await loading.dismiss();      
       alert(JSON.stringify(err));
@@ -89,7 +89,11 @@ export class LoginPage implements OnInit {
   logGoogle(){
     this.playSound();    
     this.authService.loginGoogle();
-  }  
+  }
+
+  goToRegister(){
+    this.router.navigateByUrl('registro', {replaceUrl: true});
+  }
 
   playSound(){
     this.smartAudio.play('tabSwitch');

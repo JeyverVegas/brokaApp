@@ -12,8 +12,9 @@ export class ProductosService {
 
   private productos = new BehaviorSubject([]);
   private total = new BehaviorSubject(0);
+  private next = null;
   filtros: ProductFilters = {};
-  filtrado = false;  
+  filtrado = false;
   loading = null;
   constructor(
     private http: HttpClient,
@@ -45,7 +46,7 @@ export class ProductosService {
     })
   }
 
-  getFiltersRange(): Promise<any>{
+  getFiltersRange(): Promise<any> {
     return new Promise((resolve) => {
       this.http.get(this.authService.api + '/ranges', {
         headers: this.authService.authHeader
@@ -122,8 +123,17 @@ export class ProductosService {
     return this.productos;
   }
 
+  getOneProduct(propertyID: number){
+    return this.http.get(this.authService.api + '/properties/' + propertyID, {
+      headers: this.authService.authHeader,
+      params: {
+        include: this.getProductRelationships([])
+      }
+    }).toPromise();
+  }
+
   async findProducts(relationships?) {
-    
+
     this.loading = await this.loadingCtrl.create({
       message: 'Cargando productos...',
       spinner: 'bubbles'
@@ -140,19 +150,24 @@ export class ProductosService {
       params: {
         include: this.getProductRelationships(relationships)
       }
-    }).subscribe((response: { data: [], meta: any }) => {      
+    }).subscribe((response: { data: [], meta: any, links: any }) => {
       this.productos.next(response.data);
       this.total.next(response.meta.total);
+      this.next = response.links.next;      
       this.loading.dismiss();
     }, async error => {
       await this.loading.dismiss();
       this.presentToast('Ha ocurrido un error', 'danger');
-      console.log(error);      
+      console.log(error);
     })
   }
 
-  getTotal(){
+  getTotal() {
     return this.total;
+  }
+  
+  getNext(){
+    return this.next;
   }
 
   getFilters() {
@@ -198,19 +213,19 @@ export class ProductosService {
         queryString = queryString + 'filter[radius]=' + this.filtros.radius.join(',') + '&';
       }
 
-      if (this.filtros.state) {
+      if (this.filtros.state && this.filtros.state != 0) {
         queryString = queryString + 'filter[state]=' + this.filtros.state + '&';
-        if (this.filtros.city) {
+        if (this.filtros.city && this.filtros.city != 0) {
           queryString = queryString + 'filter[city]=' + this.filtros.city + '&';
         }
       }
 
       if (this.filtros.currency && this.filtros.priceBetween) {
-        queryString = queryString + 'filter[price_between]=' + this.filtros.currency + this.filtros.priceBetween.join(',') + '&';
+        queryString = queryString + 'filter[price_between]=' + this.filtros.currency + ',' + this.filtros.priceBetween.join(',') + '&';
       }
 
       queryString = queryString.slice(0, -1);
-            
+
       return queryString;
     } catch (error) {
       this.presentToast('Ha ocurrido un error', 'danger');
@@ -267,6 +282,12 @@ export class ProductosService {
 
   removeDiscardProduct(id: number) {
     return this.http.delete(this.authService.api + '/properties/discarted/' + id, {
+      headers: this.authService.authHeader
+    }).toPromise();
+  }
+
+  removerAllDiscartedProducts(){
+    return this.http.delete(this.authService.api + '/properties/discarted', {
       headers: this.authService.authHeader
     }).toPromise();
   }

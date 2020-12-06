@@ -23,6 +23,8 @@ export class InicioPage {
     direction: 'vertical',
   };
 
+  deviceWidth = null;
+
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
@@ -32,16 +34,12 @@ export class InicioPage {
     private loadingCtrl: LoadingController,
     private authService: AuthenticationService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
   ) { }
 
   ionViewDidEnter() {
     this.productos = this.productosService.getProducts();
     this.total = this.productosService.getTotal();
-    console.log(this.authService.user)
-    console.log(this.productos.subscribe(valor => {
-      console.log(valor);
-    }));
   }
 
   async openProduct(producto) {
@@ -110,11 +108,16 @@ export class InicioPage {
             this.productosService.discardProduct(product.id).then(response => {
               for (let [index, p] of this.productos.getValue().entries()) {
                 if (p.id === product.id) {
+
                   this.productos.getValue().splice(index, 1);
                 }
-              }
+              }              
               loading.dismiss().then(() => {
+                if (this.productos.value.length == 0) {
+                  this.loadMore();
+                }
                 this.presentToast('La propiedad... ' + product.name + ', ha sido descartada', 'secondary');
+                this.total.next(this.total.value - 1);
               });
             }).catch(error => {
               console.log(error);
@@ -212,6 +215,26 @@ export class InicioPage {
       ]
     });
     toast.present();
+  }
+
+  async loadMore() {
+    if (this.productosService.getNext()) {
+      const loading = await this.loadingCtrl.create({
+        spinner: 'lines',
+        message: 'Cargando mas inmuebles...'
+      });
+      await loading.present();
+      this.http.get(this.productosService.getNext(), {
+        headers: this.authService.authHeader
+      }).toPromise().then((response: any) => {
+        console.log(response);
+        this.productos.next(response.data);
+      }).catch(err => {
+        console.log(err);
+      }).finally(async () => {
+        await loading.dismiss();
+      })
+    }
   }
 
 }

@@ -29,6 +29,7 @@ export class ChatPage implements OnInit {
 
   ionViewWillEnter(){    
     this.chats = this.chatService.returnChats();
+    console.log(this.chats.value);
     this.chatService.getChats();    
   }
 

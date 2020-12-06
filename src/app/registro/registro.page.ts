@@ -49,7 +49,7 @@ export class RegistroPage implements OnInit {
     
     this.authService.register(this.usuario).subscribe( async (response) =>{
       await loading.dismiss();      
-      this.router.navigateByUrl('/introduction', {replaceUrl: true});
+      this.router.navigateByUrl('/filtros', {replaceUrl: true});
     }, async (err) =>{
 
       await loading.dismiss();      
@@ -70,6 +70,10 @@ export class RegistroPage implements OnInit {
     });
 
     toast.present();
+  }
+
+  goToLogin(){
+    this.router.navigateByUrl('login', {replaceUrl: true});
   }
 
   playSound(){

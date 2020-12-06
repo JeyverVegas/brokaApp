@@ -34,7 +34,7 @@ export class AppComponent {
       name: 'Mis notificaciones',
       icon: 'notifications',
       active: false,
-      url: ''
+      url: '/tabs/tabs/notificaciones'
     },
     {
       name: 'Mis búsquedas',

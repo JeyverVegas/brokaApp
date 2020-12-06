@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonSlides, LoadingController, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
@@ -17,7 +18,7 @@ export class FiltrosPage implements OnInit {
   propertyStatuses: PropertyStatus[] = [];
   features: PropertyFeatures[] = [];
   provincies = [];
-  partidos = [];  
+  partidos = [];
   @ViewChild('filtrosslider', { static: true }) protected slides: IonSlides;
 
   slidesOpts = {
@@ -31,7 +32,19 @@ export class FiltrosPage implements OnInit {
     }
   };
 
+  rangesPrices = {
+    min: 0,
+    max: 0
+  }
+
+  steps = 1;
+
   environmentsBetween = {
+    lower: 0,
+    upper: 0
+  }
+
+  pricesBetween = {
     lower: 0,
     upper: 0
   }
@@ -42,7 +55,8 @@ export class FiltrosPage implements OnInit {
     type: [],
     environmentsBetween: [],
     state: 0,
-    city: 0
+    city: 0,
+    priceBetween: [null, null]
   };
 
   constructor(
@@ -51,35 +65,39 @@ export class FiltrosPage implements OnInit {
     private productosService: ProductosService,
     private smartAudio: SmartAudioService,
     private loadingCtrl: LoadingController,
-    private addressService: AddressService,
-    private navParams: NavParams
+    private addressService: AddressService,    
+    private router: Router,
   ) { }
 
-  async ngOnInit() {    
+  async ngOnInit() {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...'
     });
-    try {      
+    try {
       await loading.present();
       this.contractTypes = await this.productosService.getContractType();
       this.propertyTypes = await this.productosService.getPropertyType();
       this.minMaxRange = await this.productosService.getFiltersRange();
+
       this.environmentsBetween.lower = this.minMaxRange.environments.min;
       this.environmentsBetween.upper = this.minMaxRange.environments.max;
+
       this.provincies = await this.addressService.getStates();
 
-      console.log(this.provincies);
+      this.filtros.currency = this.minMaxRange.prices[0].id;
+
+      console.log(this.minMaxRange);
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
       this.presentToast('Ha ocurrido un error al cargar los filtros', 'danger');
       console.log(error);
-      
-    }    
-  }
 
-  goBack(){
+    }
+  }  
+
+  goBack() {
     this.playSound();
     this.slides.slidePrev();
   }
@@ -88,53 +106,78 @@ export class FiltrosPage implements OnInit {
     this.smartAudio.play('tabSwitch');
   }
 
-  setcontractType(id: number){
+  setcontractType(id: number) {
     this.playSound();
     this.filtros.contractType[0] = id;
     this.slides.slideNext();
   }
 
-  setpropertyType(id: number){
+  setpropertyType(id: number) {
     this.playSound();
     this.filtros.type[0] = id;
     this.slides.slideNext();
   }
 
-  setEnvironmentsBetween(){
+  setEnvironmentsBetween() {
     this.playSound();
     this.filtros.environmentsBetween[0] = this.environmentsBetween.lower;
     this.filtros.environmentsBetween[1] = this.environmentsBetween.upper;
     this.slides.slideNext();
   }
 
-  async setState(){
-    if(this.filtros.state != 0){
+  async setState() {
+    if (this.filtros.state != 0) {
       const loading = await this.loadingCtrl.create({
         spinner: 'lines',
         message: 'Cargando partidos...'
       });
       await loading.present();
-      try {                
+      try {
         this.partidos = await this.addressService.getCities(this.filtros.state);
         await loading.dismiss();
-      } catch (error) {      
-        console.log(error);        
+      } catch (error) {
+        console.log(error);
         await loading.dismiss();
         this.presentToast('Ha ocurrido un error al cargar los partidos.', 'danger');
-      }      
-    }else{
+      }
+    } else {
       this.filtros.city = 0;
       this.partidos = [];
     }
   }
 
-  setStateCity(){
+  setStateCity() {
     this.playSound();
     this.slides.slideNext();
   }
 
-  async aplicarFiltro() {
+  setCurrency() {
+    const currency = this.minMaxRange.prices.find(price => price.id == this.filtros.currency);
     
+    this.rangesPrices.min = currency.min_price;
+    this.rangesPrices.max = currency.max_price;   
+
+    this.pricesBetween.lower = currency.min_price;
+    this.pricesBetween.upper = currency.max_price;    
+
+    this.steps = currency.max_price / 100;
+    console.log(this.steps);
+  }
+
+  async setPricesBetween(){
+    this.filtros.priceBetween[0] = this.pricesBetween.lower;
+    this.filtros.priceBetween[1] = this.pricesBetween.upper;
+    this.productosService.filtros = this.filtros;    
+    if(await this.modalCtrl.getTop()){
+      this.productosService.getProducts();    
+      this.modalCtrl.dismiss();
+    }else{
+      this.router.navigateByUrl('/tabs', {replaceUrl: true});
+    }    
+  }
+
+  async aplicarFiltro() {
+
   }
 
   async presentToast(text, color) {

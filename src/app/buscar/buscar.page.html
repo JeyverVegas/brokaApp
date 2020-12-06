@@ -10,7 +10,7 @@
       <ion-text color="dark">Todos los resultados</ion-text>
     </h3>
     <ion-grid>      
-      <ion-row *ngFor="let producto of filtro">
+      <ion-row *ngFor="let producto of filtro" class="animate__animated animate__fadeInUp">
         <ion-col size="5" class="ion-align-self-center">
           <img class="img-list" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
         </ion-col>
@@ -46,4 +46,8 @@
       </ion-row>
     </ion-grid>
   </div>
+  <ion-infinite-scroll position="bottom" threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="lines" loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

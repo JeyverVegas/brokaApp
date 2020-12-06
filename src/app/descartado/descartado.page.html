@@ -18,6 +18,11 @@
   </ng-template>
   <div *ngIf="descartados.length > 0; else descartados1">
     <h1>Mis descartados</h1>
+    <div class="ion-text-right">
+      <ion-button fill="outline" color="success" (click)="reloadAll()" size="small">
+        <ion-icon name="reload-outline" slot="start"></ion-icon> Reestablecer todos
+      </ion-button>
+    </div>
     <ion-grid class="ion-padding">
       <ion-row style="position: relative;" *ngFor="let producto of descartados">
         <ion-col size="5" class="ion-align-self-center">

@@ -50,8 +50,7 @@
         <ion-icon name="log-in-outline" slot="end"></ion-icon>
       </ion-button>
       <p class="ion-text-center">
-        <ion-text color="medium">¿No tienes una cuenta? <a routerLink="/registro" routerDirection="forward"
-            style="color: gray;"><b>Regístrate</b></a></ion-text>
+        <ion-text color="medium">¿No tienes una cuenta? <a style="color: gray;" (click)="goToRegister()"><b>Regístrate</b></a></ion-text>
       </p>      
     </form>
   </div>

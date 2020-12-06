@@ -28,12 +28,7 @@ const routes: Routes = [
     path: 'registro',
     loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule),
     canLoad: [AutoLoginGuard]
-  },
-  {
-    path: 'notificaciones',
-    loadChildren: () => import('./notificaciones/notificaciones.module').then(m => m.NotificacionesPageModule),
-    canLoad: [AuthGuard]
-  },
+  },  
   {
     path: 'map',
     loadChildren: () => import('./map/map.module').then(m => m.MapPageModule),
@@ -55,7 +50,8 @@ const routes: Routes = [
   },
   {
     path: 'filtros',
-    loadChildren: () => import('./filtros/filtros.module').then(m => m.FiltrosPageModule)
+    loadChildren: () => import('./filtros/filtros.module').then(m => m.FiltrosPageModule),
+    canLoad: [AuthGuard]
   }  
 ];
 @NgModule({

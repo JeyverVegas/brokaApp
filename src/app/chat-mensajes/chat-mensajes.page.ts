@@ -70,6 +70,10 @@ export class ChatMensajesPage implements OnInit {
     })
   }
 
+  ionViewWillLeave(){
+    this.chatService.markMessagesRead(this.chat.id);
+  }
+
   doRefresh(event){
     this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: {data: any[]})=>{
       if(response.data.length < 1){

@@ -89,7 +89,7 @@ export class AuthenticationService {
           await this.storage.set(USER_DATA, this.user);
           await this.storage.set(TOKEN_KEY, response.token);
           this.isAuthenticated.next(true);
-          this.router.navigateByUrl('tabs', { replaceUrl: true });
+          this.router.navigateByUrl('filtros', { replaceUrl: true });
           loading.dismiss();
         }).catch(async error => {
           //ERROR AL INICIAR SESION EN EL SERVIDOR.
@@ -125,7 +125,7 @@ export class AuthenticationService {
         await this.storage.set(TOKEN_KEY, response.token);
         this.isAuthenticated.next(true);
         await loading.dismiss();
-        this.router.navigateByUrl('tabs', { replaceUrl: true });
+        this.router.navigateByUrl('filtros', { replaceUrl: true });
       }).catch(async err => {
         await loading.dismiss();
         alert(JSON.stringify(err));
@@ -190,6 +190,12 @@ export class AuthenticationService {
     let header = this.authHeader.set('Accept', 'application/json');
     return this.http.post(this.api + '/profile/images', formdata, {
       headers: header
+    }).toPromise();
+  }
+
+  deleteImgGallery(imageId: number){
+    return this.http.delete(this.api + '/profile/images/' + imageId, {
+      headers: this.authHeader
     }).toPromise();
   }
 

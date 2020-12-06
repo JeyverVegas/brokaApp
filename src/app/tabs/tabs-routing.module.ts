@@ -43,6 +43,10 @@ const routes: Routes = [
         path: 'mis-matchs',
         loadChildren: () => import('../mis-matchs/mis-matchs.module').then(m => m.MisMatchsPageModule)
       },
+      {
+        path: 'notificaciones',
+        loadChildren: () => import('../notificaciones/notificaciones.module').then(m => m.NotificacionesPageModule),        
+      },
     ]
   },
   {

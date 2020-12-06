@@ -1,7 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { ImageModalPage } from '../image-modal/image-modal.page';
+import { AuthenticationService } from '../servicios/authentication.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
@@ -20,9 +22,12 @@ export class BuscarPage implements OnInit {
 
   constructor(
     private productosService: ProductosService,
+    private authService: AuthenticationService,
     private modalCtrl: ModalController,
     private smartAudio: SmartAudioService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private http: HttpClient,
+
   ) { }
 
   async ngOnInit() {
@@ -123,6 +128,23 @@ export class BuscarPage implements OnInit {
   async doRefresh(event) {
     this.refrescando = event.target;
     this.productosService.getProducts();
+  }
+
+  loadMore(event){
+    if(this.productosService.getNext()){
+      this.http.get(this.productosService.getNext(), {
+        headers: this.authService.authHeader
+      }).toPromise().then((response: any) =>{        
+        this.productos.next(this.productos.value.concat(response.data));        
+        if(!response.links.next){
+          event.target.disabled = true;
+        }
+      }).catch(err =>{
+        console.log(err);
+      }).finally(() =>{
+        event.target.complete();
+      })
+    }
   }
 
 }

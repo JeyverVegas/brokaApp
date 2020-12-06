@@ -91,6 +91,7 @@ export class ChatService {
     this.echo.private('new-message.' + this.authService.user.id).listen('NewMessage', message => {      
       this.playSound();
       const chat: any = this.chats.getValue().find(chat => chat.id == message.chat_id);
+      chat.unread_messages_count = chat.unread_messages_count + 1;
       chat && chat.messages.push(message);
     }).error(error =>{
       console.log(error);
@@ -98,9 +99,19 @@ export class ChatService {
   }
 
   sendMessage(newMessage: any) {
-
     return this.http.post(this.authService.api + '/chats/' + newMessage.chat_id + '/messages', newMessage.formData,
       { headers: this.authService.authHeader }).toPromise();
+  }
+
+  markMessagesRead(chatId: number){
+    this.http.put(this.authService.api + '/chats/' + chatId + '/messages/mark-as-read', null, {
+      headers: this.authService.authHeader
+    }).subscribe(response =>{
+      const chat: any = this.chats.getValue().find(chat => chat.id == chatId);
+      chat.unread_messages_count = 0;
+    }, error =>{
+      this.markMessagesRead(chatId);
+    })
   }
 
   playSound() {

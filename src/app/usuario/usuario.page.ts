@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ActionSheetController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ImageModalPage } from '../image-modal/image-modal.page';
@@ -29,7 +29,7 @@ export class UsuarioPage implements OnInit {
   target = null;
 
   constructor(
-    private loadingCtrl: LoadingController,    
+    private loadingCtrl: LoadingController,
     private webview: WebView,
     private router: Router,
     private toastController: ToastController,
@@ -38,38 +38,61 @@ export class UsuarioPage implements OnInit {
     private file: File,
     private filePath: FilePath,
     private platform: Platform,
-    private ref: ChangeDetectorRef,  
+    private ref: ChangeDetectorRef,
     private smartAudio: SmartAudioService,
     private modalCtrl: ModalController,
     private authService: AuthenticationService,
-    private storage: Storage
+    private storage: Storage,
+    private alertCtrl: AlertController
   ) { }
 
-  ngOnInit() {        
-    this.user = this.authService.user;       
+  ngOnInit() {
+    this.user = this.authService.user;
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
-  async logOut() {    
+  async deleteImgGallery(imageId: number) {
     this.playSound();
-
-    const loading = await this.loadingCtrl.create({
-      spinner: 'crescent',
-      message: 'cerrando sesion',
-      duration: 3000
+    const alerta = await this.alertCtrl.create({
+      header: "¿Estas Seguro?",
+      message: '¿Quieres eliminar la imagen?',
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            this.playSound();
+          }
+        },
+        {
+          text: 'Si',
+          handler: async () => {
+            const loading = await this.loadingCtrl.create({
+              spinner: 'lines',
+              message: 'Eliminando Imagen...'
+            });
+            await loading.present();
+            this.authService.deleteImgGallery(imageId).then((response: any) => {
+              this.presentToast('La imagen ha sido eliminada exitosamente.', 'secondary');
+              for (let [index, img] of this.profileImages.entries()) {
+                if (img.id === imageId) {
+                  this.user.profile.profile_images.splice(index, 1);
+                }
+              }
+            }).catch(err => {
+              this.presentToast('Ha ocurrido un error al eliminar la imagen.', 'danger');
+            }).finally(async () => {
+              await loading.dismiss();
+            })
+          }
+        }
+      ]
     });
-
-    await loading.present();
-
-    await this.authService.logOut().then(() =>{
-      loading.onWillDismiss().then(() => {
-        this.router. navigateByUrl('/login', {replaceUrl: true});
-      });
-    });    
+    alerta.present();
   }
+
 
   /*CONVIERTO LA URL NATIVA A URL DE NAVEGADOR*/
   pathForImage(img) {
@@ -156,8 +179,8 @@ export class UsuarioPage implements OnInit {
   /*ACTUALIZO LA IMAGEN DEL USUARIO CON LA URL DE LA IMAGEN EN EL EQUIPO*/
   updateStoredImages(name) {
     let filePath = this.file.dataDirectory + name;
-    
-    if(this.target == 'usuario'){
+
+    if (this.target == 'usuario') {
       this.user.profile.image = this.pathForImage(filePath);
     }
     this.ref.detectChanges(); // trigger change detection cycle
@@ -186,13 +209,13 @@ export class UsuarioPage implements OnInit {
         type: file.type
       });
       /*UNA VEZ AGREGO LA IMAGEN AL INPUT DE TIPO FILE, INSERTO EL INPUT DENTRO DEL FORMULARIO*/
-      if(this.target == 'usuario'){
+      if (this.target == 'usuario') {
         formData.append('image', imgBlob, file.name);
         formData.append('_method', 'put');
-      }else{        
+      } else {
         formData.append('images[]', imgBlob);
-      }  
-      
+      }
+
       this.uploadImageData(formData);
     };
     reader.readAsArrayBuffer(file);
@@ -204,36 +227,36 @@ export class UsuarioPage implements OnInit {
       spinner: 'lines',
       message: 'Cargando Imagen.'
     });
-    loading.present(); 
-    if(this.target == 'usuario'){
-      this.authService.updateProfileImage(formData, this.user.profile.id).then((response: {data:any}) =>{        
-        this.user.profile = response.data;        
+    loading.present();
+    if (this.target == 'usuario') {
+      this.authService.updateProfileImage(formData, this.user.profile.id).then((response: { data: any }) => {
+        this.user.profile = response.data;
         this.authService.user.profile = this.user.profile;
         this.storage.set(USER_DATA, this.user);
         this.ref.detectChanges()
         loading.dismiss();
         this.presentToast('la imagen de usuario ha sido actualizada.', 'secondary', false);
-      }).catch(err =>{        
+      }).catch(err => {
         loading.dismiss();
         this.presentToast('Ha ocurrido un error al actualizar la imagen', 'danger', false);
       });
       loading.dismiss();
-    }else{
-      this.authService.updateGalleryImages(formData).then((response: {data:any[]}) =>{        
+    } else {
+      this.authService.updateGalleryImages(formData).then((response: { data: any[] }) => {
         this.user.profile.profile_images.push(response.data[0]);
         this.authService.user = this.user;
         this.storage.set(USER_DATA, this.user);
         this.ref.detectChanges();
         loading.dismiss();
         this.presentToast('la imagen ha sido añadida exitosamente ;).', 'secondary', false);
-      }).catch(err =>{        
+      }).catch(err => {
         this.presentToast('Ha ocurrido un error al añadir la imagen', 'danger', false);
         loading.dismiss();
       });
     }
-  }  
+  }
 
-  async presentToast(mensaje:string, color:string, redireciona?:boolean, urlPath?:string){
+  async presentToast(mensaje: string, color: string, redireciona?: boolean, urlPath?: string) {
     const toast = await this.toastController.create({
       message: mensaje,
       color: color,
@@ -244,14 +267,14 @@ export class UsuarioPage implements OnInit {
 
     toast.present();
 
-    if(redireciona){
-      toast.onDidDismiss().then(() =>{
-        this.router.navigateByUrl(urlPath, {replaceUrl: true});
+    if (redireciona) {
+      toast.onDidDismiss().then(() => {
+        this.router.navigateByUrl(urlPath, { replaceUrl: true });
       });
     }
   }
-  
-  async openPreview(img){
+
+  async openPreview(img) {
     const modal = await this.modalCtrl.create({
       component: ImageModalPage,
       cssClass: 'b_transparent',

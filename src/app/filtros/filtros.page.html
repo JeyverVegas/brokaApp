@@ -84,6 +84,33 @@
       </ion-button>
     </ion-slide>
 
+    <!--PRECIO Y MONEDA-->
+    <ion-slide style="flex-direction: column;" class="ion-padding">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      <h2 class="ion-text-center">
+        <ion-text color="primary">
+          ¿QUE PRECIOS BUSCAS?
+        </ion-text>
+      </h2>      
+      <ion-item lines="none" style="width: 100%;">
+        <ion-label position="floating" color="secondary">
+          Moneda
+        </ion-label>
+        <ion-select [(ngModel)]="filtros.currency" (ionChange)="setCurrency()">          
+          <ion-select-option *ngFor="let price of minMaxRange.prices" [value]="price.id">{{price.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p>{{pricesBetween.lower.toLocaleString()}} - {{pricesBetween.upper.toLocaleString()}}</p>
+      <ion-item lines="none" style="width: 100%;">
+        <ion-range dualKnobs="true" [min]="rangesPrices.min" [max]="rangesPrices.max" [step]="steps" pin="true" [(ngModel)]="pricesBetween"></ion-range>
+      </ion-item>
+      <ion-button (click)="setPricesBetween()">
+        aceptar
+      </ion-button>      
+    </ion-slide>
+
   </ion-slides>
 
 </ion-content>

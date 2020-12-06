@@ -30,9 +30,9 @@ export class AddressService {
   getCities(stateID?: number): Promise<City[]> {
     return new Promise((resolve) => {
       let query = this.authService.api + '/cities';
-      /* if (stateID) {
-        query = query + '/' + stateID;
-      } */
+      if (stateID) {
+        query = query + '?filter[state]=' + stateID;
+      }
       this.http.get(query, {
         headers: this.authService.authHeader
       }).subscribe((response: { data: City[] }) => {
