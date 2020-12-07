@@ -30,11 +30,13 @@ export class ChatPage implements OnInit {
   ionViewWillEnter(){    
     this.chats = this.chatService.returnChats();
     console.log(this.chats.value);
-    this.chatService.getChats();    
+    this.chatService.getChats(true).finally(() =>{
+      this.chatService.setNewMewssagesCount0();    
+    });
   }
 
   doRefresh(event){
-    this.chatService.getChats().then(()=>{
+    this.chatService.getChats(true).then(()=>{
       event.target.complete();
     }).catch(err =>{
       console.log(err);     

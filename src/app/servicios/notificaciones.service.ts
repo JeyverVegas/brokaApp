@@ -21,7 +21,8 @@ export class NotificacionesService {
   }
 
   notificationMarkRead(notificationId: any){
-    return this.http.put(this.authService.api + '/notifications/' + notificationId + '/mark-as-read', {
+    console.log(this.authService.authHeader);
+    return this.http.put(this.authService.api + '/notifications/' + notificationId + '/mark-as-read', null, {
       headers: this.authService.authHeader
     }).toPromise();
   }

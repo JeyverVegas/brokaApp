@@ -18,8 +18,7 @@ export class BuscarPage implements OnInit {
   productos = new BehaviorSubject([]);
   filtro = [];
   refrescando: any = null;
-
-
+  next = null;
   constructor(
     private productosService: ProductosService,
     private authService: AuthenticationService,
@@ -36,13 +35,14 @@ export class BuscarPage implements OnInit {
 
   async ionViewDidEnter() {
     this.productos = this.productosService.getProducts();
-    this.initializedItems();    
+    this.initializedItems();
   }
 
   initializedItems() {
     this.productos.subscribe(productos => {
       this.filtro = productos;
-      if(this.refrescando){
+      this.next = this.productosService.getNext();
+      if (this.refrescando) {
         this.refrescando.complete();
       }
     });
@@ -130,20 +130,23 @@ export class BuscarPage implements OnInit {
     this.productosService.getProducts();
   }
 
-  loadMore(event){
-    if(this.productosService.getNext()){
-      this.http.get(this.productosService.getNext(), {
+  loadMore(event) {
+    if (this.next) {
+      event.target.disabled = false;
+      this.http.get(this.next, {
         headers: this.authService.authHeader
-      }).toPromise().then((response: any) =>{        
-        this.productos.next(this.productos.value.concat(response.data));        
-        if(!response.links.next){
-          event.target.disabled = true;
+      }).toPromise().then((response: any) => {
+        this.productos.next(this.productos.value.concat(response.data));
+        if (!response.links.next) {
+          this.next = null;
         }
-      }).catch(err =>{
+      }).catch(err => {
         console.log(err);
-      }).finally(() =>{
+      }).finally(() => {
         event.target.complete();
       })
+    } else {
+      event.target.complete();
     }
   }
 

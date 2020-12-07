@@ -302,7 +302,7 @@ export class UserProfilePage implements OnInit {
 
   async saveProfile() {
     const loading = await this.loadingCtrl.create({
-      message: 'cargando...',
+      message: 'Guardando Información',
       spinner: 'bubbles'
     });
 
@@ -323,7 +323,7 @@ export class UserProfilePage implements OnInit {
       this.authService.addProfile(formData).subscribe(async (response) => {
         await loading.dismiss();
         this.error.displayError = false;
-        this.presentToast('El usuario ha sido actualizado exitosamente.', 'success');
+        this.saveAddress();        
       }, async (error) => {
         await loading.dismiss();
         this.error.message = error.error.message;
@@ -339,8 +339,7 @@ export class UserProfilePage implements OnInit {
       formData.append('_method', 'put');
       this.authService.updateProfile(formData).subscribe(async (response) => {
         await loading.dismiss();
-        this.presentToast('El usuario ha sido actualizado exitosamente.', 'success');
-
+        this.saveAddress();
       }, async (error) => {
         await loading.dismiss();        
         this.error.message = error.error.message;
@@ -354,11 +353,11 @@ export class UserProfilePage implements OnInit {
   async saveAddress() {
 
     const loading = await this.loadingCtrl.create({
-      message: 'cargando...',
+      message: 'Guardando Ubicación...',
       spinner: 'bubbles'
     });
 
-    loading.present();
+    await loading.present();
 
     let address = {
       latitude: this.user.address.latitude,
@@ -372,9 +371,8 @@ export class UserProfilePage implements OnInit {
       console.log('soy nulo');
 
       this.authService.addAddress(address).subscribe(async (response) => {
-
         await loading.dismiss();
-        this.presentToast('La dirección ha sido guardada.', 'success');
+        this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
       }, async (error) => {
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
@@ -386,7 +384,7 @@ export class UserProfilePage implements OnInit {
     } else {      
       this.authService.updateAddress(address).subscribe(async (response) => {
         await loading.dismiss();
-        this.presentToast('La dirección ha sido Actualizada.', 'success');
+        this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
       }, async (error) => {
         console.log(error);
         this.error.message = error.error.message;

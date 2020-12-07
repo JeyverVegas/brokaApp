@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
@@ -6,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
 import { AuthenticationService } from '../servicios/authentication.service';
+import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
@@ -21,8 +21,7 @@ export class InicioPage {
   total = new BehaviorSubject(0);
   slideOpts = {
     direction: 'vertical',
-  };
-
+  };  
   deviceWidth = null;
 
   constructor(
@@ -32,8 +31,8 @@ export class InicioPage {
     private alertCtrl: AlertController,
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private authService: AuthenticationService,
-    private http: HttpClient,
+    private authService: AuthenticationService,    
+    private matchService: MatchService,
     private router: Router,
   ) { }
 
@@ -114,7 +113,7 @@ export class InicioPage {
               }              
               loading.dismiss().then(() => {
                 if (this.productos.value.length == 0) {
-                  this.loadMore();
+                  this.productosService.getProducts();
                 }
                 this.presentToast('La propiedad... ' + product.name + ', ha sido descartada', 'secondary');
                 this.total.next(this.total.value - 1);
@@ -132,7 +131,7 @@ export class InicioPage {
     await alerta.present();
   }
 
-  async initChat(product) {
+  async matchear(product) {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
@@ -152,21 +151,17 @@ export class InicioPage {
               this.playSound();
               const loading = await this.loadingCtrl.create({
                 spinner: 'dots',
-                message: 'Enviando Mensaje.'
+                message: 'Enviando Solicitud...'
               });
-              loading.present();
-              let mensaje = {
-                content: 'Hola buenos dias quisiera matchear ' + product.name,
-                recipient_id: product.realEstateAgency.user_id
-              }
-              this.http.post(this.authService.api + '/chats', mensaje, {
-                headers: this.authService.authHeader
-              }).toPromise().then(async (response: any) => {
-                await loading.dismiss();
-                this.router.navigateByUrl('/tabs/tabs/chat');
-              }).catch(async err => {
-                await loading.dismiss();
+              await loading.present();
+              this.matchService.storeMatch({property_id: product.id, message: 'Hola quisiera matchear: ' + product.name}).then(response =>{
+                console.log(response);
+                this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+              }).catch(err =>{
                 console.log(err);
+                this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+              }).finally(async ()=>{
+                await loading.dismiss();
               })
             }
           }
@@ -215,26 +210,6 @@ export class InicioPage {
       ]
     });
     toast.present();
-  }
-
-  async loadMore() {
-    if (this.productosService.getNext()) {
-      const loading = await this.loadingCtrl.create({
-        spinner: 'lines',
-        message: 'Cargando mas inmuebles...'
-      });
-      await loading.present();
-      this.http.get(this.productosService.getNext(), {
-        headers: this.authService.authHeader
-      }).toPromise().then((response: any) => {
-        console.log(response);
-        this.productos.next(response.data);
-      }).catch(err => {
-        console.log(err);
-      }).finally(async () => {
-        await loading.dismiss();
-      })
-    }
   }
 
 }

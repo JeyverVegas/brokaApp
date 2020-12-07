@@ -57,11 +57,11 @@ export class ChatMensajesPage implements OnInit {
     .then((response: any) =>{
       this.chat.messages = response.data;      
       this.chat.messages.sort((a, b) => {
-        return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       });
       setTimeout(() => {
         this.content.scrollToBottom(200);
-      });
+      }, 500);
       console.log(this.chat.messages);
       loading.dismiss();
     }).catch(err =>{
@@ -72,6 +72,7 @@ export class ChatMensajesPage implements OnInit {
 
   ionViewWillLeave(){
     this.chatService.markMessagesRead(this.chat.id);
+    this.chatService.setNewMewssagesCount0();
   }
 
   doRefresh(event){

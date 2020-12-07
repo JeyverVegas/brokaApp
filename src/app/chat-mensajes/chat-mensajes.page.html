@@ -89,9 +89,10 @@
               {{attachment.name}}
             </ion-label>
             <ion-buttons slot="end">
-              <ion-button [download]="attachment.url">
+              <a download href="{{attachment.url}}" class="ion-activatable ripple-parent" style="position: relative;">
                 <ion-icon name="arrow-down-circle-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+                <ion-ripple-effect></ion-ripple-effect>
+              </a>
             </ion-buttons>
           </ion-item>
         </div>

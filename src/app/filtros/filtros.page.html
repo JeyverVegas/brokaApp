@@ -52,7 +52,7 @@
     </ion-slide>
 
     <!--LUGAR-->
-    <ion-slide style="flex-direction: column;" class="ion-padding">
+    <ion-slide style="flex-direction: column;" class="ion-padding" *ngIf="!radiusActivated">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>

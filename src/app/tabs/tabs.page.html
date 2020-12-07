@@ -15,6 +15,9 @@
 
     <ion-tab-button mode="md"  tab="chat" (click)="playSound()">
       <ion-icon name="chatbubble-outline"></ion-icon>      
+      <ion-badge color="danger" *ngIf="newMessagesCount.getValue() > 0">
+        {{newMessagesCount | async}}
+      </ion-badge>
     </ion-tab-button>
 
     <ion-tab-button mode="md"  tab="usuario" (click)="playSound()" class="animate__animated animate__infinite"

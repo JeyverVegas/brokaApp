@@ -19,6 +19,10 @@ declare var google: any;
 export class MapPage implements OnInit {
 
   user: Usuario = null;
+  backupAddress = {
+    state: null,
+    city: null
+  };
   userMarker: BrokaMarkers = null;
   cargado = false;
   currentPosition: { lat: number, lng: number } = null;
@@ -50,6 +54,11 @@ export class MapPage implements OnInit {
 
   async ionViewDidEnter() {
     this.user = this.authService.user;
+    this.backupAddress.city = this.productoService.filtros.city;
+    this.backupAddress.state = this.productoService.filtros.state;
+    this.productoService.filtros.city = null; 
+    this.productoService.filtros.state = null;
+    console.log(this.backupAddress.city);
     try {
       var location = await this.geolocation.getCurrentPosition({ timeout: 5000, maximumAge: 0 });
       this.currentPosition = { lat: location.coords.latitude, lng: location.coords.longitude };

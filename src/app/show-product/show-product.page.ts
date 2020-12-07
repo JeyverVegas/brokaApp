@@ -1,6 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
+import { AuthenticationService } from '../servicios/authentication.service';
+import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 
@@ -13,7 +16,7 @@ declare var google: any;
 })
 export class ShowProductPage implements OnInit {
 
-  producto = null;
+  @Input() producto: any;
   slideOpts = {
     autoplay: {
       delay: 3000,
@@ -34,23 +37,24 @@ export class ShowProductPage implements OnInit {
   @ViewChild('map', { static: true }) protected map: ElementRef;
 
 
-  constructor(
-    private navParams: NavParams,
+  constructor(    
+    private productosService: ProductosService,
+    private authService: AuthenticationService,
+    private smartAudio: SmartAudioService,
+    private matchService: MatchService,
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
-    private productosService: ProductosService,
-    private smartAudio: SmartAudioService,
     private toastController: ToastController,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) { }
 
   ionViewDidEnter() {
     this.slides.update();
   }
 
-  ngOnInit() {
-    this.producto = this.navParams.get('producto');    
+  ngOnInit() {    
     this.crearMapa();
   }
 
@@ -181,6 +185,67 @@ export class ShowProductPage implements OnInit {
       ]
     });
     await alerta.present();
+  }
+
+  async matchear(producto) {
+    this.playSound();
+
+    if (this.authService.user.profile && this.authService.user.address) {
+      this.alertCtrl.create({
+        header: '¿Desea intentar matchear este anuncio?',
+        message: this.producto.name,
+        buttons: [
+          {
+            text: 'no',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'si',
+            handler: async () => {
+              this.playSound();
+              const loading = await this.loadingCtrl.create({
+                spinner: 'dots',
+                message: 'Enviando Solicitud...'
+              });
+              await loading.present();
+              this.matchService.storeMatch({property_id: this.producto.id, message: 'Hola quisiera matchear: ' + this.producto.name}).then(response =>{
+                console.log(response);
+                this.modalCtrl.dismiss().then(() =>{
+                  this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+                })                
+              }).catch(err =>{
+                console.log(err);
+                this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+              }).finally(async ()=>{
+                await loading.dismiss();
+              })
+            }
+          }
+        ]
+      }).then(a => a.present());
+    } else {
+      this.alertCtrl.create({
+        header: 'Debe completar primero su perfil',
+        message: 'Para poder matchear una propiedad primero debe completar su perfil ;).',
+        buttons: [
+          {
+            text: 'SEGUIR MIRANDO',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'COMPLETAR PERFIL',
+            handler: async () => {
+              this.playSound();
+              this.router.navigateByUrl('/user-profile');
+            }
+          }
+        ]
+      }).then(a => a.present());
+    }
   }
 
   async presentToast(text, color) {

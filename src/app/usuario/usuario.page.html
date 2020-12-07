@@ -24,11 +24,7 @@
             routerDirection="forward" class="animate__animated animate__infinite"
             [class.animate__pulse]="user.profile == undefined">
             Completar Perfil <span *ngIf="user.profile == undefined">(importante)</span>
-        </ion-button>
-        <br>
-        <ion-button expand="block" fill="outline" color="dark" (click)="playSound()">
-            Mensaje
-        </ion-button>
+        </ion-button>        
         <br>
         <ion-button expand="block" fill="outline" color="dark" (click)="selectImage('galeria')">
             añadir imagen

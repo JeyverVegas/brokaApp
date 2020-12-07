@@ -49,6 +49,7 @@ export class FiltrosPage implements OnInit {
     upper: 0
   }
 
+  radiusActivated = null;
 
   filtros: ProductFilters = {
     contractType: [],
@@ -87,6 +88,7 @@ export class FiltrosPage implements OnInit {
 
       this.filtros.currency = this.minMaxRange.prices[0].id;
 
+      this.radiusActivated = this.productosService.filtros.radius;
       console.log(this.minMaxRange);
       await loading.dismiss();
     } catch (error) {

@@ -78,40 +78,39 @@ export class NotificacionesPage implements OnInit {
   }
 
   async doSomething(notification: any) {
-    if (notification.additional_data.computed_type == 'match_accepted') {
-      this.router.navigateByUrl('/tabs/tabs/mis-matchs');
-    }
-    if (notification.additional_data.computed_type == 'unknown') {
-      this.router.navigateByUrl('/tabs/tabs/mis-matchs');
-    }
-
-    if (notification.additional_data.computed_type == 'property_created') {
-      const loading = await this.loadingCtrl.create({
-        spinner: 'lines',
-        message: 'Cargando...'
-      });
-      await loading.present();
-      this.productosService.getOneProduct(notification.additional_data.property_id).then(async (response: any) => {
-        const modal = await this.modalCtrl.create({
-          component: ShowProductPage,
-          componentProps: {
-            producto: response.data
-          }
+    this.notificacionesService.notificationMarkRead(notification.id).then(async (response: any) => {
+      notification = response.data;
+      if (notification.additional_data.computed_type == 'match_accepted') {
+        this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+      }
+      if (notification.additional_data.computed_type == 'unknown') {
+        this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+      }
+  
+      if (notification.additional_data.computed_type == 'property_created') {
+        const loading = await this.loadingCtrl.create({
+          spinner: 'lines',
+          message: 'Cargando...'
         });
-        await modal.present();
-      }).catch(err => {
-        console.log(err);
-        this.presentToast('Ha ocurrido un error al cargar la informacion :(', 'danger');
-      }).finally(async () => {
-        await loading.dismiss();
-      })
-    }
-
-    this.notificacionesService.notificationMarkRead(notification.id).then((response) => {
-      console.log(response);
+        await loading.present();
+        this.productosService.getOneProduct(notification.additional_data.property_id).then(async (response: any) => {
+          const modal = await this.modalCtrl.create({
+            component: ShowProductPage,
+            componentProps: {
+              producto: response.data
+            }
+          });
+          await modal.present();
+        }).catch(err => {
+          console.log(err);
+          this.presentToast('Ha ocurrido un error al cargar la informacion :(', 'danger');
+        }).finally(async () => {
+          await loading.dismiss();
+        })
+      }
     }).catch(err =>{
       console.log(err);
-    })
+    })        
   }
 
 

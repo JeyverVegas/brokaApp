@@ -12,6 +12,7 @@
   </div>
 
   <div *ngIf="misMatchs.length > 0" class="ion-padding">
+    <h3>Mis Matchs</h3>
     <div class="ion-text-right">
       <ion-button shape="round" color="danger" fill="outline" size="small" mode="md" (click)="deleteAllMatchs()">
         <ion-icon name="close" slot="start"></ion-icon>
@@ -22,8 +23,8 @@
     <ion-list class="animate__animated animate__fadeInUp">
       <ion-item *ngFor="let match of misMatchs">
         <ion-thumbnail slot="start">
-          <ion-img [class.hidden]="!cargo" (click)="openPreview(match.property.images[0].url)" (ionImgDidLoad)="cargo = !cargo" [src]="match.property.images[0].url" class="animate__animated animate__fadeIn"></ion-img>
-          <ion-skeleton-text *ngIf="!cargo" animated></ion-skeleton-text>
+          <ion-img (click)="openPreview(match.property.images[0].url)" [src]="match.property.images[0].url" class="animate__animated animate__fadeIn"></ion-img>
+          <!-- <ion-skeleton-text *ngIf="!cargo" animated></ion-skeleton-text> -->
         </ion-thumbnail>
         <ion-label>
           <p>{{match.status}}</p>

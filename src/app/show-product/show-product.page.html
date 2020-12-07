@@ -17,6 +17,7 @@
 </ion-header>
 
 <ion-content>
+
   <ion-slides #sliderRef pager="true" class="slider-img" [options]="slideOpts">
     <ion-slide *ngFor="let image of producto.images" style="background: url({{image.url}}); background-size: 100% 100%;" (click)="openPreview(image.url)">
     </ion-slide>
@@ -196,4 +197,28 @@
   <div #map style="min-height: 250px;">
 
   </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="playSound()">
+      <ion-icon name="options"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="matchear()">
+        <ion-icon color="success" name="checkmark"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="descartar()">
+        <ion-icon name="close" color="danger"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button *ngIf="!producto.is_favorite" (click)="addToFavorite(producto)">
+        <ion-icon name="heart-outline" color="danger"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button *ngIf="producto.is_favorite" (click)="removeFromFavorite(producto)">
+        <ion-icon name="heart" color="danger"></ion-icon>
+      </ion-fab-button>      
+      <ion-fab-button (click)="openShared()">
+        <ion-icon name="share-social" color="secondary"></ion-icon>
+      </ion-fab-button>      
+    </ion-fab-list>    
+  </ion-fab>
+
 </ion-content>

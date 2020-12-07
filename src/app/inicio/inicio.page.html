@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content>    
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
@@ -56,7 +56,7 @@
 
                     <h3 style="color: white;"><ion-icon name="location"></ion-icon> {{(producto.address.address.length>25)? (producto.address.address | slice:0:25)+'...':(producto.address.address)}}</h3>
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Ambientes: {{producto.environments}}</p>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio: {{findPrice(producto.prices)?.price_value}} {{findPrice(producto.prices)?.currency?.code}}</p>
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio: {{findPrice(producto.prices)?.price_value.toLocaleString()}} {{findPrice(producto.prices)?.currency?.code}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
@@ -66,10 +66,10 @@
                         (click)="descartar(producto)">
                         <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>
                     </ion-button>                    
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" routerLink="/tabs/tabs/buscar" routerDirection="forward">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
                         <ion-icon slot="icon-only" color="primary" name="list"></ion-icon>
                     </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="initChat(producto)">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="matchear(producto)">
                         <ion-icon slot="icon-only" color="success" name="checkmark"></ion-icon>
                     </ion-button>                    
                 </ion-buttons>
