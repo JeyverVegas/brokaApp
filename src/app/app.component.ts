@@ -158,7 +158,7 @@ export class AppComponent {
     });
 
     await loading.present();
-
+    this.chatService.unistallEcho();
     await this.authService.logOut().then(() => {
       loading.dismiss().then(() => {
         this.router.navigateByUrl('/login', { replaceUrl: true });

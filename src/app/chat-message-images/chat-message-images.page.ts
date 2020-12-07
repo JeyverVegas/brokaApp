@@ -33,10 +33,13 @@ export class ChatMessageImagesPage implements OnInit {
 
   ngOnInit() {
     console.log(this.imagenes);
+    this.bottomSlides.update();
+    this.topSlides.update();
   }
 
   async slideChanged() {
     this.selectedImg = await this.topSlides.getActiveIndex();
+    this.bottomSlides.slideTo(await this.topSlides.getActiveIndex());
   }
 
   slideTo(index: number) {

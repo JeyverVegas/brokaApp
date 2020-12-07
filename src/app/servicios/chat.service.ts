@@ -30,9 +30,6 @@ export class ChatService {
       if(isLogin){
         await this.getChats();
         this.setupEcho();        
-        this.newMessagesCount.next
-      }else{
-        this.unistallEcho();
       }
     })    
   }
@@ -131,6 +128,7 @@ export class ChatService {
 
   unistallEcho(){
     this.echo.private('new-message.' + this.authService.user.id).stopListening('NewMessage');
+    this.echo.leaveChannel('new-message.' + this.authService.user.id);
   }
 
   playSound() {

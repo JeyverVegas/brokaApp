@@ -8,7 +8,6 @@ import { Profile, UserAddress, Usuario } from '../interface';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook/ngx';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { Router } from '@angular/router';
-import { ChatService } from './chat.service';
 
 const TOKEN_KEY = 'my-token';
 const USER_DATA = 'user-data';
@@ -34,7 +33,7 @@ export class AuthenticationService {
     private googlePlus: GooglePlus,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,    
-    private router: Router
+    private router: Router,    
   ) {
 
     this.loadToken();
@@ -255,7 +254,7 @@ export class AuthenticationService {
     )
   }
 
-  logOut(): Promise<void> {
+  logOut(): Promise<void> { 
     this.user = null;
     this.isAuthenticated.next(false);
     this.storage.remove(USER_DATA);

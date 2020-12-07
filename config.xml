@@ -3,7 +3,7 @@
     <name>Broka</name>
     <description>Aplicación de inmobiliaria creada para ayudar a conseguir el inmueble de tus sueños</description>
     <author email="tridant16@gmail.com" href="http://tecsoes.com/">Jeyver</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
