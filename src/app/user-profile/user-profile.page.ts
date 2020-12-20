@@ -32,14 +32,8 @@ export class UserProfilePage implements OnInit {
     },
     address: {
       id: 1,
-      state: {
-        id: 1,
-        name: 'Buenos Aires'
-      },
-      city: {
-        id: 0,
-        name: 'Gral. San Marín'
-      },
+      state: null,
+      city: null,
       address: '',
       latitude: null,
       longitude: null,
@@ -80,59 +74,58 @@ export class UserProfilePage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    console.log(this.authService.token);
-    console.log(this.authService.user);
     let loading = await this.loadingCtrl.create({
       message: 'Cargando datos...',
       spinner: 'bubbles'
     });
-
     await loading.present();
-
-    this.cities = await this.addressService.getCities();
-    this.states = await this.addressService.getStates();
-
-    if (this.authService.user.profile !== null) {
-      Object.assign(this.user.profile, this.authService.user.profile);      
-    }
-
-    if (this.authService.user.address !== null) {
-      this.user.address = this.authService.user.address;
-    } else {
-      this.user.address = {
-        id: 1,
-        state: this.states[0],
-        city: this.cities[0],
-        address: '',
-        latitude: null,
-        longitude: null,
+    try {
+      console.log(this.authService.user);
+      console.log(this.user);
+      this.states = await this.addressService.getStates();
+      if (this.authService.user.profile !== null) {
+        Object.assign(this.user.profile, this.authService.user.profile);
       }
+
+      if (this.authService.user.address !== null) {
+        this.user.address = this.authService.user.address;
+      } else {
+        this.user.address = {
+          id: 1,
+          state: this.states[0],          
+          address: '',
+          latitude: null,
+          longitude: null,
+        }
+      }
+      await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      alert(JSON.stringify(error));
     }
-    loading.dismiss();
-    console.log(this.user);
   }
 
 
-  setState(event) {
-    let valor = Number(event.target.value);
-    let state = this.states.filter(state => {
-      if (state.id && valor) {
-        return (state.id == valor);
-      }
-    });
-
-    this.user.address.state = state[0];
-  }
-
-  setCity(event) {
-    let valor = Number(event.target.value);
-    let city = this.cities.filter(city => {
-      if (city.id && valor) {
-        return (city.id == valor);
-      }
-    });
-
-    this.user.address.city = city[0];
+  async setState(event) {
+    const loading = await this.loadingCtrl.create({
+      spinner: 'bubbles',
+      message: 'cargando partidos...'
+    })
+    await loading.present();
+    try {
+      let state = event.target.value;      
+      this.cities = await this.addressService.getCities(state.id);      
+      if(this.cities.length > 0){
+        this.user.address.city = this.cities[0];
+      }else{
+        this.user.address.city = null;
+      }            
+      this.user.address.state = state;
+      await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      console.log(error);
+    }
   }
 
   compareWithFn = (o1, o2) => {
@@ -205,30 +198,34 @@ export class UserProfilePage implements OnInit {
 
   /*OBTENGO LA IMAGEN*/
   takePicture(sourceType: PictureSourceType) {
-    var options: CameraOptions = {
-      quality: 100,
-      sourceType: sourceType,
-      saveToPhotoAlbum: false,
-      correctOrientation: true
-    };
+    try {
+      var options: CameraOptions = {
+        quality: 100,
+        sourceType: sourceType,
+        saveToPhotoAlbum: false,
+        correctOrientation: true
+      };
 
-    this.camera.getPicture(options).then(imagePath => {
+      this.camera.getPicture(options).then(imagePath => {
 
-      if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+        if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
 
-        this.filePath.resolveNativePath(imagePath)
-          .then(filePath => {
-            let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-            let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
-            this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
-          });
+          this.filePath.resolveNativePath(imagePath)
+            .then(filePath => {
+              let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+              let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+              this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+            });
 
-      } else {
-        var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-        var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
-        this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
-      }
-    });
+        } else {
+          var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+          var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+          this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+        }
+      });
+    } catch (e) {
+      alert(JSON.stringify(e));
+    }
   }
 
   /*CREO EL NUEVO NOMBRE DE LA IMAGEN*/
@@ -240,7 +237,7 @@ export class UserProfilePage implements OnInit {
   }
 
   /*COPIO LA IMAGEN AL DIRECTORIO DE LA APP*/
-  copyFileToLocalDir(namePath, currentName, newFileName) {
+  copyFileToLocalDir(namePath, currentName, newFileName) {    
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
       this.updateStoredImages(newFileName);
     }, error => {
@@ -319,11 +316,11 @@ export class UserProfilePage implements OnInit {
     if (this.authService.user.profile === null) {
       if (this.newUserImage.blob !== null) {
         formData.append('image', this.newUserImage.blob, this.newUserImage.name);
-      }      
+      }
       this.authService.addProfile(formData).subscribe(async (response) => {
         await loading.dismiss();
         this.error.displayError = false;
-        this.saveAddress();        
+        this.saveAddress();
       }, async (error) => {
         await loading.dismiss();
         this.error.message = error.error.message;
@@ -332,7 +329,7 @@ export class UserProfilePage implements OnInit {
         this.presentToast('Error al actualizar el usuario.', 'danger');
       });
     }
-    else{      
+    else {
       if (this.newUserImage.blob !== null) {
         formData.append('image', this.newUserImage.blob, this.newUserImage.name);
       }
@@ -341,10 +338,10 @@ export class UserProfilePage implements OnInit {
         await loading.dismiss();
         this.saveAddress();
       }, async (error) => {
-        await loading.dismiss();        
+        await loading.dismiss();
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
-        this.error.displayError = true;        
+        this.error.displayError = true;
         this.presentToast('Error al actualizar el usuario.', 'danger');
       });
     }
@@ -381,7 +378,7 @@ export class UserProfilePage implements OnInit {
         await loading.dismiss();
 
       });
-    } else {      
+    } else {
       this.authService.updateAddress(address).subscribe(async (response) => {
         await loading.dismiss();
         this.presentToast('La informacion ha sido guardada exitosamente.', 'success');

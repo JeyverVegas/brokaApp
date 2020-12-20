@@ -24,8 +24,8 @@
                         <ion-icon name="call"></ion-icon> Telefono: {{user.profile.phone}}
                     </h3>
                     <h3>
-                        <ion-icon name="location"></ion-icon> Dirección: {{user.address.state.name}},
-                        {{user.address.city.name}}, {{user.address.address}}
+                        <ion-icon name="location"></ion-icon> Dirección: {{user.address?.state?.name}} <span *ngIf="user.address.state">,</span>
+                        {{user.address?.city?.name}} <span *ngIf="user.address.city">,</span>  {{user.address.address}}
                     </h3>
                 </ion-label>
             </ion-col>
@@ -87,7 +87,7 @@
             </h2>
             <ion-item>                
                 <ion-label color="primary" position="floating">Provincia</ion-label>
-                <ion-select [(ngModel)]="user.address.state"  [compareWith]="compareWithFn" okText="Ok" cancelText="cancelar">
+                <ion-select [(ngModel)]="user.address.state" (ionChange)="setState($event)"  [compareWith]="compareWithFn" okText="Ok" cancelText="cancelar">
                     <ion-select-option *ngFor="let state of states" [value]="state">{{state.name}}</ion-select-option>
                 </ion-select>
             </ion-item>
