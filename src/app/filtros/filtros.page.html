@@ -102,7 +102,7 @@
           <ion-select-option *ngFor="let price of minMaxRange.prices" [value]="price.id">{{price.name}}</ion-select-option>
         </ion-select>
       </ion-item>
-      <p>{{pricesBetween.lower.toLocaleString()}} - {{pricesBetween.upper.toLocaleString()}}</p>
+      <p>{{pricesBetween.lower.toLocaleString('de-DE')}} - {{pricesBetween.upper.toLocaleString('de-DE')}}</p>
       <ion-item lines="none" style="width: 100%;">
         <ion-range dualKnobs="true" [min]="rangesPrices.min" [max]="rangesPrices.max" [step]="steps" pin="true" [(ngModel)]="pricesBetween"></ion-range>
       </ion-item>

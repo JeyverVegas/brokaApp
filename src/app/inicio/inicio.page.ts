@@ -55,7 +55,7 @@ export class InicioPage {
     modal.present();
   }
 
-  findPrice(prices: any[]) {
+  findPrice(prices: any[]) {        
     var price = null;
     if (this.productosService.filtros.currency) {
       price = prices.find(price => price.currency.id == this.productosService.filtros.currency);

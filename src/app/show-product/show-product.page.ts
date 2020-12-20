@@ -205,7 +205,9 @@ export class ShowProductPage implements OnInit {
             text: 'COMPLETAR PERFIL',
             handler: async () => {
               this.playSound();
-              this.router.navigateByUrl('/user-profile');
+              this.router.navigateByUrl('/user-profile').then(()=>{
+                this.modalCtrl.dismiss();
+              });
             }
           }
         ]

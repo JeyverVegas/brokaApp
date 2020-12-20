@@ -63,7 +63,7 @@
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Ambientes:
                         {{producto.environments}}</p>
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio:
-                        {{findPrice(producto.prices)?.price_value.toLocaleString()}}
+                        {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
                         {{findPrice(producto.prices)?.currency?.code}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>

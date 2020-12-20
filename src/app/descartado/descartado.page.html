@@ -60,7 +60,7 @@
             <p class="price">
               <ion-text color="secondary">
                 {{findPrice(producto.prices)?.currency?.code}}
-                {{findPrice(producto.prices)?.price_value.toLocaleString()}}
+                {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
               </ion-text>
             </p>
             <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
