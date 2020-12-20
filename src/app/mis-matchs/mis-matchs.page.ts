@@ -147,6 +147,7 @@ export class MisMatchsPage {
   async openChat(match: Match) {
     this.playSound();
     const chat = this.chatService.returnChats().value.find(chats => chats.type === 'private' && chats.userIds.includes(match.property.realEstateAgency.user_id))
+    console.log(chat);
     const modal = await this.modalCtrl.create({
       component: ChatMensajesPage,
       componentProps: {

@@ -33,7 +33,7 @@
           </div>
           
           <div class="price-container" *ngIf="producto.prices">
-            <p class="price"><ion-text color="secondary">{{producto.prices[0].price_value}}{{producto.prices[0].currency.symbol}}</ion-text></p>            
+            <p class="price"><ion-text color="secondary">{{findPrice(producto.prices)?.currency?.code}} {{findPrice(producto.prices)?.price_value.toLocaleString()}}</ion-text></p>            
             <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
               {{producto.favorite_to_count}} <ion-icon slot="end" name="heart-outline" color="danger"></ion-icon>
             </ion-button>

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonContent, IonGrid, LoadingController, ModalController, NavParams, Platform, ToastController } from '@ionic/angular';
-import { finalize } from 'rxjs/operators';
+import { IonContent, IonGrid, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ChatImagesPreviewPage } from '../chat-images-preview/chat-images-preview.page';
 import { SelectFilePage } from '../select-file/select-file.page';
 import { AuthenticationService } from '../servicios/authentication.service';

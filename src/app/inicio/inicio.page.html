@@ -1,4 +1,4 @@
-<ion-content>    
+<ion-content>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
@@ -28,35 +28,43 @@
         </ion-grid>
     </div>
 
-    <div class="ion-text-center ion-padding" style="margin-top: 100px" *ngIf="productos.getValue().length === 0">    
+    <div class="ion-text-center ion-padding" style="margin-top: 22vh" *ngIf="productos.getValue().length === 0">
+        <ion-icon name="sad-outline" color="primary" style="font-size: 20vw;"></ion-icon>
         <p>
             <ion-text color="medium">
                 En este momento no tenemos inmuebles o inmobiliarias que coincidan
                 con lo que estas buscando.
             </ion-text>
         </p>
-        <ion-button color="primary" class="animate__animated animate__infinite animate__pulse" mode="ios" (click)="abriFiltros()">
+        <ion-button color="primary" class="animate__animated animate__infinite animate__pulse" mode="ios"
+            (click)="abriFiltros()">
             <ion-icon slot="start" name="options-outline"></ion-icon>
             Cambiar filtros
         </ion-button>
     </div>
-    <div class="display-total ion-padding">
+    <div class="display-total ion-padding" [class.hidden]="productos.getValue().length == 0">
         <ion-icon name="home" slot="start"></ion-icon> Resultados: {{total | async}}
     </div>
     <div style="overflow: hidden; height: 100%;" [class.hidden]="productos.getValue().length == 0">
         <div *ngFor="let producto of productos | async" style="height: 100%; position: relative;">
             <ion-slides [options]="slideOpts" pager="true" style="height: 100%;">
-                <ion-slide 
-                *ngFor="let image of producto.images" 
-                style="background: url('{{image.url}}'); background-size: 100% 100%;">
-                </ion-slide>    
+                <ion-slide *ngFor="let image of producto.images"
+                    style="background: url('{{image.url}}'); background-size: 100% 100%;">
+                </ion-slide>
             </ion-slides>
             <div class="description-container">
-                <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;" (click)="openProduct(producto)">
+                <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;"
+                    (click)="openProduct(producto)">
 
-                    <h3 style="color: white;"><ion-icon name="location"></ion-icon> {{(producto.address.address.length>25)? (producto.address.address | slice:0:25)+'...':(producto.address.address)}}</h3>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Ambientes: {{producto.environments}}</p>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio: {{findPrice(producto.prices)?.price_value.toLocaleString()}} {{findPrice(producto.prices)?.currency?.code}}</p>
+                    <h3 style="color: white;">
+                        <ion-icon name="location"></ion-icon>
+                        {{(producto.address.address.length>25)? (producto.address.address | slice:0:25)+'...':(producto.address.address)}}
+                    </h3>
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Ambientes:
+                        {{producto.environments}}</p>
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis;">Precio:
+                        {{findPrice(producto.prices)?.price_value.toLocaleString()}}
+                        {{findPrice(producto.prices)?.currency?.code}}</p>
 
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
@@ -65,18 +73,20 @@
                     <ion-button color="light" size="large" class="boton-redondo" fill="solid"
                         (click)="descartar(producto)">
                         <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>
-                    </ion-button>                    
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
+                    </ion-button>
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid"
+                        routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
                         <ion-icon slot="icon-only" color="primary" name="list"></ion-icon>
                     </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid" (click)="matchear(producto)">
+                    <ion-button color="light" size="large" class="boton-redondo" fill="solid"
+                        (click)="matchear(producto)">
                         <ion-icon slot="icon-only" color="success" name="checkmark"></ion-icon>
-                    </ion-button>                    
+                    </ion-button>
                 </ion-buttons>
             </div>
         </div>
     </div>
-    
 
-    
+
+
 </ion-content>

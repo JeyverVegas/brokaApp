@@ -31,7 +31,8 @@
         </ion-col>
         <ion-col style="position: relative;" size="6" class="ion-align-self-center ion-activatable ripple-parent">
           <h4 style="margin: 0;">
-            <ion-text color="dark">{{(producto.name.length>20)? (producto.name | slice:0:20)+'...':(producto.name)}}</ion-text>
+            <ion-text color="dark">{{(producto.name.length>20)? (producto.name | slice:0:20)+'...':(producto.name)}}
+            </ion-text>
           </h4>
 
           <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
@@ -57,7 +58,9 @@
 
           <div class="price-container" *ngIf="producto.prices">
             <p class="price">
-              <ion-text color="secondary">{{producto.prices[0].price_value}}{{producto.prices[0].currency.symbol}}
+              <ion-text color="secondary">
+                {{findPrice(producto.prices)?.currency?.code}}
+                {{findPrice(producto.prices)?.price_value.toLocaleString()}}
               </ion-text>
             </p>
             <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">

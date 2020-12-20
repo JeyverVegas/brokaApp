@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
 import { AuthenticationService } from '../servicios/authentication.service';
+import { ChatService } from '../servicios/chat.service';
 import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -21,7 +22,7 @@ export class InicioPage {
   total = new BehaviorSubject(0);
   slideOpts = {
     direction: 'vertical',
-  };  
+  };
   deviceWidth = null;
 
   constructor(
@@ -31,9 +32,10 @@ export class InicioPage {
     private alertCtrl: AlertController,
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private authService: AuthenticationService,    
+    private authService: AuthenticationService,
     private matchService: MatchService,
     private router: Router,
+    private chatService: ChatService
   ) { }
 
   ionViewDidEnter() {
@@ -85,88 +87,52 @@ export class InicioPage {
 
   async descartar(product) {
     this.playSound();
-    const alerta = await this.alertCtrl.create({
-      header: '¿Estas Seguro?',
-      message: 'desea descartar esta propiedad: ' + product.name,
-      buttons: [
-        {
-          text: 'No',
-          handler: () => {
-            this.playSound();
-          }
-        },
-        {
-          text: 'Si',
-          handler: async () => {
-            this.playSound();
-            const loading = await this.loadingCtrl.create({
-              spinner: 'dots',
-              message: 'Cargando...'
-            });
-            loading.present();
-            this.productosService.discardProduct(product.id).then(response => {
-              for (let [index, p] of this.productos.getValue().entries()) {
-                if (p.id === product.id) {
-
-                  this.productos.getValue().splice(index, 1);
-                }
-              }              
-              loading.dismiss().then(() => {
-                if (this.productos.value.length == 0) {
-                  this.productosService.getProducts();
-                }
-                this.presentToast('La propiedad... ' + product.name + ', ha sido descartada', 'secondary');
-                this.total.next(this.total.value - 1);
-              });
-            }).catch(error => {
-              console.log(error);
-              loading.dismiss().then(() => {
-                this.presentToast(error.error.errors.property_id[0], 'danger');
-              });
-            });
-          }
-        }
-      ]
+    const loading = await this.loadingCtrl.create({
+      spinner: 'dots',
+      message: 'Cargando...'
     });
-    await alerta.present();
+    loading.present();
+    this.productosService.discardProduct(product.id).then(response => {
+      for (let [index, p] of this.productos.getValue().entries()) {
+        if (p.id === product.id) {
+
+          this.productos.getValue().splice(index, 1);
+        }
+      }
+      loading.dismiss().then(() => {
+        if (this.productos.value.length == 0) {
+          this.productosService.getProducts();
+        }        
+        this.total.next(this.total.value - 1);
+      });
+    }).catch(error => {
+      console.log(error);
+      loading.dismiss().then(() => {
+        this.presentToast(error.error.errors.property_id[0], 'danger');
+      });
+    });
   }
 
   async matchear(product) {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
-      this.alertCtrl.create({
-        header: '¿Desea intentar matchear este anuncio?',
-        message: product.name,
-        buttons: [
-          {
-            text: 'no',
-            handler: () => {
-              this.playSound();
-            }
-          },
-          {
-            text: 'si',
-            handler: async () => {
-              this.playSound();
-              const loading = await this.loadingCtrl.create({
-                spinner: 'dots',
-                message: 'Enviando Solicitud...'
-              });
-              await loading.present();
-              this.matchService.storeMatch({property_id: product.id, message: 'Hola quisiera matchear: ' + product.name}).then(response =>{
-                console.log(response);
-                this.router.navigateByUrl('/tabs/tabs/mis-matchs');
-              }).catch(err =>{
-                console.log(err);
-                this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
-              }).finally(async ()=>{
-                await loading.dismiss();
-              })
-            }
-          }
-        ]
-      }).then(a => a.present());
+      this.playSound();
+      const loading = await this.loadingCtrl.create({
+        spinner: 'dots',
+        message: 'Enviando Solicitud...'
+      });
+      await loading.present();
+      this.matchService.storeMatch({ property_id: product.id, message: 'Hola quisiera matchear: ' + product.name }).then(response => {
+        this.chatService.getChats();
+        console.log(response);
+        this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+      }).catch(err => {
+        console.log(err);
+        this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+      }).finally(async () => {
+        await loading.dismiss();
+      });
     } else {
       this.alertCtrl.create({
         header: 'Debe completar primero su perfil',

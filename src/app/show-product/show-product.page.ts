@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { AuthenticationService } from '../servicios/authentication.service';
+import { ChatService } from '../servicios/chat.service';
 import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -37,7 +38,7 @@ export class ShowProductPage implements OnInit {
   @ViewChild('map', { static: true }) protected map: ElementRef;
 
 
-  constructor(    
+  constructor(
     private productosService: ProductosService,
     private authService: AuthenticationService,
     private smartAudio: SmartAudioService,
@@ -47,25 +48,26 @@ export class ShowProductPage implements OnInit {
     private toastController: ToastController,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private chatService: ChatService
   ) { }
 
   ionViewDidEnter() {
     this.slides.update();
   }
 
-  ngOnInit() {    
+  ngOnInit() {
     this.crearMapa();
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
   crearMapa() {
     var map = new google.maps.Map(this.map.nativeElement, {
-      center: {lat: this.producto.address.latitude, lng: this.producto.address.longitude}, 
-      zoom: 10,      
+      center: { lat: this.producto.address.latitude, lng: this.producto.address.longitude },
+      zoom: 10,
       mapTypeControl: false,
       zoomControl: true,
       scaleControl: false,
@@ -75,9 +77,9 @@ export class ShowProductPage implements OnInit {
     });
 
     var marker = new google.maps.Marker({
-      position: {lat: this.producto.address.latitude, lng: this.producto.address.longitude},
-      map: map,            
-      label: {        
+      position: { lat: this.producto.address.latitude, lng: this.producto.address.longitude },
+      map: map,
+      label: {
         color: "#ff5f90",
         fontSize: "16px",
         fontWeight: 'bold',
@@ -87,19 +89,19 @@ export class ShowProductPage implements OnInit {
     });
   }
 
-  closeModal(){
+  closeModal() {
     this.playSound();
     this.modalCtrl.dismiss();
   }
 
-  async openShared(){
+  async openShared() {
     this.playSound();
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Compartir en:',
       buttons: [
         {
           icon: "logo-whatsapp",
-          text: 'Whatsapp',          
+          text: 'Whatsapp',
         },
         {
           icon: "logo-facebook",
@@ -107,7 +109,7 @@ export class ShowProductPage implements OnInit {
         },
         {
           icon: "logo-twitter",
-          text: 'Twitter',          
+          text: 'Twitter',
         },
         {
           icon: "logo-instagram",
@@ -122,11 +124,11 @@ export class ShowProductPage implements OnInit {
     });
 
     actionSheet.present();
-  }  
+  }
 
   addToFavorite() {
     this.playSound();
-    this.productosService.addFavoriteProduct(this.producto.id).then(response => {      
+    this.productosService.addFavoriteProduct(this.producto.id).then(response => {
       this.presentToast(this.producto.name + ' ha sido añadido a favoritos.', 'success');
       this.producto.is_favorite = true;
       this.producto.favorite_to_count++;
@@ -136,11 +138,11 @@ export class ShowProductPage implements OnInit {
   }
 
   removeFromFavorite() {
-    this.playSound();    
+    this.playSound();
     this.productosService.removeFavoriteProduct(this.producto.id).then(response => {
       this.presentToast(this.producto.name + ' ha sido removido de favoritos.', 'success');
       this.producto.is_favorite = false;
-      this.producto.favorite_to_count--;      
+      this.producto.favorite_to_count--;
     }).catch(error => {
       this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
       console.log(error);
@@ -148,83 +150,46 @@ export class ShowProductPage implements OnInit {
   }
 
   async descartar() {
-    this.playSound();
-    const alerta = await this.alertCtrl.create({
-      header: '¿Estas Seguro?',
-      message: 'desea descartar esta propiedad: ' + this.producto.name,
-      buttons: [
-        {
-          text: 'No',
-          handler: () =>{
-            this.playSound();
-          }
-        },
-        {
-          text: 'Si',
-          handler: async () =>{
-              this.playSound();
-              const loading = await this.loadingCtrl.create({
-                spinner: 'dots',
-                message: 'Cargando...'
-              });
-              loading.present();
-              this.productosService.discardProduct(this.producto.id).then(response => {
-                loading.dismiss().then(()=>{
-                  this.modalCtrl.dismiss();
-                  this.presentToast('La propiedad... ' + this.producto.name + ', ha sido descartada', 'secondary');
-                  this.productosService.getProducts();
-                });                
-              }).catch(error => {
-                console.log(error);
-                loading.dismiss().then(()=>{
-                  this.presentToast(error.error.errors.property_id[0], 'danger');
-                });                
-              });                        
-          }
-        }
-      ]
+    this.playSound();    
+    const loading = await this.loadingCtrl.create({
+      spinner: 'dots',
+      message: 'Cargando...'
     });
-    await alerta.present();
+    loading.present();
+    this.productosService.discardProduct(this.producto.id).then(response => {
+      loading.dismiss().then(() => {
+        this.modalCtrl.dismiss();
+        this.presentToast('La propiedad... ' + this.producto.name + ', ha sido descartada', 'secondary');
+        this.productosService.getProducts();
+      });
+    }).catch(error => {
+      console.log(error);
+      loading.dismiss().then(() => {
+        this.presentToast(error.error.errors.property_id[0], 'danger');
+      });
+    });
   }
 
   async matchear(producto) {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
-      this.alertCtrl.create({
-        header: '¿Desea intentar matchear este anuncio?',
-        message: this.producto.name,
-        buttons: [
-          {
-            text: 'no',
-            handler: () => {
-              this.playSound();
-            }
-          },
-          {
-            text: 'si',
-            handler: async () => {
-              this.playSound();
-              const loading = await this.loadingCtrl.create({
-                spinner: 'dots',
-                message: 'Enviando Solicitud...'
-              });
-              await loading.present();
-              this.matchService.storeMatch({property_id: this.producto.id, message: 'Hola quisiera matchear: ' + this.producto.name}).then(response =>{
-                console.log(response);
-                this.modalCtrl.dismiss().then(() =>{
-                  this.router.navigateByUrl('/tabs/tabs/mis-matchs');
-                })                
-              }).catch(err =>{
-                console.log(err);
-                this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
-              }).finally(async ()=>{
-                await loading.dismiss();
-              })
-            }
-          }
-        ]
-      }).then(a => a.present());
+      const loading = await this.loadingCtrl.create({
+        spinner: 'dots',
+        message: 'Enviando Solicitud...'
+      });
+      await loading.present();
+      this.matchService.storeMatch({ property_id: this.producto.id, message: 'Hola quisiera matchear: ' + this.producto.name }).then(response => {
+        this.chatService.getChats();
+        this.modalCtrl.dismiss().then(() => {
+          this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+        })
+      }).catch(err => {
+        console.log(err);
+        this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+      }).finally(async () => {
+        await loading.dismiss();
+      })
     } else {
       this.alertCtrl.create({
         header: 'Debe completar primero su perfil',
@@ -259,7 +224,7 @@ export class ShowProductPage implements OnInit {
     toast.present();
   }
 
-  async openPreview(img){
+  async openPreview(img) {
     const modal = await this.modalCtrl.create({
       component: ImageModalPage,
       cssClass: 'b_transparent',
