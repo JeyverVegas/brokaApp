@@ -1,6 +1,10 @@
 <app-top-bar></app-top-bar>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" mode="ios">
+    <ion-refresher-content
+    refreshingText="Cargando..."></ion-refresher-content>
+  </ion-refresher>
   
   <ion-list class="ion-padding">
     <ion-item button *ngFor="let notificacion of notificaciones" (click)="doSomething(notificacion)">
@@ -13,7 +17,7 @@
         <p>{{notificacion.body}}</p>
         <p>{{notificacion.created_at | date:'dd/MM/yyyy, hh:mm aa'}}</p>
       </ion-label>
-      <ion-icon *ngIf="!notificacion.read_at" name="ellipse" slot="end" color="secondary"></ion-icon>
+      <ion-icon *ngIf="notificacion.read_at == null" name="ellipse" slot="end" color="secondary"></ion-icon>
     </ion-item>
   </ion-list>
 

@@ -95,7 +95,8 @@ export class AppComponent {
       this.smartAudio.preload('chatsound', 'assets/audios/chatsound.mp3');
       this.authService.isAuthenticated.subscribe(isLogin =>{
         if(isLogin){
-          this.chatService.getChats();
+          this.chatService.getChats();          
+          this.oneSignal.setExternalUserId(this.authService.user.id.toString());
         }
       })
       
@@ -109,7 +110,7 @@ export class AppComponent {
     
     this.oneSignal.startInit('eb9f921d-63b7-4c42-9dec-82544a36a935', '277124092318');
 
-    this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.None);
+    this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.None);    
 
     this.oneSignal.handleNotificationReceived().subscribe((data) => {
       let msg = data.payload.body;
@@ -160,6 +161,7 @@ export class AppComponent {
     await loading.present();
     this.chatService.unistallEcho();
     await this.authService.logOut().then(() => {
+      this.oneSignal.removeExternalUserId();
       loading.dismiss().then(() => {
         this.router.navigateByUrl('/login', { replaceUrl: true });
       });

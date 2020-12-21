@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { AuthenticationService } from '../servicios/authentication.service';
@@ -24,10 +24,14 @@ export class NotificacionesPage implements OnInit {
     private toastController: ToastController,
     private modalCtrl: ModalController,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private ref: ChangeDetectorRef
   ) { }
 
-  async ngOnInit() {
+  async ngOnInit() {    
+  }
+
+  async ionViewDidEnter(){
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...'
@@ -78,8 +82,11 @@ export class NotificacionesPage implements OnInit {
   }
 
   async doSomething(notification: any) {
+    console.log(notification);
     this.notificacionesService.notificationMarkRead(notification.id).then(async (response: any) => {
       notification = response.data;
+      notification.read_at = response.data.read_at;      
+      console.log(response.data)
       if (notification.additional_data.computed_type == 'match_accepted') {
         this.router.navigateByUrl('/tabs/tabs/mis-matchs');
       }
@@ -108,6 +115,7 @@ export class NotificacionesPage implements OnInit {
           await loading.dismiss();
         })
       }
+      this.ref.detectChanges();
     }).catch(err =>{
       console.log(err);
     })        
@@ -123,6 +131,18 @@ export class NotificacionesPage implements OnInit {
       mode: 'ios'
     });
     toast.present();
+  }
+
+  async doRefresh(event){    
+    this.notificacionesService.getNotifications().then((response: any) => {
+      this.notificaciones = response.data;
+      this.next = response.links.next;
+      console.log(response);
+    }).catch(err => {
+      console.log(err);
+    }).finally(async () => {
+      event.target.complete();
+    })
   }
 
 
