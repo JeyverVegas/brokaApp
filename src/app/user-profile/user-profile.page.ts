@@ -326,7 +326,7 @@ export class UserProfilePage implements OnInit {
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
         this.error.displayError = true;
-        this.presentToast('Error al actualizar el usuario.', 'danger');
+        this.presentToast(this.firstError, 'danger');
       });
     }
     else {
@@ -342,7 +342,7 @@ export class UserProfilePage implements OnInit {
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
         this.error.displayError = true;
-        this.presentToast('Error al actualizar el usuario.', 'danger');
+        this.presentToast(this.firstError, 'danger');
       });
     }
   }
@@ -387,7 +387,7 @@ export class UserProfilePage implements OnInit {
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
         this.error.displayError = true;
-        this.presentToast('Error al actualizar la dirección', 'danger');
+        this.presentToast(this.firstError, 'danger');
         await loading.dismiss();
 
       });

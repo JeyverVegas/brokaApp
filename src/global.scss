@@ -29,6 +29,11 @@
 /*Estilos Globales de la App*/
 
 /*Estilos del select de categorias*/
+ion-input, ion-item{
+    --highlight-color-valid: none !important;
+    --highlight-color-invalid: none !important;
+}
+
 .hello .alert-wrapper {
     /*color de los valores al ser seleccionados*/
     [aria-checked="true"].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md {
@@ -245,7 +250,7 @@
     height: 25%;
     background: white;
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     width: 100%;
     left: 0;
     border-radius: 40px 40px 0px 0px;

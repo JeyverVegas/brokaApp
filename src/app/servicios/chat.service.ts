@@ -75,6 +75,7 @@ export class ChatService {
       headers: this.authService.authHeader
     }).toPromise().then((response: any) => {      
       this.chats.next(response.data);      
+      console.log(response.data);
       if(!chatPage){
         this.newMessagesCount.next(this.chats.getValue().reduce((suma, b) => suma + b.unread_messages_count, 0));
       }      
