@@ -59,13 +59,7 @@ export class AppComponent {
       icon: 'checkbox-outline',
       active: false,
       url: '/tabs/tabs/mis-matchs'
-    },
-    /* {
-      name: 'Contacte con nosotros',
-      icon: 'call-outline',
-      active: false,
-      url: ''
-    }, */
+    },    
   ]
 
 
@@ -96,12 +90,12 @@ export class AppComponent {
       this.authService.isAuthenticated.subscribe(isLogin =>{
         if(isLogin){
           this.chatService.getChats();          
-          this.oneSignal.setExternalUserId(this.authService.user.id.toString());
+          //this.oneSignal.setExternalUserId(this.authService.user.id.toString());
         }
       })
       
       if (this.platform.is('cordova')) {
-        this.setupPush();
+        //this.setupPush();
       }
     });
   }

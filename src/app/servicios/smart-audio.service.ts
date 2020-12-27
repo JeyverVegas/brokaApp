@@ -9,7 +9,7 @@ export class SmartAudioService {
 
   audioType: string = 'html5';
   sounds: any = [];
-  mute = false;
+  mute = true;
   constructor(public nativeAudio: NativeAudio, platform: Platform) {
 
     if (platform.is('cordova')) {

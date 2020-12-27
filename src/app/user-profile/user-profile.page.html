@@ -18,13 +18,13 @@
                     <ion-icon name="add" slot="icon-only"></ion-icon>
                 </ion-button>
             </ion-col>
-            <ion-col size="8">
+            <ion-col size="8" class="user-info">
                 <ion-label color="light">
                     <h3>
                         <ion-icon name="person"></ion-icon> Nombre: {{user.profile.firstname}} {{user.profile.lastname}}
                     </h3>
                     <h3>
-                        <ion-icon name="call"></ion-icon> Telefono: {{user.profile.phone}}
+                        <ion-icon name="call"></ion-icon> Teléfono: {{user.profile.phone}}
                     </h3>
                     <h3>
                         <ion-icon name="location"></ion-icon> Dirección: {{user.address?.state?.name}} <span *ngIf="user.address.state">,</span>
@@ -73,7 +73,7 @@
                     <ion-input [(ngModel)]="user.profile.lastname" name="lastname"></ion-input>
                 </ion-item>
                 <ion-item mode="md">
-                    <ion-label position="floating" color="primary">Telefono</ion-label>
+                    <ion-label position="floating" color="primary">Teléfono</ion-label>
                     <ion-input [(ngModel)]="user.profile.phone" name="phone"></ion-input>
                 </ion-item>
                 <br>
@@ -101,7 +101,7 @@
                 </ion-select>
             </ion-item>
             <ion-item mode="md">
-                <ion-label color="primary" position="floating">Direción</ion-label>
+                <ion-label color="primary" position="floating">Dirección</ion-label>
                 <ion-textarea [(ngModel)]="user.address.address"></ion-textarea>
             </ion-item>
             <br>
@@ -143,19 +143,22 @@
                     [(ngModel)]="silenciar">
                 </ion-checkbox>
             </ion-item>
+            <ion-item buttom (click)="showTerms()">
+                <ion-label class="ion-text-wrap">Terminos y condiciones</ion-label>                
+            </ion-item>
         </ion-slide>
     </ion-slides>
 
 </ion-content>
 
 <ion-footer class="ion-text-center ion-no-border">
-    <ion-button *ngIf="slideNumber == 0" class="color_primario" mode="ios" (click)="saveProfile()">
-        guardar cambios
+    <ion-button *ngIf="slideNumber == 0" color="primary" mode="ios" (click)="saveProfile()">
+        Guardar cambios
     </ion-button>
-    <ion-button *ngIf="slideNumber == 1" class="color_primario" mode="ios" (click)="saveAddress()">
-        guardar dirección
+    <ion-button *ngIf="slideNumber == 1" color="primary" mode="ios" (click)="saveAddress()">
+        Guardar dirección
     </ion-button>
-    <ion-button *ngIf="slideNumber == 2" class="color_primario" mode="ios" (click)="save()">
-        guardar configuración
+    <ion-button *ngIf="slideNumber == 2" color="primary" mode="ios" (click)="save()">
+        Guardar configuración
     </ion-button>
 </ion-footer>

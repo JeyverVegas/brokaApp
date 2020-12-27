@@ -2,6 +2,33 @@ ion-content{
     position: relative;
 }
 
+.all-height{
+    height: 100%;
+}
+
+.img-container{
+    height: 100%;
+    background: black;
+    padding: 3px;
+
+    div {
+        background: white;
+        border-radius: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2px;
+    }
+}
+
+.mapita{
+    height: 80%;
+    width: 100%;
+    border-radius: 15px;
+    margin-top: -7vh;
+    box-shadow: 0px 7px 110px -17px rgba(0,0,0,0.56);
+}
+
 .hidden{
     display: none;
 }
@@ -9,11 +36,11 @@ ion-content{
 .description-container{
     position: absolute;
     bottom: 0;
-    height: 40%;
+    height: 25%;
     background: rgba(0,0,0, .3);
     color: white;
     text-align: left;
-    padding: 10%;
+    padding: 5%;
     width: 100%;
     z-index: 9999;
 }
@@ -37,18 +64,15 @@ ion-content{
 }
 
 .boton-redondo{
-    height: 50px;
-    width: 50px;                
+    height: 10vw;
+    width: 10vw;                
     --border-radius: 100% !important;
-}
-
-.house-img{
-    animation: levitar 1.5s alternate infinite;
+    position: relative;
+    --overflow: none;
 }
 
 .buttons-container{
-    justify-content: space-between; 
-    justify-content: space-between; 
+    justify-content: space-evenly;     
     width: 100%; 
     position: absolute; 
     bottom: 10px; 
@@ -57,12 +81,43 @@ ion-content{
     padding: 0 20px;
 }
 
-@keyframes levitar{
-    from{
-        transform: translateY(0);
+.pulse1 {
+    margin:100px;
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background: white;    
+    position: absolute;
+    z-index: -1;
+    box-shadow: 0 0 0 rgba(255,255,255, 1);
+    animation: pulse 1.5s infinite;
+  }
+  .pulse:hover {
+    animation: none;
+  }
+  
+  @keyframes pulse {
+    0% {
+      -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 1);
+      box-shadow: 0 0 0 0 rgba(255,255,255, 1);
     }
+    70% {
+        -moz-box-shadow: 0 0 0 15px rgba(255,255,255, 0);
+        box-shadow: 0 0 0 15px rgba(255,255,255, 0);
+    }
+    100% {
+        -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+        box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+    }
+  }
 
-    to{
-        transform: translateY(-40px);
-    }
-}
+  .delete-container{
+      position: fixed;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 9999;
+      font-size: 50px;
+  }

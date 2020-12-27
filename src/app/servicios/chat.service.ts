@@ -74,8 +74,7 @@ export class ChatService {
     this.http.get(this.authService.api + '/chats', {
       headers: this.authService.authHeader
     }).toPromise().then((response: any) => {      
-      this.chats.next(response.data);      
-      console.log(response.data);
+      this.chats.next(response.data);            
       if(!chatPage){
         this.newMessagesCount.next(this.chats.getValue().reduce((suma, b) => suma + b.unread_messages_count, 0));
       }      

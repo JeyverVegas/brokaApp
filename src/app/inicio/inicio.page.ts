@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
+import { BrokaMarkers } from '../interface';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
 import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { ShowProductPage } from '../show-product/show-product.page';
+declare var google: any;
 
 @Component({
   selector: 'app-inicio',
@@ -18,13 +20,13 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class InicioPage {
 
+  @ViewChildren('mapa') protected mapas: QueryList<ElementRef>;
+  @ViewChildren('containerx') protected containerx: QueryList<ElementRef>;
   productos = new BehaviorSubject([]);
   total = new BehaviorSubject(0);
-  slideOpts = {
-    direction: 'vertical',
-  };
+  
   deviceWidth = null;
-
+  showdelete = false;
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
@@ -39,8 +41,50 @@ export class InicioPage {
   ) { }
 
   ionViewDidEnter() {
-    this.productos = this.productosService.getProducts();
-    this.total = this.productosService.getTotal();
+     
+    this.productos = this.productosService.getProducts();    
+    
+    this.mapas.changes.subscribe((elements: any) =>{
+      var mapas: any[] = elements.toArray();
+
+      mapas.forEach((mapa: ElementRef) => {
+        const map = mapa.nativeElement;        
+        const product = this.productos.getValue()[Number(map.dataset.index)];        
+        this.crearMapa(map, product, Number(map.dataset.index));
+      })
+    })
+  }
+
+  crearMapa(mapa, product, index) {
+    if(google){
+      var map = new google.maps.Map(mapa, {
+        center: { lat: product.address.latitude, lng: product.address.longitude },
+        zoom: 10,
+        mapTypeControl: false,
+        zoomControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false
+      });    
+  
+      map.addListener('drag', ()=>{
+         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
+         element.style.overflow = "hidden";      
+      });
+  
+      map.addListener('dragend', ()=>{
+        const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
+        element.style.overflow = "auto";      
+     })
+  
+      var marker = new BrokaMarkers(
+        new google.maps.LatLng(product.address.latitude, product.address.longitude),
+        product.images[0].url
+      );
+  
+      marker.setMap(map);
+    }    
   }
 
   async openProduct(producto) {
@@ -55,7 +99,7 @@ export class InicioPage {
     modal.present();
   }
 
-  findPrice(prices: any[]) {        
+  findPrice(prices: any[]) {
     var price = null;
     if (this.productosService.filtros.currency) {
       price = prices.find(price => price.currency.id == this.productosService.filtros.currency);
@@ -87,11 +131,7 @@ export class InicioPage {
 
   async descartar(product) {
     this.playSound();
-    const loading = await this.loadingCtrl.create({
-      spinner: 'dots',
-      message: 'Cargando...'
-    });
-    loading.present();
+    this.showdelete = true;
     this.productosService.discardProduct(product.id).then(response => {
       for (let [index, p] of this.productos.getValue().entries()) {
         if (p.id === product.id) {
@@ -99,17 +139,15 @@ export class InicioPage {
           this.productos.getValue().splice(index, 1);
         }
       }
-      loading.dismiss().then(() => {
-        if (this.productos.value.length == 0) {
-          this.productosService.getProducts();
-        }        
-        this.total.next(this.total.value - 1);
-      });
+      if (this.productos.value.length == 0) {
+        this.productosService.getProducts();
+      }
+      this.total.next(this.total.value - 1);
     }).catch(error => {
       console.log(error);
-      loading.dismiss().then(() => {
-        this.presentToast(error.error.errors.property_id[0], 'danger');
-      });
+      this.presentToast(error.error.errors.property_id[0], 'danger');
+    }).finally(() => {
+      this.showdelete = false;
     });
   }
 
@@ -124,8 +162,7 @@ export class InicioPage {
       });
       await loading.present();
       this.matchService.storeMatch({ property_id: product.id, message: 'Hola quisiera matchear: ' + product.name }).then(response => {
-        this.chatService.getChats();
-        console.log(response);
+        this.chatService.getChats();        
         this.router.navigateByUrl('/tabs/tabs/mis-matchs');
       }).catch(err => {
         console.log(err);

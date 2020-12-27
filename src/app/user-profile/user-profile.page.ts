@@ -3,7 +3,7 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/n
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ActionSheetController, IonSlides, LoadingController, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
 import { City, State, Usuario } from '../interface';
 import { MapConfigPage } from '../map-config/map-config.page';
 import { AddressService } from '../servicios/address.service';
@@ -70,7 +70,8 @@ export class UserProfilePage implements OnInit {
     private webview: WebView,
     private ref: ChangeDetectorRef,
     private toastController: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
@@ -401,5 +402,17 @@ export class UserProfilePage implements OnInit {
 
   public get firstError() {
     return this.errorList[0];
+  }
+
+  showTerms(){
+    this.alertCtrl.create({
+      header: 'Terminos y Condiciones',
+      message: 'Aca irian los terminos y condiciones de la aplicacion',
+      buttons: [
+        {
+          text: 'si'
+        }
+      ]
+    }).then(a => a.present());
   }
 }
