@@ -10,6 +10,11 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { Usuario } from '../interface';
 import { Storage } from '@ionic/storage';
+import { ChatService } from '../servicios/chat.service';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
+import { BehaviorSubject } from 'rxjs';
+import { MatchService } from '../servicios/match.service';
+import { ProductosService } from '../servicios/productos.service';
 
 const USER_DATA = 'user-data';
 
@@ -21,9 +26,10 @@ const USER_DATA = 'user-data';
 export class UsuarioPage implements OnInit {
 
   user = {} as Usuario;
-
+  chatCount = 0;
+  matchCount = 0;
+  discardCount = 0;
   profileImages = [];
-
   silenciar = false;
 
   target = null;
@@ -41,13 +47,28 @@ export class UsuarioPage implements OnInit {
     private ref: ChangeDetectorRef,
     private smartAudio: SmartAudioService,
     private modalCtrl: ModalController,
-    private authService: AuthenticationService,
     private storage: Storage,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private authService: AuthenticationService,
+    private chatService: ChatService,
+    private matchService: MatchService,
+    private productosService: ProductosService,
+    private oneSignal: OneSignal,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.user = this.authService.user;
+  }
+
+  async ionViewDidEnter() {
+    try {      
+      this.chatCount = this.chatService.returnChats().getValue().length;
+      var match: any = await this.matchService.getMatchs();
+      this.matchCount = match.data.length;
+      this.discardCount = await (await this.productosService.getDescartados()).length;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   playSound() {
@@ -284,6 +305,42 @@ export class UsuarioPage implements OnInit {
     });
 
     modal.present();
+  }
+
+  async logOut() {
+    this.playSound();
+    const alerta = await this.alertCtrl.create({
+      header: '¿Cerrar Sesión?',
+      message: '¿Deseas cerrar la sesión actual?',
+      buttons: [
+        {
+          text: "No",
+          handler: () => {
+            this.playSound();
+          }
+        },
+        {
+          text: "Si",
+          handler: async () => {
+            this.playSound();
+            const loading = await this.loadingCtrl.create({
+              spinner: 'crescent',
+              message: 'Cerrando Sesión.',
+            });
+            await loading.present();
+            this.chatService.unistallEcho();
+            await this.authService.logOut().then(() => {
+              this.oneSignal.removeExternalUserId();
+              loading.dismiss().then(() => {
+                this.router.navigateByUrl('/login', { replaceUrl: true });
+              });
+            });
+          }
+        }
+      ]
+    });
+
+    await alerta.present();
   }
 
 

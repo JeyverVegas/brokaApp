@@ -27,6 +27,7 @@ export class InicioPage {
   
   deviceWidth = null;
   showdelete = false;
+  showmatch = false;
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
@@ -72,6 +73,11 @@ export class InicioPage {
          const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
          element.style.overflow = "hidden";      
       });
+
+      map.addListener('dragstart', ()=>{
+        const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
+        element.style.overflow = "hidden";      
+     });
   
       map.addListener('dragend', ()=>{
         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
@@ -104,8 +110,10 @@ export class InicioPage {
     if (this.productosService.filtros.currency) {
       price = prices.find(price => price.currency.id == this.productosService.filtros.currency);
     } else {
-      price = prices[0];
+      price = prices[0];      
     }
+
+    price.price_value = parseInt(price.price_value, 0);
     return price;
   }
 
@@ -141,8 +149,7 @@ export class InicioPage {
       }
       if (this.productos.value.length == 0) {
         this.productosService.getProducts();
-      }
-      this.total.next(this.total.value - 1);
+      }      
     }).catch(error => {
       console.log(error);
       this.presentToast(error.error.errors.property_id[0], 'danger');
@@ -155,20 +162,24 @@ export class InicioPage {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
-      this.playSound();
-      const loading = await this.loadingCtrl.create({
-        spinner: 'dots',
-        message: 'Enviando Solicitud...'
-      });
-      await loading.present();
+      this.playSound();      
+      this.showmatch = true;
       this.matchService.storeMatch({ property_id: product.id, message: 'Hola quisiera matchear: ' + product.name }).then(response => {
-        this.chatService.getChats();        
-        this.router.navigateByUrl('/tabs/tabs/mis-matchs');
+        this.chatService.getChats();
+        for (let [index, p] of this.productos.getValue().entries()) {
+          if (p.id === product.id) {
+  
+            this.productos.getValue().splice(index, 1);
+          }
+        }
+        if (this.productos.value.length == 0) {
+          this.productosService.getProducts();
+        }      
       }).catch(err => {
         console.log(err);
         this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
       }).finally(async () => {
-        await loading.dismiss();
+        this.showmatch = false;
       });
     } else {
       this.alertCtrl.create({

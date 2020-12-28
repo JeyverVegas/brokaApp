@@ -100,8 +100,6 @@ export interface Match {
 
 }
 
-
-
 export class BrokaMarkers extends google.maps.OverlayView {
   private latlng_: { lat: number, lng: number };
   private imageSrc: string;

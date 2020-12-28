@@ -1,3 +1,11 @@
+ion-header{
+    background-color: var(--ion-color-primary);
+    background-image: url(../../assets/images/circles.png);
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 .slider-img{
     height: 30vh;
     max-height: 400px;

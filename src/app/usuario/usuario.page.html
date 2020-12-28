@@ -1,44 +1,99 @@
-<app-top-bar></app-top-bar>
+<ion-header>
 
-<ion-content class="ion-padding">
-    <div class="ion-text-center">
-        <div class="div-img-user">
-            <img *ngIf="user.profile && user.profile.image; else invitadoImg" class="img-user"
-                src="{{user.profile.image}}" alt="" (click)="openPreview(user.profile.image)">
-            <ng-template #invitadoImg>
-                <ion-icon name="person-circle-outline" class="img-user" color="primary"></ion-icon>
-            </ng-template>
-            <ion-button *ngIf="user.profile && user.profile.image;" size="small" color="secondary" class="button-edit" (click)="selectImage('usuario')">
-                <ion-icon name="add" slot="icon-only"></ion-icon>
-            </ion-button>
-        </div>
-        <h1 *ngIf="user.profile && user.profile.firstname && user.profile.lastname; else invitadoName">
-            {{user.profile.firstname}} {{user.profile.lastname}}</h1>
-        <ng-template #invitadoName>
-            <h1>Invitado</h1>
-        </ng-template>
-        <h4 *ngIf="user.email">{{user.email}}</h4>
-        <p *ngIf="user.profile && user.profile.bio">{{user.profile.bio}}</p>
-        <br>
-        <ion-button expand="block" fill="outline" color="dark" (click)="playSound()" routerLink="/user-profile"
-            routerDirection="forward" class="animate__animated animate__infinite"
-            [class.animate__pulse]="user.profile == undefined">
-            Completar Perfil <span *ngIf="user.profile == undefined">(importante)</span>
-        </ion-button>        
-        <br>
-        <ion-button expand="block" fill="outline" color="dark" (click)="selectImage('galeria')">
-            añadir imagen
-            <ion-icon slot="end" name="camera-outline"></ion-icon>
-        </ion-button>
+</ion-header>
+
+<ion-content>
+    <div class="ion-padding user-header">
+        <h1>
+            <ion-text color="light">
+                Perfíl
+            </ion-text>
+        </h1>
     </div>
+    <div class="ion-padding">
+        <div class="list-items">
+            <div class="user-info-container ion-padding">
+                <div style="display: flex; justify-content: space-between;">
+                    <ion-button style="position: relative;" fill="clear" slot="start" color="primary" mode="md" (click)="playSound()"
+                        routerLink="/user-profile" routerDirection="forward">
+                        <ion-icon slot="icon-only" name="settings"></ion-icon>
+                        <div *ngIf="!user.profile" class="medalla"></div>
+                        <div *ngIf="!user.profile" class="pulse1"></div>
+                    </ion-button>
+                    <ion-button slot="end" fill="clear" color="primary" mode="md" (click)="logOut()">
+                        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+                    </ion-button>
+                </div>
+                <div class="div-img-user">
+                    <img *ngIf="user.profile && user.profile.image; else invitadoImg" class="img-user"
+                        src="{{user.profile.image}}" alt="" (click)="openPreview(user.profile.image)">
+                    <ng-template #invitadoImg>
+                        <ion-icon name="person-circle-outline" class="img-user" color="primary"></ion-icon>
+                    </ng-template>
+                    <ion-button *ngIf="user.profile && user.profile.image;" size="small" color="primary"
+                        class="button-edit" (click)="selectImage('usuario')">
+                        <ion-icon name="add" slot="icon-only"></ion-icon>
+                    </ion-button>
+                </div>
+                <h1 *ngIf="user.profile && user.profile.firstname && user.profile.lastname; else invitadoName">
+                    {{user.profile.firstname}} {{user.profile.lastname}}</h1>
+                <ng-template #invitadoName>
+                    <h1>Invitado</h1>
+                </ng-template>
+                <h4 *ngIf="user.email"><ion-icon name="mail" color="primary" slot="start" class="ion-margin-end"></ion-icon>{{user.email}}</h4>
+                <p>
+                    <ion-icon name="call" color="primary" slot="start" class="ion-margin-end"></ion-icon>  
+                    <ion-text color="medium">{{user.profile.phone}}</ion-text>
+                </p>
+                <p *ngIf="user.profile && user.profile.bio">
+                    <ion-icon name="location" color="primary" slot="start" class="ion-margin-end"></ion-icon>  
+                    <ion-text color="medium">{{user.profile.bio}}</ion-text>
+                </p>
+            </div>
+            <ion-list class="info-details">
+                <ion-item button lines="none" detail routerLink="/tabs/tabs/mis-matchs" routerDirection="forward">
+                    <ion-icon slot="start" name="heart" color="success"></ion-icon>
+                    <ion-label class="ion-text-wrap" color="medium">inmuebles matcheados</ion-label>
+                    <ion-button slot="end" color="success" fill="clear">{{matchCount}}</ion-button>
+                </ion-item>
+                <ion-item button lines="none" detail routerLink="/tabs/tabs/descartado" routerDirection="forward">
+                    <ion-icon name="close" color="danger" slot="start"></ion-icon>
+                    <ion-label class="ion-text-wrap" color="medium">inmuebles descartados</ion-label>
+                    <ion-button slot="end" color="danger" fill="clear">{{discardCount}}</ion-button>
+                </ion-item>
+                <ion-item button lines="none" detail routerLink="/tabs/tabs/chat" routerDirection="forward">
+                    <ion-icon name="chatbubbles-outline" slot="start" color="warning"></ion-icon>
+                    <ion-label class="ion-text-wrap" color="medium">Conversaciones</ion-label>
+                    <ion-button slot="end" color="warning" fill="clear">{{chatCount}}</ion-button>
+                </ion-item>
+                <ion-item lines="none" button detail> 
+                    <ion-icon color="medium" name="information-circle" slot="start"></ion-icon>
+                    <ion-label color="medium">Términos y Condiciones</ion-label>
+                </ion-item>
+            </ion-list>
+        </div>
+    </div>
+
+    <!-- <ion-button expand="block" fill="outline" color="dark" (click)="playSound()" routerLink="/user-profile"
+        routerDirection="forward" class="animate__animated animate__infinite"
+        [class.animate__pulse]="user.profile == undefined">
+        Completar Perfil <span *ngIf="user.profile == undefined">(importante)</span>
+    </ion-button>
+    <br>
+    <ion-button expand="block" fill="outline" color="dark" (click)="selectImage('galeria')">
+        añadir imagen
+        <ion-icon slot="end" name="camera-outline"></ion-icon>
+    </ion-button>
     <ion-grid *ngIf="user.profile && user.profile.profile_images">
         <ion-row>
             <ion-col size="6" *ngFor="let image of user.profile.profile_images" style="position: relative;">
-                <img src="{{image.url}}" alt="" (click)="openPreview(image.url)" class="animate__animated animate__fadeInUp">
-                <ion-button color="danger" class="remove-button animate__animated animate__fadeInUp" (click)="deleteImgGallery(image.id)">
+                <img src="{{image.url}}" alt="" (click)="openPreview(image.url)"
+                    class="animate__animated animate__fadeInUp">
+                <ion-button color="danger" class="remove-button animate__animated animate__fadeInUp"
+                    (click)="deleteImgGallery(image.id)">
                     <ion-icon name="close" slot="icon-only"></ion-icon>
                 </ion-button>
             </ion-col>
         </ion-row>
-    </ion-grid>
+    </ion-grid> -->
 </ion-content>

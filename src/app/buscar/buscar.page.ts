@@ -158,6 +158,7 @@ export class BuscarPage implements OnInit {
     } else {
       price = prices[0];
     }
+    price.price_value = parseInt(price.price_value, 0);
     return price;
   }
 

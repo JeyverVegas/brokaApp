@@ -70,7 +70,7 @@ export class FiltrosPage implements OnInit {
     private router: Router,
   ) { }
 
-  async ngOnInit() {
+  async ngOnInit() {    
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...'
@@ -156,11 +156,11 @@ export class FiltrosPage implements OnInit {
   setCurrency() {
     const currency = this.minMaxRange.prices.find(price => price.id == this.filtros.currency);
     
-    this.rangesPrices.min = currency.min_price;
-    this.rangesPrices.max = currency.max_price;   
+    this.rangesPrices.min = parseInt(currency.min_price, 0);
+    this.rangesPrices.max = parseInt(currency.max_price, 0);   
 
-    this.pricesBetween.lower = currency.min_price;
-    this.pricesBetween.upper = currency.max_price;    
+    this.pricesBetween.lower = parseInt(currency.min_price, 0);
+    this.pricesBetween.upper = parseInt(currency.max_price, 0);
 
     this.steps = currency.max_price / 100;
     console.log(this.steps);

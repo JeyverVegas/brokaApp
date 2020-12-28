@@ -7,6 +7,10 @@
         <ion-icon name="close" color="light"></ion-icon>
     </div>
 
+    <div *ngIf="showmatch" class="delete-container animate__animated animate__fadeInUp animate__faster">
+        <ion-icon name="heart" color="success"></ion-icon>
+    </div>
+
     <div class="menu-buttons" *ngIf="productos.getValue().length > 0">
         <ion-grid>
             <ion-row style="background-color: rgba(0, 0, 0, .2);">
@@ -79,21 +83,18 @@
                 </div>
                 <br>
                 <ion-buttons class="buttons-container">
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid"
-                        (click)="descartar(producto)">
-                        <ion-icon slot="icon-only" color="danger" name="close"></ion-icon>
-                        <div class="pulse1"></div>
-                    </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid"
-                        routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
-                        <ion-icon slot="icon-only" color="primary" name="list"></ion-icon>
-                        <div class="pulse1"></div>
-                    </ion-button>
-                    <ion-button color="light" size="large" class="boton-redondo" fill="solid"
-                        (click)="matchear(producto)">
-                        <ion-icon slot="icon-only" color="success" name="heart"></ion-icon>
-                        <div class="pulse1"></div>
-                    </ion-button>
+                    <div class="boton-redondo" (click)="descartar(producto)">
+                        <img src="../../assets/icon/delete.png" alt="">
+                        <div class="pulse12"></div>
+                    </div>
+                    <div class="boton-redondo" routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
+                        <img src="../../assets/icon/info.png" alt="">
+                        <div class="pulse12"></div>
+                    </div>
+                    <div class="boton-redondo" (click)="matchear(producto)">
+                        <img src="../../assets/icon/match.png" alt="">
+                        <div class="pulse12"></div>
+                    </div>                    
                 </ion-buttons>
             </div>
         </div>
