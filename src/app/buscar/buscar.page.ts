@@ -150,7 +150,7 @@ export class BuscarPage implements OnInit {
     }
   }
 
-  
+
   findPrice(prices: any[]) {
     var price = null;
     if (this.productosService.filtros.currency) {

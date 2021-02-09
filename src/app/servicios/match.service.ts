@@ -31,7 +31,7 @@ export class MatchService {
   }
 
   deleteAllMatch() {
-    return this.http.delete(this.authService.api + '/matches/', {
+    return this.http.delete(this.authService.api + '/matches', {
       headers: this.authService.authHeader
     }).toPromise();
   }
