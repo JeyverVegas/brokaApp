@@ -4,6 +4,7 @@ import { AlertController, LoadingController, ModalController, ToastController } 
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
 import { FiltrosPage } from '../filtros/filtros.page';
+import { Filtros2Page } from '../filtros2/filtros2.page';
 import { BrokaMarkers } from '../interface';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
@@ -24,7 +25,7 @@ export class InicioPage {
   @ViewChildren('containerx') protected containerx: QueryList<ElementRef>;
   productos = new BehaviorSubject([]);
   total = new BehaviorSubject(0);
-  
+
   deviceWidth = null;
   showdelete = false;
   showmatch = false;
@@ -42,22 +43,22 @@ export class InicioPage {
   ) { }
 
   ionViewDidEnter() {
-     
-    this.productos = this.productosService.getProducts();    
+
+    this.productos = this.productosService.getProducts();
     
-    this.mapas.changes.subscribe((elements: any) =>{
+    this.mapas.changes.subscribe((elements: any) => {
       var mapas: any[] = elements.toArray();
 
       mapas.forEach((mapa: ElementRef) => {
-        const map = mapa.nativeElement;        
-        const product = this.productos.getValue()[Number(map.dataset.index)];        
+        const map = mapa.nativeElement;
+        const product = this.productos.getValue()[Number(map.dataset.index)];
         this.crearMapa(map, product, Number(map.dataset.index));
       })
     })
   }
 
   crearMapa(mapa, product, index) {
-    if(google){
+    if (google) {
       var map = new google.maps.Map(mapa, {
         center: { lat: product.address.latitude, lng: product.address.longitude },
         zoom: 10,
@@ -66,35 +67,37 @@ export class InicioPage {
         scaleControl: false,
         streetViewControl: false,
         rotateControl: false,
-        fullscreenControl: false
-      });    
-  
-      map.addListener('drag', ()=>{
-         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
-         element.style.overflow = "hidden";      
+        fullscreenControl: false,
+        draggable: false
       });
 
-      map.addListener('dragstart', ()=>{
+      map.addListener('drag', () => {
         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
-        element.style.overflow = "hidden";      
-     });
-  
-      map.addListener('dragend', ()=>{
+        element.style.overflow = "hidden";
+      });
+
+      map.addListener('dragstart', () => {
         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
-        element.style.overflow = "auto";      
-     })
-  
+        element.style.overflow = "hidden";
+      });
+
+      map.addListener('dragend', () => {
+        const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
+        element.style.overflow = "auto";
+      })
+
       var marker = new BrokaMarkers(
         new google.maps.LatLng(product.address.latitude, product.address.longitude),
         product.images[0].url
       );
-  
+
       marker.setMap(map);
-    }    
+    }
   }
 
   async openProduct(producto) {
-    this.playSound();
+
+    /* this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
@@ -102,25 +105,29 @@ export class InicioPage {
       }
     });
 
-    modal.present();
+    modal.present(); */
   }
 
   findPrice(prices: any[]) {
     var price = null;
+
     if (this.productosService.filtros.currency) {
       price = prices.find(price => price.currency.id == this.productosService.filtros.currency);
     } else {
-      price = prices[0];      
+      price = prices[0];
     }
 
-    price.price_value = parseInt(price.price_value, 0);
+    if (price) {
+      price.price_value = parseInt(price.price_value, 0);
+    }
+
     return price;
   }
 
   async abriFiltros() {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage
+      component: Filtros2Page
     });
 
     modal.present();
@@ -149,7 +156,7 @@ export class InicioPage {
       }
       if (this.productos.value.length == 0) {
         this.productosService.getProducts();
-      }      
+      }
     }).catch(error => {
       console.log(error);
       this.presentToast(error.error.errors.property_id[0], 'danger');
@@ -162,19 +169,19 @@ export class InicioPage {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
-      this.playSound();      
+      this.playSound();
       this.showmatch = true;
       this.matchService.storeMatch({ property_id: product.id, message: 'Hola quisiera matchear: ' + product.name }).then(response => {
         this.chatService.getChats();
         for (let [index, p] of this.productos.getValue().entries()) {
           if (p.id === product.id) {
-  
+
             this.productos.getValue().splice(index, 1);
           }
         }
         if (this.productos.value.length == 0) {
           this.productosService.getProducts();
-        }      
+        }
       }).catch(err => {
         console.log(err);
         this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');

@@ -22,12 +22,12 @@ export class UserProfilePage implements OnInit {
   @ViewChild('slidesconfig', { static: true }) protected slides: IonSlides;
   @ViewChild('mapconfig', { static: true }) protected map: ElementRef;
   @ViewChild('slidessteps', { static: true }) protected slidesSteps: IonSlides;
-  
+
   slideOpts = {
     allowTouchMove: false,
-    //autoHeight: true,    
+    //autoHeight: true,
   }
-  
+
   user: Usuario = {
     profile: {
       firstname: '',
@@ -76,7 +76,7 @@ export class UserProfilePage implements OnInit {
     private webview: WebView,
     private ref: ChangeDetectorRef,
     private toastController: ToastController,
-    private loadingCtrl: LoadingController    
+    private loadingCtrl: LoadingController
   ) { }
 
   async ngOnInit() {
@@ -98,7 +98,7 @@ export class UserProfilePage implements OnInit {
       } else {
         this.user.address = {
           id: 1,
-          state: this.states[0],          
+          state: this.states[0],
           address: '',
           latitude: null,
           longitude: null,
@@ -119,13 +119,13 @@ export class UserProfilePage implements OnInit {
     })
     await loading.present();
     try {
-      let state = event.target.value;      
-      this.cities = await this.addressService.getCities(state.id);      
-      if(this.cities.length > 0){
+      let state = event.target.value;
+      this.cities = await this.addressService.getCities(state.id);
+      if (this.cities.length > 0) {
         this.user.address.city = this.cities[0];
-      }else{
+      } else {
         this.user.address.city = null;
-      }            
+      }
       this.user.address.state = state;
       await loading.dismiss();
     } catch (error) {
@@ -243,7 +243,7 @@ export class UserProfilePage implements OnInit {
   }
 
   /*COPIO LA IMAGEN AL DIRECTORIO DE LA APP*/
-  copyFileToLocalDir(namePath, currentName, newFileName) {    
+  copyFileToLocalDir(namePath, currentName, newFileName) {
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
       this.updateStoredImages(newFileName);
     }, error => {
@@ -357,45 +357,40 @@ export class UserProfilePage implements OnInit {
 
     const loading = await this.loadingCtrl.create({
       message: 'Guardando Ubicación...',
-      spinner: 'bubbles'
+      spinner: 'bubbles',
     });
 
     await loading.present();
 
     let address = {
-      latitude: this.user.address.latitude,
-      longitude: this.user.address.longitude,
-      address: this.user.address.address,
-      state_id: this.user.address.state.id,
-      city_id: this.user.address.city.id
+      latitude: this.user?.address?.latitude,
+      longitude: this.user?.address?.longitude,
+      address: this.user?.address?.address,
+      state_id: this.user?.address?.state?.id,
+      city_id: this.user?.address?.city?.id
     }
 
     if (this.authService.user.address === null) {
-      console.log('soy nulo');
-
       this.authService.addAddress(address).subscribe(async (response) => {
         await loading.dismiss();
         this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
       }, async (error) => {
+        await loading.dismiss();
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
-        //this.error.displayError = true;
+        this.error.displayError = true;
         this.presentToast(this.firstError, 'danger');
-        await loading.dismiss();
-
       });
     } else {
       this.authService.updateAddress(address).subscribe(async (response) => {
         await loading.dismiss();
         this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
       }, async (error) => {
-        console.log(error);
+        await loading.dismiss();
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
         this.error.displayError = true;
         this.presentToast(this.firstError, 'danger');
-        await loading.dismiss();
-
       });
     }
   }
@@ -409,11 +404,11 @@ export class UserProfilePage implements OnInit {
     return this.errorList[0];
   }
 
-  slideBack(){
+  slideBack() {
     this.slidesSteps.slidePrev();
   }
 
-  slideNext(){
+  slideNext() {
     this.slidesSteps.slideNext();
   }
 }

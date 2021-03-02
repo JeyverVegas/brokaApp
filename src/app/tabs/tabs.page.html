@@ -1,29 +1,29 @@
 <ion-tabs>
 
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button mode="md"  tab="inicio" (click)="playSound()">
-      <ion-icon name="home"></ion-icon>      
-    </ion-tab-button>    
-
-    <ion-tab-button mode="md" tab="buscar" (click)="playSound()">
-      <ion-icon name="search-outline"></ion-icon>      
+  <ion-tab-bar [class.hidden]="selectedPath == '/tabs/tabs/inicio'" slot="bottom">
+    <ion-tab-button mode="md" tab="inicio" (click)="playSound()">
+      <ion-icon name="home"></ion-icon>
     </ion-tab-button>
 
-    <!-- <ion-tab-button mode="md" (click)="playSound()">
-      <ion-icon class="button_add" name="add-outline"></ion-icon>
-    </ion-tab-button> -->
+    <ion-tab-button mode="md" tab="buscar" (click)="playSound()">
+      <ion-icon name="search-outline"></ion-icon>
+    </ion-tab-button>
 
-    <ion-tab-button mode="md"  tab="chat" (click)="playSound()">
-      <ion-icon name="chatbubble-outline"></ion-icon>      
+    <ion-tab-button mode="md" routerLink="/map">
+      <ion-icon name="globe-outline"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button mode="md" tab="chat" (click)="playSound()">
+      <ion-icon name="chatbubble-outline"></ion-icon>
       <ion-badge color="danger" *ngIf="newMessagesCount.getValue() > 0">
         {{newMessagesCount | async}}
       </ion-badge>
     </ion-tab-button>
 
-    <ion-tab-button mode="md"  tab="usuario" (click)="playSound()" class="animate__animated animate__infinite"
-    [class.animate__pulse]="user.profile == undefined" style="position: relative;">
+    <ion-tab-button mode="md" tab="usuario" (click)="playSound()" class="animate__animated animate__infinite"
+      [class.animate__pulse]="user.profile == undefined" style="position: relative;">
       <ion-badge *ngIf="user.profile == undefined" color="danger"></ion-badge>
-      <ion-icon name="person"></ion-icon>      
+      <ion-icon name="person"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>
 

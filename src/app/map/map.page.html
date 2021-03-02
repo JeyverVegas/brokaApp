@@ -7,10 +7,43 @@
       <h1>Cargando Mapa</h1>
     </div>
   </div>
-  <div [class.show]="cargado" class="hidden" style="height: 100%;" #googlemap>
-    
-  </div>  
+
+  <div *ngIf="showRadio"
+    style="width: 80vw; position: fixed; top: 20vh; left: 20px; z-index: 9999; background: white; border-radius: 10px; text-align: center;">
+    <ion-text color="primary">Radio</ion-text>
+    <ion-item style="--padding-start: 0; --inner-padding-end: 0; border-radius: 10px; --background:transparent"
+      lines="none">
+      <ion-range min="5" [(ngModel)]="radius" max="25" step="1" debounce="300" (ionChange)="radiusChange()">
+        <ion-button slot="start" fill="clear" color="danger" (click)="removeRadius()">
+          <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" fill="clear" color="success" (click)="addRadius()">
+          <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-range>
+    </ion-item>
+  </div>
+
+
+
+  <div [class.show]="cargado" class="hidden" style="height: 100%; position: relative;" #googlemap>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button (click)="playSound()">
+      <ion-icon name="options"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="getPosition()">
+        <ion-icon name="location-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button [color]="showRadio ? 'primary' : null" (click)="showRadio = !showRadio">
+        <ion-icon name="radio-button-off-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
   <ion-button class="button-option" color="primary" shape="round" mode="ios" (click)="openOptions()">
     Opciones
-  </ion-button>  
+  </ion-button>
 </ion-content>

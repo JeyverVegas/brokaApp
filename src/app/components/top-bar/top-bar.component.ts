@@ -2,6 +2,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { FiltrosPage } from 'src/app/filtros/filtros.page';
+import { Filtros2Page } from 'src/app/filtros2/filtros2.page';
 import { ProductosService } from 'src/app/servicios/productos.service';
 import { SmartAudioService } from 'src/app/servicios/smart-audio.service';
 
@@ -14,10 +15,10 @@ export class TopBarComponent implements OnInit {
 
   @Input() titulo: string;
   @Input() back: string;
-  
+
   constructor(
     private modalCtrl: ModalController,
-    private smartAudio : SmartAudioService,
+    private smartAudio: SmartAudioService,
     private navCtrl: NavController,
     private productosService: ProductosService
   ) { }
@@ -25,20 +26,20 @@ export class TopBarComponent implements OnInit {
   ngOnInit() {
   }
 
-  async abriFiltros(){
+  async abriFiltros() {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: FiltrosPage,      
+      component: Filtros2Page,
     });
 
     modal.present();
   }
 
-  goBack(){
+  goBack() {
     this.navCtrl.back();
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 

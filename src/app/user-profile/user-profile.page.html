@@ -1,11 +1,12 @@
 <ion-content>
-    <div class="ion-text-right">
+    <div class="ion-text-right" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 99999;">
         <ion-button color="danger" fill="clear" (click)="goBack()" size="large">
             <ion-icon name="close" slot="icon-only"></ion-icon>
         </ion-button>
-    </div>    
-    <ion-slides pager="true" #slidessteps [options]="slideOpts">
-        <ion-slide>            
+    </div>
+    <ion-slides pager="true" style="height: 100%;" #slidessteps [options]="slideOpts">
+        <ion-slide>
+            <br>
             <h2 style="margin-top: 50px;">
                 <ion-text color="primary">
                     1er. Paso: Por favor carga una imagen de Perfil.
@@ -39,7 +40,8 @@
                 </ion-button>
             </div>
         </ion-slide>
-        <ion-slide>            
+        <ion-slide>
+            <br>
             <h2 style="margin-top: 50px;">
                 <ion-text color="primary">
                     2do. Paso: Añade tu informacion personal.
@@ -70,24 +72,23 @@
                             </ion-item>
                         </ion-col>
                     </ion-row>
-                    <ion-row>
+                    <!-- <ion-row>
                         <ion-col>
                             <ion-item mode="md">
                                 <ion-label position="floating" color="primary">Biografía</ion-label>
                                 <ion-textarea [(ngModel)]="user.profile.bio" placeholder="Biografía..." name="bio"></ion-textarea>
                             </ion-item>
                         </ion-col>                        
-                    </ion-row>
+                    </ion-row> -->
                 </ion-grid>
-            </form>            
+            </form>
 
             <div class="ion-margin-top">
                 <ion-button (click)="slideBack()" color="primary">
                     <ion-icon name="arrow-back" slot="start"></ion-icon>
                     Anterior
                 </ion-button>
-                <ion-button (click)="slideNext()"
-                [disabled]="user.profile.phone == null || 
+                <ion-button (click)="slideNext()" [disabled]="user.profile.phone == null || 
                 user.profile.phone == '' || 
                 user.profile.lastname == null || 
                 user.profile.lastname == '' ||
@@ -99,6 +100,7 @@
             </div>
         </ion-slide>
         <ion-slide class="ion-padding">
+            <br>
             <h2 style="margin-top: 20px;">
                 <ion-text color="primary">
                     3er. Paso: Añade tu Ubicación.
@@ -150,18 +152,18 @@
                     <ion-icon name="arrow-back" slot="start"></ion-icon>
                     Anterior
                 </ion-button>
-                <ion-button color="secondary" mode="ios" fill="solid" class="animate__animated animate__pulse animate__infinite" (click)="saveProfile()"
-                [disabled]="
+                <ion-button color="secondary" mode="ios" fill="solid"
+                    class="animate__animated animate__pulse animate__infinite" (click)="saveProfile()" [disabled]="
                 user.address.address == null ||
                 user.address.address == '' ||
                 user.address.latitude == null ||
                 user.address.longitude == null">
-                    Guardar Información                    
+                    Guardar Información
                 </ion-button>
             </ion-buttons>
 
             <div class="ion-margin-top">
-                
+
             </div>
         </ion-slide>
     </ion-slides>

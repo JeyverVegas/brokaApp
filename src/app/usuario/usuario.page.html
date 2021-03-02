@@ -14,8 +14,8 @@
         <div class="list-items">
             <div class="user-info-container ion-padding">
                 <div style="display: flex; justify-content: space-between;">
-                    <ion-button style="position: relative;" fill="clear" slot="start" color="primary" mode="md" (click)="playSound()"
-                        routerLink="/user-profile" routerDirection="forward">
+                    <ion-button style="position: relative;" fill="clear" slot="start" color="primary" mode="md"
+                        (click)="playSound()" routerLink="/user-profile" routerDirection="forward">
                         <ion-icon slot="icon-only" name="settings"></ion-icon>
                         <div *ngIf="!user.profile" class="medalla"></div>
                         <div *ngIf="!user.profile" class="pulse1"></div>
@@ -40,33 +40,50 @@
                 <ng-template #invitadoName>
                     <h1>Invitado</h1>
                 </ng-template>
-                <h4 *ngIf="user.email"><ion-icon name="mail" color="primary" slot="start" class="ion-margin-end"></ion-icon>{{user.email}}</h4>
+                <h4 *ngIf="user.email">
+                    <ion-icon name="mail" color="primary" slot="start" class="ion-margin-end"></ion-icon>{{user.email}}
+                </h4>
                 <p>
-                    <ion-icon name="call" color="primary" slot="start" class="ion-margin-end"></ion-icon>  
-                    <ion-text color="medium">{{user.profile.phone}}</ion-text>
+                    <ion-icon name="call" color="primary" slot="start" class="ion-margin-end"></ion-icon>
+                    <ion-text color="medium">{{user.profile?.phone}}</ion-text>
                 </p>
                 <p *ngIf="user.profile && user.profile.bio">
-                    <ion-icon name="location" color="primary" slot="start" class="ion-margin-end"></ion-icon>  
-                    <ion-text color="medium">{{user.profile.bio}}</ion-text>
+                    <ion-icon name="location" color="primary" slot="start" class="ion-margin-end"></ion-icon>
+                    <ion-text color="medium">{{user.address?.address}}</ion-text>
                 </p>
             </div>
             <ion-list class="info-details">
                 <ion-item button lines="none" detail routerLink="/tabs/tabs/mis-matchs" routerDirection="forward">
                     <ion-icon slot="start" name="heart" color="success"></ion-icon>
                     <ion-label class="ion-text-wrap" color="medium">inmuebles matcheados</ion-label>
-                    <ion-button slot="end" color="success" fill="clear">{{matchCount}}</ion-button>
+                    <ion-button slot="end" color="success" fill="clear">
+                        <span *ngIf="!loadingMatchCount">
+                            {{matchCount}}
+                        </span>
+                        <ion-spinner *ngIf="loadingMatchCount" name="dots"></ion-spinner>
+                    </ion-button>
                 </ion-item>
                 <ion-item button lines="none" detail routerLink="/tabs/tabs/descartado" routerDirection="forward">
                     <ion-icon name="close" color="danger" slot="start"></ion-icon>
                     <ion-label class="ion-text-wrap" color="medium">inmuebles descartados</ion-label>
-                    <ion-button slot="end" color="danger" fill="clear">{{discardCount}}</ion-button>
+                    <ion-button slot="end" color="danger" fill="clear">
+                        <span *ngIf="!loadingDiscardCount">
+                            {{discardCount}}
+                        </span>
+                        <ion-spinner *ngIf="loadingDiscardCount" name="dots"></ion-spinner>
+                    </ion-button>
                 </ion-item>
                 <ion-item button lines="none" detail routerLink="/tabs/tabs/chat" routerDirection="forward">
                     <ion-icon name="chatbubbles-outline" slot="start" color="warning"></ion-icon>
                     <ion-label class="ion-text-wrap" color="medium">Conversaciones</ion-label>
-                    <ion-button slot="end" color="warning" fill="clear">{{chatCount}}</ion-button>
+                    <ion-button slot="end" color="warning" fill="clear">
+                        <span *ngIf="!loadingChatCount">
+                            {{chatCount}}
+                        </span>
+                        <ion-spinner *ngIf="loadingChatCount" name="dots"></ion-spinner>
+                    </ion-button>
                 </ion-item>
-                <ion-item lines="none" button detail> 
+                <ion-item lines="none" button detail>
                     <ion-icon color="medium" name="information-circle" slot="start"></ion-icon>
                     <ion-label color="medium">Términos y Condiciones</ion-label>
                 </ion-item>

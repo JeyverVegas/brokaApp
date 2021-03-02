@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
+declare var google: any;
 
 @Component({
   selector: 'app-filtros',
@@ -20,10 +21,15 @@ export class FiltrosPage implements OnInit {
   provincies = [];
   partidos = [];
   @ViewChild('filtrosslider', { static: true }) protected slides: IonSlides;
+  @ViewChild('googlemaps2', { static: true }) protected mapa: ElementRef;
 
   slidesOpts = {
     allowTouchMove: false
   }
+
+  currencies = [];
+
+  optioValues = Array.from(Array(6));
 
   minMaxRange: any = {
     environments: {
@@ -39,11 +45,6 @@ export class FiltrosPage implements OnInit {
 
   steps = 1;
 
-  environmentsBetween = {
-    lower: 0,
-    upper: 0
-  }
-
   pricesBetween = {
     lower: 0,
     upper: 0
@@ -52,11 +53,16 @@ export class FiltrosPage implements OnInit {
   radiusActivated = null;
 
   filtros: ProductFilters = {
+    city: 0,
+    hasAnyFeatures: [],
+    sizeBetween: [],
+    state: 0,
     contractType: [],
     type: [],
+    currency: null,
     environmentsBetween: [],
-    state: 0,
-    city: 0,
+    bathroomsBetween: [],
+    roomsBetween: [],
     priceBetween: [null, null]
   };
 
@@ -66,11 +72,11 @@ export class FiltrosPage implements OnInit {
     private productosService: ProductosService,
     private smartAudio: SmartAudioService,
     private loadingCtrl: LoadingController,
-    private addressService: AddressService,    
+    private addressService: AddressService,
     private router: Router,
   ) { }
 
-  async ngOnInit() {    
+  async ngOnInit() {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...'
@@ -81,15 +87,20 @@ export class FiltrosPage implements OnInit {
       this.propertyTypes = await this.productosService.getPropertyType();
       this.minMaxRange = await this.productosService.getFiltersRange();
 
-      this.environmentsBetween.lower = this.minMaxRange.environments.min;
-      this.environmentsBetween.upper = this.minMaxRange.environments.max;
-
       this.provincies = await this.addressService.getStates();
 
       this.filtros.currency = this.minMaxRange.prices[0].id;
-
+      this.currencies = this.minMaxRange.prices;
       this.radiusActivated = this.productosService.filtros.radius;
-      console.log(this.minMaxRange);
+      var map = new google.maps.Map(this.mapa.nativeElement, {
+        center: { lat: -34.603722, lng: -58.381592 },
+        zoom: 10,
+        mapTypeControl: false,
+        zoomControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+      });
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
@@ -97,11 +108,15 @@ export class FiltrosPage implements OnInit {
       console.log(error);
 
     }
-  }  
+  }
 
-  goBack() {
+  goBack(index: number) {
+    if (index) {
+      this.slides.slideTo(index);
+    } else {
+      this.slides.slidePrev();
+    }
     this.playSound();
-    this.slides.slidePrev();
   }
 
   playSound() {
@@ -120,11 +135,22 @@ export class FiltrosPage implements OnInit {
     this.slides.slideNext();
   }
 
-  setEnvironmentsBetween() {
+  setEnvironmentsBetween(event) {
     this.playSound();
-    this.filtros.environmentsBetween[0] = this.environmentsBetween.lower;
-    this.filtros.environmentsBetween[1] = this.environmentsBetween.upper;
+    this.filtros.environmentsBetween[1] = event.target.value;
+    if (event.target.value == 6) {
+      this.filtros.environmentsBetween[1] = 99999999;
+    }
+    console.log(this.filtros.environmentsBetween);
     this.slides.slideNext();
+  }
+
+  slideNext(index: number) {
+    if (index) {
+      this.slides.slideTo(index);
+    } else {
+      this.slides.slideNext();
+    }
   }
 
   async setState() {
@@ -155,31 +181,26 @@ export class FiltrosPage implements OnInit {
 
   setCurrency() {
     const currency = this.minMaxRange.prices.find(price => price.id == this.filtros.currency);
-    
+
     this.rangesPrices.min = parseInt(currency.min_price, 0);
-    this.rangesPrices.max = parseInt(currency.max_price, 0);   
+    this.rangesPrices.max = parseInt(currency.max_price, 0);
 
     this.pricesBetween.lower = parseInt(currency.min_price, 0);
     this.pricesBetween.upper = parseInt(currency.max_price, 0);
 
     this.steps = currency.max_price / 100;
-    console.log(this.steps);
   }
 
-  async setPricesBetween(){
+  async setPricesBetween() {
     this.filtros.priceBetween[0] = this.pricesBetween.lower;
     this.filtros.priceBetween[1] = this.pricesBetween.upper;
-    this.productosService.filtros = this.filtros;    
-    if(await this.modalCtrl.getTop()){
-      this.productosService.getProducts();    
+    this.productosService.filtros = this.filtros;
+    if (await this.modalCtrl.getTop()) {
+      this.productosService.getProducts();
       this.modalCtrl.dismiss();
-    }else{
-      this.router.navigateByUrl('/tabs', {replaceUrl: true});
-    }    
-  }
-
-  async aplicarFiltro() {
-
+    } else {
+      this.router.navigateByUrl('/tabs', { replaceUrl: true });
+    }
   }
 
   async presentToast(text, color) {

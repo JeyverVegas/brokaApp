@@ -25,43 +25,42 @@ export class LoginPage implements OnInit {
     message: '',
     errors: {},
     displayError: false
-  }  
+  }
 
   constructor(
     private loadingCtrl: LoadingController,
     private router: Router,
     private smartAudio: SmartAudioService,
     private authService: AuthenticationService,
-    private toastCtrl: ToastController,    
+    private toastCtrl: ToastController,
   ) { }
 
   async ngOnInit() {
-   
-  }  
 
-  async onSubmit() {    
+  }
+
+  async onSubmit() {
     this.playSound();
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
-      message: 'Cargando...',      
+      message: 'Cargando...',
     });
 
     loading.present();
-    
-    this.authService.login(this.usuario).subscribe( async (response) =>{
-      await loading.dismiss();      
-      this.router.navigateByUrl('filtros', {replaceUrl: true});
-    }, async (err) =>{      
-      await loading.dismiss();      
-      alert(JSON.stringify(err));
+
+    this.authService.login(this.usuario).subscribe(async (response) => {
+      await loading.dismiss();
+      this.router.navigateByUrl('filtros', { replaceUrl: true });
+    }, async (err) => {
+      await loading.dismiss();
       this.error.message = err.error.message;
       this.error.errors = err.error.errors;
-      this.error.displayError = true;      
+      this.error.displayError = true;
       this.presentToast(this.firstError, 'danger');
     })
-  }  
+  }
 
-  async presentToast(mensaje, color){
+  async presentToast(mensaje, color) {
     const toast = await this.toastCtrl.create({
       message: mensaje,
       color: color,
@@ -81,21 +80,21 @@ export class LoginPage implements OnInit {
     return this.errorList[0];
   }
 
-  logFacebook(){  
+  logFacebook() {
     this.playSound();
     this.authService.loginFacebook();
   }
 
-  logGoogle(){
-    this.playSound();    
+  logGoogle() {
+    this.playSound();
     this.authService.loginGoogle();
   }
 
-  goToRegister(){
-    this.router.navigateByUrl('registro', {replaceUrl: true});
+  goToRegister() {
+    this.router.navigateByUrl('registro', { replaceUrl: true });
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 

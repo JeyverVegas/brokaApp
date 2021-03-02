@@ -1,23 +1,25 @@
-<ion-content>  
-  
-  <img src="../../assets/images/logo-completo.png" class="logo-img">  
+<ion-content>
 
-  <ion-slides #filtrosslider [options]="slidesOpts" class="filtros-container">    
+  <img src="../../assets/images/logo-completo.png" class="logo-img">
+
+  <ion-slides #filtrosslider [options]="slidesOpts" class="filtros-container">
     <!--TIPO DE CONTRATO-->
-    <ion-slide style="flex-direction: column;" class="ion-padding">
+    <ion-slide class="ion-padding">
       <h2 class="ion-text-center">
         <ion-text color="primary">
           ¿Que estas buscando?
         </ion-text>
       </h2>
-      <ion-button class="animate__animated animate__fadeIn animate__faster" expand="block" *ngFor="let contractType of contractTypes" (click)="setcontractType(contractType.id)" style="width: 100%;">
+      <ion-button class="animate__animated animate__fadeIn animate__faster" expand="block"
+        *ngFor="let contractType of contractTypes" (click)="setcontractType(contractType.id)" style="width: 100%;">
         {{contractType.name}}
-        <ion-icon name="checkmark-circle" slot="end" color="success" *ngIf="filtros.contractType.includes(contractType.id)"></ion-icon>
+        <ion-icon name="checkmark-circle" slot="end" color="success"
+          *ngIf="filtros.contractType.includes(contractType.id)"></ion-icon>
       </ion-button>
     </ion-slide>
-    
+
     <!--TIPO DE PROPIEDAD-->
-    <ion-slide style="flex-direction: column;" class="ion-padding">
+    <ion-slide class="ion-padding">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
@@ -26,14 +28,15 @@
           ¿QUE TIPO DE PROPIEDAD BUSCAS?
         </ion-text>
       </h2>
-      <ion-button expand="block" *ngFor="let type of propertyTypes" (click)="setpropertyType(type.id)" style="width: 100%;">
+      <ion-button expand="block" *ngFor="let type of propertyTypes" (click)="setpropertyType(type.id)"
+        style="width: 100%;">
         {{type.name}}
         <ion-icon name="checkmark-circle" slot="end" color="success" *ngIf="filtros.type.includes(type.id)"></ion-icon>
       </ion-button>
     </ion-slide>
 
     <!--AMBIENTES-->
-    <ion-slide style="flex-direction: column;" class="ion-padding">
+    <!-- <ion-slide style="display: block;" class="ion-padding">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
@@ -42,17 +45,21 @@
           ¿DE CUANTOS AMBIENTES?
         </ion-text>
       </h2>
-      <p>{{environmentsBetween.lower}} - {{environmentsBetween.upper}}</p>
-      <ion-item lines="none" style="width: 100%;">
-        <ion-range dualKnobs="true" [min]="minMaxRange.environments.min" [max]="minMaxRange.environments.max" step="1" snaps="true" [(ngModel)]="environmentsBetween"></ion-range>
-      </ion-item>
-      <ion-button (click)="setEnvironmentsBetween()">
-        aceptar
-      </ion-button>
-    </ion-slide>
+      <ion-segment style="width: 100%;" (ionChange)="setEnvironmentsBetween($event)"
+        [(ngModel)]="filtros.environmentsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
+        <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
+          *ngFor="let enviroment of optioValues; let i = index" [value]="(i+1)">
+          <ion-label>
+            <span>
+              {{i == 5 ? '+6' : (i + 1)}}
+            </span>
+          </ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-slide> -->
 
     <!--LUGAR-->
-    <ion-slide style="flex-direction: column;" class="ion-padding" *ngIf="!radiusActivated">
+    <ion-slide class="ion-padding">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
@@ -60,55 +67,120 @@
         <ion-text color="primary">
           ¿EN DONDE?
         </ion-text>
-      </h2>      
-      <ion-item lines="none" style="width: 100%;">
-        <ion-label position="floating" color="secondary">
-          Provincia
-        </ion-label>
-        <ion-select [(ngModel)]="filtros.state" (ionChange)="setState()">
-          <ion-select-option [value]="0">todas</ion-select-option>
-          <ion-select-option *ngFor="let provincy of provincies" [value]="provincy.id">{{provincy.name}}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item *ngIf="filtros.state != 0" lines="none" style="width: 100%;">
-        <ion-label position="floating" color="secondary">
-          Partido
-        </ion-label>
-        <ion-select [(ngModel)]="filtros.city">
-          <ion-select-option [value]="0">todos</ion-select-option>
-          <ion-select-option *ngFor="let partido of partidos" [value]="partido.id">{{partido.name}}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-button (click)="setStateCity()">
-        aceptar
-      </ion-button>
+      </h2>
+
+      <br>
+
+      <ion-button expand="block" (click)="slideNext()">Seleccionar Direccion</ion-button>
+
+      <br>
+
+      <ion-button expand="block" (click)="slideNext(4)">Abrir mapa</ion-button>
     </ion-slide>
 
-    <!--PRECIO Y MONEDA-->
-    <ion-slide style="flex-direction: column;" class="ion-padding">
+    <ion-slide style="height: 100%;">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
-      <h2 class="ion-text-center">
-        <ion-text color="primary">
-          ¿QUE PRECIOS BUSCAS?
-        </ion-text>
-      </h2>      
-      <ion-item lines="none" style="width: 100%;">
+      <div style="margin-top: 50%;">
+        <ion-item lines="none" class="select-address">
+          <ion-select placeholder="Provincias" [(ngModel)]="filtros.state" (ionChange)="setState()">
+            <ion-select-option [value]="0">Provincias</ion-select-option>
+            <ion-select-option *ngFor="let provincy of provincies" [value]="provincy.id">{{provincy.name}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item class="select-address" *ngIf="filtros.state != 0" lines="none">
+          <ion-select [(ngModel)]="filtros.city">
+            <ion-select-option [value]="0">Partidos</ion-select-option>
+            <ion-select-option *ngFor="let partido of partidos" [value]="partido.id">{{partido.name}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-button (click)="setStateCity()">
+          aceptar
+        </ion-button>
+      </div>
+    </ion-slide>
+    <ion-slide style="position: relative">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(2)">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      <div style="height: 100%;" #googlemaps2></div>
+      <div class="map-button radio-button ion-activatable ripple-parent">
+        <ion-icon name="radio-button-off-outline"></ion-icon>
+        <ion-ripple-effect></ion-ripple-effect>
+      </div>
+      <div class="map-button location-button ion-activatable ripple-parent">
+        <ion-icon slot="icon-only" name="location-outline"></ion-icon>
+        <ion-ripple-effect></ion-ripple-effect>
+      </div>
+    </ion-slide>
+
+    <!--PRECIO Y MONEDA-->
+    <ion-slide style="display: block;" class="ion-padding">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <div style="margin: auto;">
+        <h2 class="ion-text-center">
+          <ion-text color="primary">
+            ¿QUE PRECIOS BUSCAS?
+          </ion-text>
+        </h2>
+        <ion-grid *ngIf="currencies.length > 0">
+          <ion-row>
+            <ion-col size="12">
+              <ion-segment [(ngModel)]="filtros.currency" class="ion-justify-content-evenly" mode="md" scrollable>
+                <ion-segment-button class="segment-button segment-button-normal segment-button-secondary"
+                  *ngFor="let currency of currencies; let i = index" [value]="currency.id">
+                  <ion-label>
+                    <span>{{currency.code}}</span>
+                  </ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-between ion-align-items-center">
+            <ion-col size="12">
+              <div style="display: flex; width: 100%; justify-content: space-between; align-items: center;">
+                <div class="input-price-container">
+                  <input placeholder="Desde" [(ngModel)]="filtros.priceBetween[0]" min="1" class="input-price"
+                    type="number">
+                </div>
+                <div class="input-price-container">
+                  <input placeholder="Hasta" [(ngModel)]="filtros.priceBetween[1]" min="1" class="input-price"
+                    type="number">
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="ion-text-center">
+          <ion-button (click)="setPricesBetween()">
+            aceptar
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- <ion-item lines="none" style="width: 100%;">
         <ion-label position="floating" color="secondary">
           Moneda
         </ion-label>
-        <ion-select [(ngModel)]="filtros.currency" (ionChange)="setCurrency()">          
-          <ion-select-option *ngFor="let price of minMaxRange.prices" [value]="price.id">{{price.name}}</ion-select-option>
+        <ion-select [(ngModel)]="filtros.currency" (ionChange)="setCurrency()">
+          <ion-select-option *ngFor="let price of minMaxRange.prices" [value]="price.id">{{price.name}}
+          </ion-select-option>
         </ion-select>
       </ion-item>
       <p>{{pricesBetween.lower.toLocaleString('de-DE')}} - {{pricesBetween.upper.toLocaleString('de-DE')}}</p>
       <ion-item lines="none" style="width: 100%;">
-        <ion-range dualKnobs="true" [min]="rangesPrices.min" [max]="rangesPrices.max" [step]="steps" pin="true" [(ngModel)]="pricesBetween"></ion-range>
+        <ion-range dualKnobs="true" [min]="rangesPrices.min" [max]="rangesPrices.max" [step]="steps" pin="true"
+          [(ngModel)]="pricesBetween"></ion-range>
       </ion-item>
       <ion-button (click)="setPricesBetween()">
         aceptar
-      </ion-button>      
+      </ion-button> -->
     </ion-slide>
 
   </ion-slides>

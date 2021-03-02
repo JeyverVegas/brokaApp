@@ -1,5 +1,10 @@
 declare var google: any;
 
+export interface selectMultipleErrors {
+  message?: string,
+  error?: boolean
+}
+
 export interface Usuario {
   id?: number;
   email?: string;
@@ -53,9 +58,9 @@ export interface ProductFilters {
   name?: string;
   type?: Array<number>;
   contractType?: Array<number>;
-  sizeBetween?: [number, number];
-  roomsBetween?: [number, number];
-  bathroomsBetween?: [number, number];
+  sizeBetween?: [number?, number?];
+  roomsBetween?: [number?, number?];
+  bathroomsBetween?: [number?, number?];
   environmentsBetween?: [number?, number?];
   status?: Array<number>;
   hasAnyFeatures?: Array<number>;

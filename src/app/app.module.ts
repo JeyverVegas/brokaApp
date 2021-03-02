@@ -29,21 +29,21 @@ import { SelectFilePageModule } from './select-file/select-file.module';
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
-    BrowserModule, 
-    IonicModule.forRoot(),     
-    IonicStorageModule.forRoot(),    
+    BrowserModule,
+    IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
     ImageModalPageModule,
-    MapOptionsPageModule,    
+    MapOptionsPageModule,
     SelectFilePageModule
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    { 
-      provide: RouteReuseStrategy, 
-      useClass: IonicRouteStrategy,      
+    {
+      provide: RouteReuseStrategy,
+      useClass: IonicRouteStrategy,
     },
     Camera,
     File,
@@ -53,8 +53,8 @@ import { SelectFilePageModule } from './select-file/select-file.module';
     Geolocation,
     Facebook,
     GooglePlus,
-    OneSignal,    
+    OneSignal,
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

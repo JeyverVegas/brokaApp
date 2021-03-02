@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 
 declare var google: any;
 @Component({
@@ -17,15 +17,28 @@ export class MapConfigPage implements OnInit {
   location = { lat: -34.6083, lng: -58.3712 }
   cargado = false;
   constructor(
-    private geolocation : Geolocation,
-    private modalCtrl: ModalController
+    private geolocation: Geolocation,
+    private modalCtrl: ModalController,
+    private toastController: ToastController
   ) { }
 
   async ngOnInit() {
-    this.location.lat = await (await this.geolocation.getCurrentPosition()).coords.latitude;
-    this.location.lng = await (await this.geolocation.getCurrentPosition()).coords.longitude;
-    this.cargado = true;    
-    this.crearMapa();
+    try {
+      var location = await (await this.geolocation.getCurrentPosition()).coords;
+      if (!location) {
+        this.modalCtrl.dismiss();
+        this.presentToast('ha ocurrido un error al obtener tu dirección. itente mas tarde.', 'danger');
+        return;
+      }
+
+      this.location.lat = location.latitude;
+      this.location.lng = location.longitude;
+      this.cargado = true;
+      this.crearMapa();
+    } catch (error) {
+      this.modalCtrl.dismiss();
+      this.presentToast('ha ocurrido un error al obtener tu dirección. itente mas tarde.', 'danger');
+    }
   }
 
   crearMapa() {
@@ -38,25 +51,33 @@ export class MapConfigPage implements OnInit {
       streetViewControl: false,
       fullscreenControl: false
     });
-    
+
+    this.mapInitialized.addListener('idle', (event) => {
+      var center = this.mapInitialized.getCenter();
+      center.e += 0.000001;
+      this.mapInitialized.panTo(center);
+      center.e -= 0.000001;
+      this.mapInitialized.panTo(center);
+    });
+
     this.addMarker(this.location);
-    
-    this.mapInitialized.addListener('click', (event)=>{
-      this.addMarker({lat: event.latLng.lat(), lng: event.latLng.lng()})
-    });    
+
+    this.mapInitialized.addListener('click', (event) => {
+      this.addMarker({ lat: event.latLng.lat(), lng: event.latLng.lng() })
+    });
   }
 
-  changeZoom(event){
+  changeZoom(event) {
     this.zoom = event.target.value;
     this.mapInitialized.setZoom(this.zoom);
   }
 
-  addZoom(){
+  addZoom() {
     this.zoom++;
     this.mapInitialized.setZoom(this.zoom);
   }
 
-  removeZoom(){
+  removeZoom() {
     this.zoom--;
     this.mapInitialized.setZoom(this.zoom);
   }
@@ -87,8 +108,18 @@ export class MapConfigPage implements OnInit {
     this.markers = [];
   }
 
-  saveLocation(){
+  saveLocation() {
     this.modalCtrl.dismiss(this.location);
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color
+    });
+    toast.present();
   }
 
 

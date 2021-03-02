@@ -52,7 +52,11 @@ const routes: Routes = [
     path: 'filtros',
     loadChildren: () => import('./filtros/filtros.module').then(m => m.FiltrosPageModule),
     canLoad: [AuthGuard]
-  }  
+  },   {
+    path: 'filtros2',
+    loadChildren: () => import('./filtros2/filtros2.module').then( m => m.Filtros2PageModule)
+  }
+ 
 ];
 @NgModule({
   imports: [

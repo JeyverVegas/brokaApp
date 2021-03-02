@@ -1,0 +1,137 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button (click)="clearFilters()">
+        limpiar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Filtros</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        Aceptar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar mode="ios">
+    <ion-segment style="width: 100%;" [(ngModel)]="showSegment" color="primary">
+      <ion-segment-button value="filtros">
+        <ion-label>Filtros</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="guardados">
+        <ion-label>Guardados</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="showSegment == 'filtros'">
+
+    <ion-segment mode="md" scrollable [(ngModel)]="filtros?.contractType[0]">
+      <ion-segment-button *ngFor="let contractType of contractTypes" [value]="contractType?.id">
+        <img style="max-width: 20%;" [src]="contractType?.image" alt="">
+        <ion-label>{{contractType?.name}}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div class="line line-medium ion-margin-vertical"></div>
+
+    <h6>
+      Tipo de propiedad
+    </h6>
+    <ion-item detail>
+      <ion-select placeholder="Seleccionar" [(ngModel)]="filtros.type[0]">
+        <ion-select-option *ngFor="let propertyType of propertyTypes" [value]="propertyType.id">
+          <ion-label>
+            {{propertyType.name}}
+          </ion-label>
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <h6>
+      Habitaciones
+    </h6>
+    <ion-segment [(ngModel)]="filtros.roomsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
+      <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
+        *ngFor="let room of optioValues; let i = index" [value]="(i+1)">
+        <ion-label>
+          <span>
+            {{i == 5 ? '+6' : (i + 1)}}
+          </span>
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <h6>
+      Baños
+    </h6>
+    <ion-segment [(ngModel)]="filtros.bathroomsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
+      <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
+        *ngFor="let bathrooms of optioValues; let i = index" [value]="(i+1)">
+        <ion-label>
+          <span>
+            {{i == 5 ? '+6' : (i + 1)}}
+          </span>
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div class="line line-medium ion-margin-vertical"></div>
+
+    <h6>Precio</h6>
+    <ion-grid *ngIf="currencies.length > 0">
+      <ion-row>
+        <ion-col size="12">
+          <ion-segment [(ngModel)]="filtros.currency" class="ion-justify-content-evenly" mode="md" scrollable>
+            <ion-segment-button class="segment-button segment-button-normal segment-button-secondary"
+              *ngFor="let currency of currencies; let i = index" [value]="currency.id">
+              <ion-label>
+                <span>{{currency.code}}</span>
+              </ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-between ion-align-items-center">
+        <ion-col size="12">
+          <div style="display: flex; width: 100%; justify-content: space-between; align-items: center;">
+            <div class="input-price-container">
+              <input placeholder="Desde" [(ngModel)]="filtros.priceBetween[0]" min="1" class="input-price"
+                type="number">
+            </div>
+            <div class="input-price-container">
+              <input placeholder="Hasta" [(ngModel)]="filtros.priceBetween[1]" min="1" class="input-price"
+                type="number">
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- <div class="line line-medium ion-margin-vertical"></div>
+
+    <h6>
+      Ambientes
+    </h6>
+    <ion-segment [(ngModel)]="filtros.environmentsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
+      <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
+        *ngFor="let enviroment of optioValues; let i = index" [value]="(i+1)">
+        <ion-label>
+          <span>
+            {{i == 5 ? '+6' : (i + 1)}}
+          </span>
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment> -->
+
+    <div class="ion-text-center">
+      <ion-button (click)="closeModal()">
+        Realizar Busqueda
+      </ion-button>
+    </div>
+  </div>
+  <div *ngIf="showSegment == 'guardados'">
+    guardados
+  </div>
+</ion-content>

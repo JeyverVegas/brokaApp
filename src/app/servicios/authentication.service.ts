@@ -21,7 +21,7 @@ export class AuthenticationService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject(null);
   token = '';
   /* 3.92.133.52 */
-  host = '3.92.133.52';
+  host = '18.216.249.138';
   api = 'http://' + this.host + '/api'
   user: Usuario = null;
   authHeader = null;
@@ -32,8 +32,8 @@ export class AuthenticationService {
     private facebook: Facebook,
     private googlePlus: GooglePlus,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController,    
-    private router: Router,    
+    private loadingCtrl: LoadingController,
+    private router: Router,
   ) {
 
     this.loadToken();
@@ -46,7 +46,7 @@ export class AuthenticationService {
       this.token = token;
       this.user = user;
       this.authHeader = new HttpHeaders().set('Authorization', 'Bearer ' + this.token);
-      this.isAuthenticated.next(true)      
+      this.isAuthenticated.next(true)
     } else {
       this.isAuthenticated.next(false);
     }
@@ -192,7 +192,7 @@ export class AuthenticationService {
     }).toPromise();
   }
 
-  deleteImgGallery(imageId: number){
+  deleteImgGallery(imageId: number) {
     return this.http.delete(this.api + '/profile/images/' + imageId, {
       headers: this.authHeader
     }).toPromise();
@@ -254,7 +254,7 @@ export class AuthenticationService {
     )
   }
 
-  logOut(): Promise<void> { 
+  logOut(): Promise<void> {
     this.user = null;
     this.isAuthenticated.next(false);
     this.storage.remove(USER_DATA);

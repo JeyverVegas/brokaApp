@@ -1,8 +1,8 @@
 <ion-header class="ion-no-border ion-text-center">
   <ion-toolbar class="b_transparent">
     <ion-buttons slot="start">
-    <ion-button color="light" (click)="closeModal()">
-      <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      <ion-button color="light" (click)="closeModal()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -19,11 +19,12 @@
 <ion-content>
 
   <ion-slides #sliderRef pager="true" class="slider-img" [options]="slideOpts">
-    <ion-slide *ngFor="let image of producto.images" style="background: url({{image.url}}); background-size: 100% 100%;" (click)="openPreview(image.url)">
+    <ion-slide *ngFor="let image of producto.images" style="background: url({{image.url}}); background-size: 100% 100%;"
+      (click)="openPreview(image.url)">
     </ion-slide>
   </ion-slides>
 
-  <ion-grid>    
+  <ion-grid>
     <ion-row class="ion-align-items-center">
       <ion-col *ngIf="producto.rooms" class="ion-text-center ion-align-self-end">
         <img class="img-icon" src="../../assets/icon/habitaciones.PNG" alt="">
@@ -48,10 +49,8 @@
 
   <div class="ion-text-center">
     <p>
-      <ion-text color="medium"><b>{{producto.name}} en {{producto.address.address}}</b></ion-text>
-    </p>
-    <p>
-      <ion-text color="medium">{{producto.address.city.name}}, {{producto.address.state.name}}.</ion-text>
+      <ion-text color="medium"><b>{{producto.address.address}}</b>
+      </ion-text>
     </p>
     <ion-button color="secondary" shape="round" fill="clear" size="large" (click)="playSound();">
       <ion-icon name="location-outline" slot="start"></ion-icon>
@@ -120,24 +119,32 @@
 
     <!--Si hay 2 images-->
     <div *ngIf="producto.images.length == 2">
-      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
-      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt=""
+        (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt=""
+        (click)="openPreview(producto.images[1].url)">
     </div>
 
     <!--Si hay 3 images-->
     <div *ngIf="producto.images.length == 3">
-      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
-      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt=""
+        (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt=""
+        (click)="openPreview(producto.images[1].url)">
       <img class="img-full" src="{{producto.images[2].url}}" alt="" (click)="openPreview(producto.images[2].url)">
     </div>
 
     <!--Si hay 4 images o mas-->
     <div *ngIf="producto.images.length > 3" class="ion-text-center">
-      <img class="img-height img-1" src="{{producto.images[0].url}}" alt="" (click)="openPreview(producto.images[0].url)">
-      <img class="img-height img-2" src="{{producto.images[1].url}}" alt="" (click)="openPreview(producto.images[1].url)">
-      <img class="img-height img-3" src="{{producto.images[2].url}}" alt="" (click)="openPreview(producto.images[2].url)">
-      <img class="img-height img-4" src="{{producto.images[3].url}}" alt="" (click)="openPreview(producto.images[3].url)">
-      
+      <img class="img-height img-1" src="{{producto.images[0].url}}" alt=""
+        (click)="openPreview(producto.images[0].url)">
+      <img class="img-height img-2" src="{{producto.images[1].url}}" alt=""
+        (click)="openPreview(producto.images[1].url)">
+      <img class="img-height img-3" src="{{producto.images[2].url}}" alt=""
+        (click)="openPreview(producto.images[2].url)">
+      <img class="img-height img-4" src="{{producto.images[3].url}}" alt=""
+        (click)="openPreview(producto.images[3].url)">
+
       <ion-button color="primary" spand="block" fill="clear" (click)="playSound();">
         <ion-icon name="camera-outline" slot="start"></ion-icon>
         Ver las {{producto.images.length}} imágenes
@@ -161,8 +168,10 @@
             <h3>Precio:</h3>
           </ion-label>
         </ion-col>
-        <ion-col> 
-          <p *ngFor="let price of producto.prices"><ion-text color="medium">{{price.price_value.toLocaleString('de-DE')}} - {{price.currency.code}} </ion-text></p>
+        <ion-col>
+          <p *ngFor="let price of producto.prices">
+            <ion-text color="medium">{{price.price_value.toLocaleString('de-DE')}} - {{price.currency.code}} </ion-text>
+          </p>
         </ion-col>
       </ion-row>
 
@@ -189,10 +198,13 @@
 
     <p>
       <ion-text color="medium">
-        <span *ngIf="producto.type">{{producto.type.name}}</span> <span *ngIf="producto.address"> en {{producto.address.address}}</span> <br>
-        <span *ngIf="producto.address.city">{{producto.address.city.name}}</span><span *ngIf="producto.address.city && producto.address.state">, </span> <span *ngIf="producto.address.state">{{producto.address.state.name}}</span>.
+        <span *ngIf="producto.type">{{producto.type.name}}</span> <span *ngIf="producto.address"> en
+          {{producto.address.address}}</span> <br>
+        <span *ngIf="producto.address.city">{{producto.address.city.name}}</span><span
+          *ngIf="producto.address.city && producto.address.state">, </span> <span
+          *ngIf="producto.address.state">{{producto.address.state.name}}</span>.
       </ion-text>
-    </p>    
+    </p>
   </div>
   <div #map style="min-height: 250px;">
 
@@ -214,11 +226,11 @@
       </ion-fab-button>
       <ion-fab-button *ngIf="producto.is_favorite" (click)="removeFromFavorite(producto)">
         <ion-icon name="heart" color="danger"></ion-icon>
-      </ion-fab-button>      
+      </ion-fab-button>
       <ion-fab-button (click)="openShared()">
         <ion-icon name="share-social" color="secondary"></ion-icon>
-      </ion-fab-button>      
-    </ion-fab-list>    
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
 
 </ion-content>

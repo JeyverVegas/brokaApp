@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { AlertController, ModalController, NavController } from '@ionic/angular';
+import { AlertController, ModalController, NavController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { BrokaMarkers, Usuario } from '../interface';
 import { MapOptionsPage } from '../map-options/map-options.page';
@@ -23,6 +23,8 @@ export class MapPage implements OnInit {
     state: null,
     city: null
   };
+
+  showRadio = false;
   userMarker: BrokaMarkers = null;
   cargado = false;
   currentPosition: { lat: number, lng: number } = null;
@@ -40,14 +42,15 @@ export class MapPage implements OnInit {
     private modalCtrl: ModalController,
     private geolocation: Geolocation,
     private authService: AuthenticationService,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private toastController: ToastController
   ) { }
 
   async ngOnInit() {
 
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.productoService.filtros.radius = null;
     this.productoService.getProducts();
   }
@@ -56,7 +59,7 @@ export class MapPage implements OnInit {
     this.user = this.authService.user;
     this.backupAddress.city = this.productoService.filtros.city;
     this.backupAddress.state = this.productoService.filtros.state;
-    this.productoService.filtros.city = null; 
+    this.productoService.filtros.city = null;
     this.productoService.filtros.state = null;
     console.log(this.backupAddress.city);
     try {
@@ -107,7 +110,16 @@ export class MapPage implements OnInit {
       fullscreenControl: false
     });
 
+    /* this.map.addListener('idle', (event) => {
+      var center = this.map.getCenter();
+      center.e += 0.000001;
+      this.map.panTo(center);
+      center.e -= 0.000001;
+      this.map.panTo(center);
+    }); */
+
     this.map.addListener('click', async (event) => {
+      console.log(event);
       const alerta = await this.alertCtrl.create({
         header: '¿Quieres cambiar tu ubicación?',
         buttons: [
@@ -192,14 +204,14 @@ export class MapPage implements OnInit {
 
 
   async openProduct(producto) {
-    this.playSound();
+    /* this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
         producto: producto
       }
     });
-    modal.present();
+    modal.present(); */
   }
 
   async openOptions() {
@@ -227,9 +239,9 @@ export class MapPage implements OnInit {
 
       if (response.data.currentPosition) {
         this.currentPosition = response.data.currentPosition;
-        this.userMarker.setMap(null);        
+        this.userMarker.setMap(null);
         this.deleteMarkers();
-        this.map.setCenter(new google.maps.LatLng(this.currentPosition.lat, this.currentPosition.lng));        
+        this.map.setCenter(new google.maps.LatLng(this.currentPosition.lat, this.currentPosition.lng));
         let userMakerImg = '../../assets/images/user.png';
         if (
           this.user.profile &&
@@ -264,6 +276,42 @@ export class MapPage implements OnInit {
 
   }
 
+  async getPosition() {
+    var location = await this.geolocation.getCurrentPosition({ timeout: 5000, maximumAge: 0 });
+    if (!location) {
+      this.presentToast('ha ocurrido un error al obtener la ubicacion. por favor intente mas tarde.', 'danger');
+      return;
+    }
+    this.userMarker.setMap(null);
+    this.currentPosition = { lat: location.coords.latitude, lng: location.coords.longitude };
+
+    this.deleteMarkers();
+
+    this.map.setCenter(new google.maps.LatLng(this.currentPosition.lat, this.currentPosition.lng));
+
+    let userMakerImg = '../../assets/images/user.png';
+    if (
+      this.user.profile &&
+      this.user.profile.image &&
+      this.user.profile.image.length > 0) {
+      userMakerImg = this.user.profile.image;
+    }
+
+    this.userMarker = new BrokaMarkers(
+      new google.maps.LatLng(this.currentPosition.lat, this.currentPosition.lng),
+      userMakerImg,
+      null,
+      true
+    );
+
+    this.productoService.filtros.radius = [this.radius, this.currentPosition.lat, this.currentPosition.lng];
+    this.productos = this.productoService.getProducts();
+    this.userMarker.setMap(null);
+    this.userMarker.setMap(this.map);
+    this.mapRadius.setMap(null);
+    this.setRadius(this.map);
+  }
+
   deleteMarkers() {
     this.productsMarkers.forEach(marker => {
       marker.setMap(null);
@@ -284,9 +332,46 @@ export class MapPage implements OnInit {
     });
   }
 
+  removeRadius() {
+    if (this.radius > 5) {
+      this.radius--;
+    }
+  }
+
+  radiusHasBlur() {
+    console.log('yoho');
+    /* this.mapRadius.setMap(null);
+    this.setRadius(this.map);
+    this.productoService.filtros.radius = [this.radius, this.currentPosition.lat, this.currentPosition.lng];
+    this.productoService.getProducts(); */
+  }
+
+  radiusChange() {
+    this.mapRadius.setMap(null);
+    this.setRadius(this.map);
+    this.productoService.filtros.radius = [this.radius, this.currentPosition.lat, this.currentPosition.lng];
+    this.productoService.getProducts();
+  }
+
+  addRadius() {
+    if (this.radius < 25) {
+      this.radius++;
+    }
+  }
+
   goBack() {
     this.playSound();
     this.navCtrl.back();
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color
+    });
+    toast.present();
   }
 
   playSound() {

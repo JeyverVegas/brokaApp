@@ -1,11 +1,21 @@
+ion-tab-bar{
+    --background: rgba(255, 255, 255, 0);
+    background: rgba(255, 255, 255, 0)
+}
+
 ion-tab-button{
+    --background: rgba(0, 0, 0, 0);
     --color-focused: var(--ion-color-primary);
     --color-selected: var(--ion-color-primary);
 }
 
-.button_add{
+.hidden{
+    display: none;
+}
+
+/* .button_add{
     background: linear-gradient(to left, var(--ion-color-secondary), var(--ion-color-primary)) !important;
     padding: 3px 10px;
     border-radius: 15px;
     color: white;
-}
+} */

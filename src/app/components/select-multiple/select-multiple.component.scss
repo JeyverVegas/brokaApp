@@ -1,0 +1,88 @@
+.select-multiple-container{
+    display: flex;
+    overflow-x: scroll;    
+    padding: 5px 0;
+    align-items: center;    
+    justify-content: space-between;
+}
+
+.select-multiple-button{
+    position: relative;
+    height: 40px;
+    display: flex;
+    margin: 0 10px;
+    width: 40px;
+    padding: 5px;
+    border-radius: 50px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: all .3s;
+    span{
+        margin: auto;
+    }
+}
+
+//Color
+
+.select-multiple-button-primary{
+    border: 1px solid var(--ion-color-primary);
+}
+
+.select-multiple-button-secondary{
+    border: 1px solid var(--ion-color-secondary);
+}
+
+.select-multiple-button-tertiary{
+    border: 1px solid var(--ion-color-tertiary);
+}
+
+.select-multiple-button-success{
+    border: 1px solid var(--ion-color-success);
+}
+
+.select-multiple-button-warning{
+    border: 1px solid var(--ion-color-warning);
+}
+
+.select-multiple-button-danger{
+    border: 1px solid var(--ion-color-danger);
+}
+
+
+//Actives
+
+.active-primary{
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+}
+
+.active-secondary{
+    background: var(--ion-color-secondary);
+    color: var(--ion-color-secondary-contrast);
+}
+
+.active-tertiary{
+    background: var(--ion-color-tertiary);
+    color: var(--ion-color-tertiary-contrast);
+}
+
+.active-success{
+    background: var(--ion-color-success);
+    color: var(--ion-color-success-contrast);
+}
+
+.active-warning{
+    background: var(--ion-color-warning);
+    color: var(--ion-color-warning-contrast);
+}
+
+.active-danger{
+    background: var(--ion-color-danger);
+    color: var(--ion-color-danger-contrast);
+}
+
+
+
+.error-alert{
+    color: var(--ion-color-danger);    
+}

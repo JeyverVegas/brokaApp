@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router, RouterEvent } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { Usuario } from '../interface';
 import { AuthenticationService } from '../servicios/authentication.service';
@@ -10,23 +11,28 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage implements OnInit{
+export class TabsPage implements OnInit {
 
+  selectedPath = null;
   user = {} as Usuario;
   newMessagesCount = new BehaviorSubject(0);
   constructor(
     private smartAudio: SmartAudioService,
     private authService: AuthenticationService,
-    private chatService: ChatService
-  ) { }  
-  
-  ngOnInit(){
+    private chatService: ChatService,
+    private router: Router,
+  ) { }
+
+  ngOnInit() {
+    this.router.events.subscribe((event: RouterEvent) => {
+      this.selectedPath = this.router.url;
+    })
     this.user = this.authService.user;
     this.newMessagesCount = this.chatService.getNewMewssagesCount();
-  }  
+  }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
-  
+
 }

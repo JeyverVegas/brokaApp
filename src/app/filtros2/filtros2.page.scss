@@ -1,0 +1,51 @@
+.segment-button{    
+    --border-radius: 100%;
+    --border-style: solid;
+    --border-width: 1px;      
+    --padding-bottom: 3px;
+    --padding-end: 3px;
+    --padding-start: 3px; 
+    --padding-top: 3px;     
+    --indicator-box-shadow: transparent;
+    --indicator-height: 0px;
+    --background-checked: var(--ion-color-primary) !important;
+    --background-focused:  var(--ion-color-primary) !important;
+    --color-checked: var(--ion-color-primary-contrast) !important;
+}
+
+.segment-button-primary{
+    --border-color: var(--ion-color-primary) !important;
+}
+
+.segment-button-secondary{
+    --color: var(--ion-color-secondary) !important;
+    --border-color: var(--ion-color-secondary) !important;
+}
+
+.segment-button-normal{
+    height: 52px !important;
+    max-width: 52px !important;
+}
+.segment-button-big {
+    height: 80px !important;
+    max-width: 80px !important;
+    overflow: hidden;
+}
+
+.input-price-container {
+    border: 1px solid rgb(196, 196, 196);
+    padding: 5px;
+    border-radius: 5px; 
+    text-align: center;
+    width: 48%;
+}
+
+.input-price{
+    background: transparent;
+    border: none; 
+    max-width: 100%; 
+}
+
+.input-price:focus {    
+    outline: none;
+}

@@ -49,14 +49,14 @@ export class BuscarPage implements OnInit {
   }
 
   async openProduct(producto) {
-    this.playSound();
+    /* this.playSound();
     const modal = await this.modalCtrl.create({
       component: ShowProductPage,
       componentProps: {
         producto: producto
       }
     });
-    modal.present();
+    modal.present(); */
   }
 
   filtrar(ev) {

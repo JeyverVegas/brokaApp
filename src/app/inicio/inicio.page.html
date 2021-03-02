@@ -1,8 +1,4 @@
 <ion-content>
-    <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
-    </ion-refresher> -->
-
     <div *ngIf="showdelete" class="delete-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="close" color="light"></ion-icon>
     </div>
@@ -11,31 +7,17 @@
         <ion-icon name="heart" color="success"></ion-icon>
     </div>
 
-    <div class="menu-buttons" *ngIf="productos.getValue().length > 0">
-        <ion-grid>
-            <ion-row style="background-color: rgba(0, 0, 0, .2);">
-                <ion-col class="ion-text-center" size="4">
-                    <ion-button mode="md" size="small" fill="clear" color="light" color="light" (click)="abriFiltros()">
-                        <ion-icon slot="start" name="options-outline"></ion-icon>
-                        FILTRAR
-                    </ion-button>
-                </ion-col>
-                <ion-col class="ion-text-center" size="4">
-                    <ion-button mode="md" size="small" fill="clear" color="light" (click)="saveSearch()">
-                        GUARDAR <br>
-                        BÚSQUEDA
-                    </ion-button>
-                </ion-col>
-                <ion-col class="ion-text-center" size="4">
-                    <ion-button mode="md" size="small" fill="clear" color="light" routerLink="/map"
-                        routerDirection="forward" (click)="playSound()">
-                        <ion-icon slot="start" name="map-outline"></ion-icon>
-                        MAPA
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-    </div>
+    <ion-fab vertical="top" horizontal="start" fill="clear" slot="fixed" *ngIf="productos.getValue().length > 0">
+        <ion-fab-button class="buttons-top" (click)="abriFiltros()">
+            <ion-icon name="options-outline"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="productos.getValue().length > 0">
+        <ion-fab-button class="buttons-top" fill="clear" (click)="saveSearch()">
+            <ion-icon name="download-outline"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 
     <div class="ion-text-center ion-padding" style="margin-top: 22vh" *ngIf="productos.getValue().length === 0">
         <ion-icon name="sad-outline" color="primary" style="font-size: 20vw;"></ion-icon>
@@ -59,12 +41,47 @@
     <div style="overflow: hidden; height: 100%;" [class.hidden]="productos.getValue().length == 0">
         <div *ngFor="let producto of productos | async; let i = index" style="height: 100%; position: relative;">
             <div #containerx [attr.data-index]="i" class="img-container" style="overflow: auto;">
-                <div class="" style="border-radius: 15px; overflow: hidden;" *ngFor="let image of producto.images" >
+                <div class="show-image" style="border-radius: 15px; overflow: hidden;"
+                    *ngFor="let image of producto.images">
                     <img [src]="image.url" style="max-width: 100%;" alt="">
                 </div>
-                <div #mapa class="mapita" [attr.data-index]="i"></div>            
-            </div>            
-            
+                <div class="product-description">
+                    <h6>
+                        <ion-text color="light">
+                            En pocas palabras
+                        </ion-text>
+                    </h6>
+
+                    <span class="property-features">
+                        <img src="../../assets/icon/banos.PNG" style="width: 20px; height: 20px;" alt="">
+                        {{producto.bathrooms}} Baños
+                    </span>
+
+                    <span class="property-features">
+                        <img src="../../assets/icon/habitaciones.PNG" style="width: 20px; height: 20px;" alt="">
+                        {{producto.rooms}} habitaciones
+                    </span>
+
+                    <span class="property-features">
+                        <img src="../../assets/icon/M2.PNG" style="width: 20px; height: 20px;" alt="">
+                        {{producto.square_meters}}M2
+                    </span>
+
+                    <span *ngFor="let feature of producto.features" class="property-features">
+                        {{feature.name}}
+                    </span>
+
+                    <span class="property-features">
+                        {{producto.type.name}}
+                    </span>
+
+                    <span class="property-features">
+                        {{producto.status.name}}
+                    </span>
+                </div>
+                <div #mapa class="mapita" [attr.data-index]="i"></div>
+            </div>
+
             <div class="description-container">
                 <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;"
                     (click)="openProduct(producto)">
@@ -73,32 +90,49 @@
                         {{(producto.address.address.length>25)? (producto.address.address |
                         slice:0:25)+'...':(producto.address.address)}}
                     </h5>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Ambientes:
+                    <!-- <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Ambientes:
                         {{producto.environments}}</p>
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Precio:
+                        {{findPrice(producto.prices)?.currency?.code}}
                         {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
-                        {{findPrice(producto.prices)?.currency?.code}}</p>
-
+                    </p> -->
                     <ion-ripple-effect></ion-ripple-effect>
                 </div>
-                <br>
                 <ion-buttons class="buttons-container">
                     <div class="boton-redondo" (click)="descartar(producto)">
-                        <img src="../../assets/icon/delete.png" alt="">
-                        <div class="pulse12"></div>
+                        <ion-icon name="close" color="medium"></ion-icon>
+                        <!-- <div class="pulse12"></div> -->
                     </div>
-                    <div class="boton-redondo" routerLink="/tabs/tabs/buscar" routerDirection="forward" (click)="playSound()">
+                    <!-- <div class="boton-redondo" routerLink="/tabs/tabs/buscar" routerDirection="forward"
+                        (click)="playSound()">
                         <img src="../../assets/icon/info.png" alt="">
                         <div class="pulse12"></div>
-                    </div>
+                    </div> -->
                     <div class="boton-redondo" (click)="matchear(producto)">
-                        <img src="../../assets/icon/match.png" alt="">
-                        <div class="pulse12"></div>
-                    </div>                    
+                        <ion-icon name="heart" color="success"></ion-icon>
+                        <!-- <div class="pulse12"></div> -->
+                    </div>
                 </ion-buttons>
             </div>
         </div>
     </div>
+    <ion-buttons class="tabs-inicio">
+        <ion-button color="light" routerLink="/tabs/tabs/inicio">
+            <ion-icon name="home"></ion-icon>
+        </ion-button>
+        <ion-button color="light" routerLink="/tabs/tabs/buscar">
+            <ion-icon name="search-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="light" routerLink="/map">
+            <ion-icon name="globe-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="light" routerLink="/tabs/tabs/chat">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="light" routerLink="/tabs/tabs/usuario">
+            <ion-icon name="person-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
 
 
 

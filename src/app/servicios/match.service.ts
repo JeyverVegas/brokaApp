@@ -12,7 +12,7 @@ export class MatchService {
     private http: HttpClient
   ) { }
 
-  getMatchs() {
+  getMatchs(): Promise<any> {
     return this.http.get(this.authService.api + '/matches', {
       headers: this.authService.authHeader
     }).toPromise();

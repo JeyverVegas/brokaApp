@@ -26,9 +26,13 @@ const USER_DATA = 'user-data';
 export class UsuarioPage implements OnInit {
 
   user = {} as Usuario;
-  chatCount = 0;
-  matchCount = 0;
-  discardCount = 0;
+  chatCount: any = 0;
+  loadingChatCount = true;
+  matchCount: any = 0;
+  loadingMatchCount = true;
+  discardCount: any = 0;
+  loadingDiscardCount = true;
+
   profileImages = [];
   silenciar = false;
 
@@ -58,15 +62,20 @@ export class UsuarioPage implements OnInit {
 
   async ngOnInit() {
     this.user = this.authService.user;
+    console.log(this.user);
   }
 
   async ionViewDidEnter() {
-    try {      
+    try {
+
       this.chatCount = this.chatService.returnChats().getValue().length;
-      var match: any = await this.matchService.getMatchs();
-      this.matchCount = match.data.length;
+      this.loadingChatCount = false;
+      this.matchCount = await (await this.matchService.getMatchs()).data.length;
+      this.loadingMatchCount = false;
       this.discardCount = await (await this.productosService.getDescartados()).length;
+      this.loadingDiscardCount = false;
     } catch (error) {
+      this.presentToast('ha ocurrido un error al cargar, por favor intente mas tarde', 'danger');
       console.log(error);
     }
   }

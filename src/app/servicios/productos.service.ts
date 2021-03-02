@@ -123,7 +123,7 @@ export class ProductosService {
     return this.productos;
   }
 
-  getOneProduct(propertyID: number){
+  getOneProduct(propertyID: number) {
     return this.http.get(this.authService.api + '/properties/' + propertyID, {
       headers: this.authService.authHeader,
       params: {
@@ -151,9 +151,10 @@ export class ProductosService {
         include: this.getProductRelationships(relationships)
       }
     }).subscribe((response: { data: [], meta: any, links: any }) => {
+      console.log(response.data);
       this.productos.next(response.data);
       this.total.next(response.meta.total);
-      this.next = response.links.next;      
+      this.next = response.links.next;
       this.loading.dismiss();
     }, async error => {
       await this.loading.dismiss();
@@ -165,8 +166,8 @@ export class ProductosService {
   getTotal() {
     return this.total;
   }
-  
-  getNext(){
+
+  getNext() {
     return this.next;
   }
 
@@ -286,7 +287,7 @@ export class ProductosService {
     }).toPromise();
   }
 
-  removerAllDiscartedProducts(){
+  removerAllDiscartedProducts() {
     return this.http.delete(this.authService.api + '/properties/discarted', {
       headers: this.authService.authHeader
     }).toPromise();
