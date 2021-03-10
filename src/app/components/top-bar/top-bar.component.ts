@@ -1,4 +1,3 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { FiltrosPage } from 'src/app/filtros/filtros.page';

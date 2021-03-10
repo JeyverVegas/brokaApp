@@ -118,11 +118,6 @@ export class ProductosService {
     }).toPromise();
   }
 
-  getProducts() {
-    this.findProducts();
-    return this.productos;
-  }
-
   getOneProduct(propertyID: number) {
     return this.http.get(this.authService.api + '/properties/' + propertyID, {
       headers: this.authService.authHeader,
@@ -132,35 +127,31 @@ export class ProductosService {
     }).toPromise();
   }
 
-  async findProducts(relationships?) {
-
+  async getProducts(): Promise<BehaviorSubject<any[]>> {
     this.loading = await this.loadingCtrl.create({
-      message: 'Cargando productos...',
+      message: 'Cargando propiedades...',
       spinner: 'bubbles'
     });
+    try {
+      this.loading.present();
+      var response: any = await this.http.get(this.authService.api + '/properties' + this.getFilters(), {
+        headers: this.authService.authHeader,
+        params: {
+          include: this.getProductRelationships()
+        }
+      }).toPromise();
 
-    this.loading.present();
-
-    if (!relationships) {
-      relationships = [];
-    }
-
-    this.http.get(this.authService.api + '/properties' + this.getFilters(), {
-      headers: this.authService.authHeader,
-      params: {
-        include: this.getProductRelationships(relationships)
-      }
-    }).subscribe((response: { data: [], meta: any, links: any }) => {
-      console.log(response.data);
       this.productos.next(response.data);
       this.total.next(response.meta.total);
       this.next = response.links.next;
-      this.loading.dismiss();
-    }, async error => {
       await this.loading.dismiss();
-      this.presentToast('Ha ocurrido un error', 'danger');
+      console.log(response.data);
+      return this.productos;
+    } catch (error) {
       console.log(error);
-    })
+      await this.loading.dismiss();
+      this.presentToast('Ha ocurrido un error al obtener los inmuebles, por favor intente mas tarde.', 'danger');
+    }
   }
 
   getTotal() {
@@ -174,58 +165,90 @@ export class ProductosService {
   getFilters() {
     var queryString = '?';
     try {
+
+      //Type (House, Apartment, Etc)
       if (this.filtros.type) {
         queryString = queryString + 'filter[type]=' + this.filtros.type.join(',') + '&';
       }
 
-      if (this.filtros.contractType) {
+      //Contract (Rent, Sell, Etc)
+      if (this.filtros.contractType && this.filtros.contractType.length > 0) {
         queryString = queryString + 'filter[contract_type]=' + this.filtros.contractType.join(',') + '&';
       }
 
-      if (this.filtros.sizeBetween) {
+      //Size (M2)
+      if (this.filtros.sizeBetween && this.filtros.sizeBetween.length >= 2) {
         queryString = queryString + 'filter[size_between]=' + this.filtros.sizeBetween.join(',') + '&';
       }
 
-      if (this.filtros.roomsBetween) {
+      //Rooms
+      if (this.filtros.roomsBetween && this.filtros.roomsBetween.length >= 2) {
         queryString = queryString + 'filter[rooms_between]=' + this.filtros.roomsBetween.join(',') + '&';
       }
 
-      if (this.filtros.bathroomsBetween) {
+      if (this.filtros.rooms && this.filtros.rooms.length > 0) {
+        queryString = queryString + 'filter[rooms_in]=' + this.filtros.rooms.join(',') + '&';
+      }
+
+      //Bathrooms
+      if (this.filtros.bathroomsBetween && this.filtros.bathroomsBetween.length >= 2) {
         queryString = queryString + 'filter[bathrooms_between]=' + this.filtros.bathroomsBetween.join(',') + '&';
       }
 
-      if (this.filtros.environmentsBetween) {
+      if (this.filtros.bathrooms && this.filtros.bathrooms.length > 0) {
+        queryString = queryString + 'filter[bathrooms_in]=' + this.filtros.bathrooms.join(',') + '&';
+      }
+
+      //Enviroments
+      if (this.filtros.environmentsBetween && this.filtros.environmentsBetween.length >= 2) {
         queryString = queryString + 'filter[environments_between]=' + this.filtros.environmentsBetween.join(',') + '&';
       }
 
-      if (this.filtros.status) {
+      if (this.filtros.environments && this.filtros.environments.length > 0) {
+        queryString = queryString + 'filter[environments_in]=' + this.filtros.environments.join(',') + '&';
+      }
+
+      //Status
+      if (this.filtros.status && this.filtros.status.length > 0) {
         queryString = queryString + 'filter[status]=' + this.filtros.status.join(',') + '&';
       }
 
-      if (this.filtros.hasAnyFeatures) {
+      //Feature
+      if (this.filtros.hasAnyFeatures && this.filtros.hasAnyFeatures.length > 0) {
         queryString = queryString + 'filter[has_any_features]=' + this.filtros.hasAnyFeatures.join(',') + '&';
       }
 
-      if (this.filtros.realEstateAgency) {
+      //Agency
+      if (this.filtros.realEstateAgency && this.filtros.realEstateAgency.length > 0) {
         queryString = queryString + 'filter[real_estate_agency]=' + this.filtros.realEstateAgency.join(',') + '&';
       }
 
+      //Radius
       if (this.filtros.radius) {
         queryString = queryString + 'filter[radius]=' + this.filtros.radius.join(',') + '&';
       }
 
-      if (this.filtros.state && this.filtros.state != 0) {
+      //Address
+      if (this.filtros.state && this.filtros.state != 'todas') {
         queryString = queryString + 'filter[state]=' + this.filtros.state + '&';
-        if (this.filtros.city && this.filtros.city != 0) {
+        if (this.filtros.city && this.filtros.city != 'todas') {
           queryString = queryString + 'filter[city]=' + this.filtros.city + '&';
         }
       }
 
+      //Price
       if (this.filtros.currency && this.filtros.priceBetween) {
         queryString = queryString + 'filter[price_between]=' + this.filtros.currency + ',' + this.filtros.priceBetween.join(',') + '&';
       }
 
+      //Products for Page
+      if (this.filtros.per_page) {
+        queryString = queryString + 'per_page=' + this.filtros.per_page;
+      }
+
       queryString = queryString.slice(0, -1);
+
+      console.log(queryString);
 
       return queryString;
     } catch (error) {
@@ -257,9 +280,9 @@ export class ProductosService {
 
   private getProductRelationships(aditionalRels?: Array<ProductRelationships>) {
     const relationships: Array<ProductRelationships> = ['images', 'prices.currency', 'address.state', 'address.city', 'features', 'type', 'status', 'favorite_to_count', 'realEstateAgency'];
-
-    relationships.push(...aditionalRels);
-
+    if (aditionalRels) {
+      relationships.push(...aditionalRels);
+    }
     return relationships.join(',');
   }
 

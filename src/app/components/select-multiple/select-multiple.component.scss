@@ -8,10 +8,8 @@
 
 .select-multiple-button{
     position: relative;
-    height: 40px;
     display: flex;
-    margin: 0 10px;
-    width: 40px;
+    margin: 0 3px;
     padding: 5px;
     border-radius: 50px;
     overflow: hidden;
@@ -20,6 +18,23 @@
     span{
         margin: auto;
     }
+}
+
+//Size
+
+.select-multiple-button-small{
+    height: 30px;
+    width: 30px;
+}
+
+.select-multiple-button-normal{
+    height: 50px;
+    width: 50px;
+}
+
+.select-multiple-button-large{
+    height: 70px;
+    width: 70px;
 }
 
 //Color

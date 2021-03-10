@@ -3,6 +3,7 @@ import { AlertController, LoadingController, ModalController, ToastController } 
 import { ChatMensajesPage } from '../chat-mensajes/chat-mensajes.page';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { Match } from '../interface';
+import { PropertyCardPage } from '../property-card/property-card.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
 import { MatchService } from '../servicios/match.service';
@@ -142,6 +143,19 @@ export class MisMatchsPage {
         }
       ]
     }).then(a => a.present());
+  }
+
+  async openProduct(producto) {
+    console.log(producto);
+    /* 
+    this.playSound();
+    const modal = await this.modalCtrl.create({
+      component: PropertyCardPage,
+      componentProps: {
+        property: producto
+      }
+    });
+    modal.present(); */
   }
 
   async openChat(match: Match) {

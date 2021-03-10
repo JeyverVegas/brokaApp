@@ -1,5 +1,5 @@
 .map-config{
-    height: 70vh;
+    height: 100vh;
 }
 
 .show{
@@ -8,4 +8,26 @@
 
 .hidden{
     display: none;
+}
+
+
+//Broka Controls
+.map-buttons-container{
+    position: absolute;
+    bottom: 3%;
+    left: 10px;
+}
+
+.map-button{
+    background: var(--ion-color-primary);
+    border-radius: 100%;    
+    box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.4);
+    color: var(--ion-color-primary-contrast);
+    font-weight: bold;
+    height: 40px;
+    margin: 5px 0;
+    padding: 10px;
+    position: relative;
+    width: 40px;    
+    z-index: 99; 
 }

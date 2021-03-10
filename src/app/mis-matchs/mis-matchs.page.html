@@ -23,16 +23,17 @@
     <ion-list class="animate__animated animate__fadeInUp">
       <ion-item *ngFor="let match of misMatchs">
         <ion-thumbnail slot="start">
-          <ion-img (click)="openPreview(match.property.images[0].url)" [src]="match.property.images[0].url" class="animate__animated animate__fadeIn"></ion-img>
+          <ion-img (click)="openProduct(match.property)" [src]="match.property.images[0].url"
+            class="animate__animated animate__fadeIn"></ion-img>
           <!-- <ion-skeleton-text *ngIf="!cargo" animated></ion-skeleton-text> -->
         </ion-thumbnail>
         <ion-label>
-          <p>{{match.status}}</p>
-          <h3>{{match.property.name}}</h3>
-          <p>
+          <p (click)="openProduct(match.property)">{{match.status}}</p>
+          <h3 (click)="openProduct(match.property)">{{match.property.name}}</h3>
+          <p (click)="openProduct(match.property)">
             <ion-icon name="call-outline" slot="start"></ion-icon> {{match.property.realEstateAgency.phone}}
           </p>
-          <p>
+          <p (click)="openProduct(match.property)">
             <ion-icon name="person" slot="start"></ion-icon> {{match.property.realEstateAgency.name}}
           </p>
           <ion-buttons>
@@ -45,6 +46,6 @@
           </ion-buttons>
         </ion-label>
       </ion-item>
-    </ion-list>  
-  </div>  
+    </ion-list>
+  </div>
 </ion-content>

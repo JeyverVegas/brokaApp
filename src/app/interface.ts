@@ -1,4 +1,4 @@
-declare var google: any;
+import { } from 'googlemaps';
 
 export interface selectMultipleErrors {
   message?: string,
@@ -57,19 +57,30 @@ export interface PropertyFeatures extends State { }
 export interface ProductFilters {
   name?: string;
   type?: Array<number>;
+  per_page?: number;
   contractType?: Array<number>;
   sizeBetween?: [number?, number?];
+  rooms?: number[];
   roomsBetween?: [number?, number?];
+  bathrooms?: number[];
   bathroomsBetween?: [number?, number?];
+  environments?: number[];
   environmentsBetween?: [number?, number?];
   status?: Array<number>;
   hasAnyFeatures?: Array<number>;
   realEstateAgency?: Array<number>;
   radius?: [number, number, number];
-  city?: number;
-  state?: number;
+  city?: string;
+  state?: string;
   priceBetween?: [number, number];
   currency?: number;
+}
+
+export interface googleMapsControlOpts {
+  showMyPositionButton?: boolean;
+  showRadiusButton?: boolean;
+  draggable?: boolean;
+  zoom?: number;
 }
 
 
@@ -106,7 +117,7 @@ export interface Match {
 }
 
 export class BrokaMarkers extends google.maps.OverlayView {
-  private latlng_: { lat: number, lng: number };
+  private latlng_: google.maps.LatLng;
   private imageSrc: string;
   private callback: any;
   private user: boolean;

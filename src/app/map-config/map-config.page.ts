@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 
 declare var google: any;
 @Component({
@@ -19,12 +19,13 @@ export class MapConfigPage implements OnInit {
   constructor(
     private geolocation: Geolocation,
     private modalCtrl: ModalController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingCtrl: LoadingController
   ) { }
 
   async ngOnInit() {
     try {
-      var location = await (await this.geolocation.getCurrentPosition()).coords;
+      var location = await (await this.geolocation.getCurrentPosition({ timeout: 5000 })).coords;
       if (!location) {
         this.modalCtrl.dismiss();
         this.presentToast('ha ocurrido un error al obtener tu dirección. itente mas tarde.', 'danger');
@@ -36,8 +37,10 @@ export class MapConfigPage implements OnInit {
       this.cargado = true;
       this.crearMapa();
     } catch (error) {
-      this.modalCtrl.dismiss();
-      this.presentToast('ha ocurrido un error al obtener tu dirección. itente mas tarde.', 'danger');
+      console.log(error);
+      //this.modalCtrl.dismiss();
+      //this.presentToast('ha ocurrido un error al obtener tu dirección. itente mas tarde.', 'danger');
+      this.crearMapa();
     }
   }
 
@@ -91,6 +94,7 @@ export class MapConfigPage implements OnInit {
     });
     this.location = location;
     this.markers.push(marker);
+    this.mapInitialized.setCenter(this.location);
   }
 
   setMapOnAll(map: any | null) {
@@ -106,6 +110,27 @@ export class MapConfigPage implements OnInit {
   deleteMarkers() {
     this.clearMarkers();
     this.markers = [];
+  }
+
+  async getCurrentLocation() {
+    const loading = await this.loadingCtrl.create({
+      spinner: 'bubbles',
+      message: 'Obteniendo tu Ubicación.'
+    });
+
+    try {
+      await loading.present();
+      var currentPosition = await (await this.geolocation.getCurrentPosition()).coords;
+      this.location.lat = currentPosition.latitude;
+      this.location.lng = currentPosition.longitude;
+      this.deleteMarkers();
+      this.addMarker(this.location);
+      await loading.dismiss();
+    } catch (error) {
+      console.log(error);
+      await loading.dismiss();
+      this.presentToast('ha ocuarrido un error al obtener tu ubicación, por favor intente mas tarde.', 'danger');
+    }
   }
 
   saveLocation() {

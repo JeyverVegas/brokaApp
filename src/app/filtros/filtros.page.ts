@@ -1,7 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
-import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures } from '../interface';
+import { BehaviorSubject } from 'rxjs';
+import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures, googleMapsControlOpts } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -20,11 +21,18 @@ export class FiltrosPage implements OnInit {
   features: PropertyFeatures[] = [];
   provincies = [];
   partidos = [];
+  inmuebles: any[] = [];
   @ViewChild('filtrosslider', { static: true }) protected slides: IonSlides;
-  @ViewChild('googlemaps2', { static: true }) protected mapa: ElementRef;
 
   slidesOpts = {
     allowTouchMove: false
+  }
+
+  comeFromSlide: number = null;
+
+  BrokaControls: googleMapsControlOpts = {
+    showMyPositionButton: false,
+    showRadiusButton: false
   }
 
   currencies = [];
@@ -53,10 +61,10 @@ export class FiltrosPage implements OnInit {
   radiusActivated = null;
 
   filtros: ProductFilters = {
-    city: 0,
+    city: 'todas',
     hasAnyFeatures: [],
     sizeBetween: [],
-    state: 0,
+    state: 'todas',
     contractType: [],
     type: [],
     currency: null,
@@ -86,13 +94,11 @@ export class FiltrosPage implements OnInit {
       this.contractTypes = await this.productosService.getContractType();
       this.propertyTypes = await this.productosService.getPropertyType();
       this.minMaxRange = await this.productosService.getFiltersRange();
-
-      this.provincies = await this.addressService.getStates();
-
-      this.filtros.currency = this.minMaxRange.prices[0].id;
       this.currencies = this.minMaxRange.prices;
+      console.log(this.minMaxRange);
+      this.provincies = await this.addressService.getStates();
       this.radiusActivated = this.productosService.filtros.radius;
-      var map = new google.maps.Map(this.mapa.nativeElement, {
+      /* var map = new google.maps.Map(this.mapa.nativeElement, {
         center: { lat: -34.603722, lng: -58.381592 },
         zoom: 10,
         mapTypeControl: false,
@@ -100,7 +106,7 @@ export class FiltrosPage implements OnInit {
         scaleControl: false,
         streetViewControl: false,
         fullscreenControl: false
-      });
+      }); */
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
@@ -110,11 +116,15 @@ export class FiltrosPage implements OnInit {
     }
   }
 
-  goBack(index: number) {
+  goBack(index: number, comeFrom: boolean) {
     if (index) {
       this.slides.slideTo(index);
     } else {
       this.slides.slidePrev();
+    }
+
+    if (comeFrom) {
+      this.slides.slideTo(this.comeFromSlide);
     }
     this.playSound();
   }
@@ -135,17 +145,22 @@ export class FiltrosPage implements OnInit {
     this.slides.slideNext();
   }
 
-  setEnvironmentsBetween(event) {
+  handleEnviromentsChange(event) {
     this.playSound();
-    this.filtros.environmentsBetween[1] = event.target.value;
-    if (event.target.value == 6) {
-      this.filtros.environmentsBetween[1] = 99999999;
-    }
-    console.log(this.filtros.environmentsBetween);
-    this.slides.slideNext();
+    this.filtros.environments = event;
   }
 
-  slideNext(index: number) {
+  async goToMap() {
+    this.filtros.per_page = 99999999999;
+    this.filtros.city = 'todas';
+    this.filtros.state = 'todas';
+    this.productosService.filtros = this.filtros;
+    this.inmuebles = await (await this.productosService.getProducts()).getValue();
+    this.slideNext((2 + await this.slides.getActiveIndex()));
+  }
+
+  async slideNext(index: number) {
+    this.comeFromSlide = await this.slides.getActiveIndex();
     if (index) {
       this.slides.slideTo(index);
     } else {
@@ -154,14 +169,16 @@ export class FiltrosPage implements OnInit {
   }
 
   async setState() {
-    if (this.filtros.state != 0) {
+    if (this.filtros.state != 'todas') {
       const loading = await this.loadingCtrl.create({
         spinner: 'lines',
         message: 'Cargando partidos...'
       });
       await loading.present();
       try {
-        this.partidos = await this.addressService.getCities(this.filtros.state);
+        let provincy = this.provincies.find(provincy => provincy.name == this.filtros.state);
+        console.log(provincy);
+        this.partidos = await this.addressService.getCities(provincy.id);
         await loading.dismiss();
       } catch (error) {
         console.log(error);
@@ -169,14 +186,14 @@ export class FiltrosPage implements OnInit {
         this.presentToast('Ha ocurrido un error al cargar los partidos.', 'danger');
       }
     } else {
-      this.filtros.city = 0;
+      this.filtros.city = 'todas';
       this.partidos = [];
     }
   }
 
   setStateCity() {
     this.playSound();
-    this.slides.slideNext();
+    this.slideNext(6);
   }
 
   setCurrency() {

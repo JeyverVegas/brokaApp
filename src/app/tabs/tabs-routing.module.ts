@@ -18,35 +18,39 @@ const routes: Routes = [
       {
         path: 'usuario',
         loadChildren: () => import('../usuario/usuario.module').then(m => m.UsuarioPageModule)
-      },      
+      },
       {
         path: 'buscar',
-        loadChildren: () => import('../buscar/buscar.module').then( m => m.BuscarPageModule)
+        loadChildren: () => import('../buscar/buscar.module').then(m => m.BuscarPageModule)
       },
       {
         path: 'favoritos',
-        loadChildren: () => import('../favoritos/favoritos.module').then( m => m.FavoritosPageModule)
+        loadChildren: () => import('../favoritos/favoritos.module').then(m => m.FavoritosPageModule)
       },
       {
         path: 'descartado',
-        loadChildren: () => import('../descartado/descartado.module').then( m => m.DescartadoPageModule)
+        loadChildren: () => import('../descartado/descartado.module').then(m => m.DescartadoPageModule)
       },
       {
         path: 'inmobiliarias',
-        loadChildren: () => import('../inmobiliarias/inmobiliarias.module').then( m => m.InmobiliariasPageModule)
+        loadChildren: () => import('../inmobiliarias/inmobiliarias.module').then(m => m.InmobiliariasPageModule)
       },
       {
         path: 'mis-busquedas',
-        loadChildren: () => import('../mis-busquedas/mis-busquedas.module').then( m => m.MisBusquedasPageModule)
-      },      
+        loadChildren: () => import('../mis-busquedas/mis-busquedas.module').then(m => m.MisBusquedasPageModule)
+      },
       {
         path: 'mis-matchs',
         loadChildren: () => import('../mis-matchs/mis-matchs.module').then(m => m.MisMatchsPageModule)
       },
       {
         path: 'notificaciones',
-        loadChildren: () => import('../notificaciones/notificaciones.module').then(m => m.NotificacionesPageModule),        
+        loadChildren: () => import('../notificaciones/notificaciones.module').then(m => m.NotificacionesPageModule),
       },
+      {
+        path: 'map-products',
+        loadChildren: () => import('../map-products/map-products.module').then(m => m.MapProductsPageModule)
+      }
     ]
   },
   {
@@ -60,4 +64,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class TabsPageRoutingModule {}
+export class TabsPageRoutingModule { }

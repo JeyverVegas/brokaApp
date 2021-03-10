@@ -18,20 +18,25 @@ export class Filtros2Page implements OnInit {
   propertyTypes: PropertyType[] = [];
   errorpropertyTypes: boolean = true;
 
+  rooms = [1];
+
   optioValues = Array.from(Array(6));
 
   currencies = [];
 
   filtros: ProductFilters = {
-    city: 0,
+    city: 'todas',
     hasAnyFeatures: [],
     sizeBetween: [],
-    state: 0,
+    state: 'todas',
     contractType: [],
     type: [],
     currency: null,
+    environments: [],
     environmentsBetween: [],
+    bathrooms: [],
     bathroomsBetween: [],
+    rooms: [],
     roomsBetween: [],
     priceBetween: [null, null]
   };
@@ -107,6 +112,9 @@ export class Filtros2Page implements OnInit {
       currency: null,
       environmentsBetween: [],
       bathroomsBetween: [],
+      rooms: [],
+      bathrooms: [],
+      environments: [],
       roomsBetween: [],
       priceBetween: [null, null]
     };
@@ -114,32 +122,28 @@ export class Filtros2Page implements OnInit {
 
   closeModal() {
 
-    if (this.filtros.environmentsBetween.length > 0) {
-
-      this.filtros.environmentsBetween[1] = this.filtros.environmentsBetween[0];
-      if (this.filtros.environmentsBetween[0] == 6) {
-        this.filtros.environmentsBetween[1] = 9999;
-      }
+    if (!this.filtros.priceBetween[0]) {
+      this.filtros.priceBetween[0] = 0;
     }
 
-    if (this.filtros.roomsBetween.length > 0) {
-      this.filtros.roomsBetween[1] = this.filtros.roomsBetween[0];
-      if (this.filtros.roomsBetween[0] == 6) {
-        this.filtros.roomsBetween[1] = 9999;
-      }
-    }
-
-    if (this.filtros.bathroomsBetween.length > 0) {
-      this.filtros.bathroomsBetween[1] = this.filtros.bathroomsBetween[0];
-      if (this.filtros.bathroomsBetween[0] == 6) {
-        this.filtros.bathroomsBetween[1] = 9999;
-      }
+    if (!this.filtros.priceBetween[1]) {
+      this.filtros.priceBetween[1] = 0;
     }
 
     this.productosService.filtros = this.filtros;
     this.productosService.getProducts();
     this.modalCtrl.dismiss();
   }
+
+  handleRoomsChange(values: number[]) {
+    this.filtros.rooms = values;
+  }
+
+  handleBathroomsChange(values) {
+    this.filtros.bathrooms = values;
+  }
+
+
 
   async presentToast(text, color) {
     const toast = await this.toastController.create({

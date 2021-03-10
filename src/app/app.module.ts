@@ -22,6 +22,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { ImageModalPageModule } from './image-modal/image-modal.module';
 import { MapOptionsPageModule } from './map-options/map-options.module';
 import { SelectFilePageModule } from './select-file/select-file.module';
+import { PropertyCardPageModule } from './property-card/property-card.module';
 
 
 
@@ -36,7 +37,8 @@ import { SelectFilePageModule } from './select-file/select-file.module';
     HttpClientModule,
     ImageModalPageModule,
     MapOptionsPageModule,
-    SelectFilePageModule
+    SelectFilePageModule,
+    PropertyCardPageModule
   ],
   providers: [
     StatusBar,

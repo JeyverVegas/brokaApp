@@ -119,6 +119,10 @@ ion-input, ion-item{
     }
 }
 
+.scroll-content {
+    padding-bottom: 0 !important;
+}
+
 .alertModal {
     padding: 15% 5% 110% 5% !important;
     .modal-wrapper {
@@ -184,20 +188,20 @@ ion-input, ion-item{
 }
 
 .img-iconxD {
-    box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.4);
-    width: 70px;
-    height: 70px;
-    margin: 4px;
-    border-radius: 100%;
+    box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.4) !important;
+    width: 70px !important;
+    height: 70px !important;
+    margin: 4px !important;
+    border-radius: 100% !important;
 }
 
 .img-iconxD2{
-    height: 22px;
-    width: 22px;
-    border-radius: 50%;
-    position: absolute;
-    bottom: -3px;
-    left: 28.5px;
+    height: 22px !important;
+    width: 22px !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    bottom: -3px !important;
+    left: 28.5px !important;
 }
 
 
@@ -248,5 +252,40 @@ ion-input, ion-item{
 .b-warning{
     color: var(--ion-color-warning-contrast);
     background: var(--ion-color-warning);
+}
+
+.alert-container{
+    position: fixed;
+    width: 100%;
+    top: 10%;
+    left: 0;
+    z-index: 99999999;
+    padding: 20px;        
+}
+
+.alert-description{
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
+.tabs-inicio{
+    position: absolute;
+    justify-content: space-between;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid var(--ion-color-light);
+    z-index: 9999;
+    ion-button{
+        width: 50px;
+        height: 50px;
+        padding: 5px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
 }
 

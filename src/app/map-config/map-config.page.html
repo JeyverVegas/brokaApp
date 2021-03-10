@@ -1,28 +1,24 @@
 <ion-content>
-
-  <div *ngIf="!cargado" class="ion-text-center" style="display: flex; height: 100%;">
-    <div style="margin: auto;">
-      <ion-spinner name="crescent" style="height: 90px; width: 90px;" color="secondary"></ion-spinner>
-      <h1>Cargando Mapa</h1>
-    </div>
-  </div>
-  <div [class.show]="cargado" class="hidden">
+  <div>
     <div #mapconfig class="map-config"></div>
 
-    <ion-item lines="none">
-      <ion-range min="0" max="20" color="primary" [value]="zoom" (ionChange)="changeZoom($event)" pin>
-        <ion-button slot="start" fill="clear" (click)="removeZoom()">
-          <ion-icon name="remove" slot="icon-only"></ion-icon>
-        </ion-button>
-        <ion-button slot="end" fill="clear" (click)="addZoom()">
-          <ion-icon name="add" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-range>
-    </ion-item>
-    <div class="ion-text-center">
-      <ion-button class="color_primario" (click)="saveLocation()" mode="ios">
-        Aceptar
-      </ion-button>
-    </div>
+
+
+    <ion-fab vertical="bottom" horizontal="center">
+      <ion-fab-button [disabled]="location ? false : true " (click)="saveLocation()">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+      <ion-fab-button>
+        <ion-icon name="options"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+        <ion-fab-button color="primary" (click)="getCurrentLocation()">
+          <ion-icon name="location-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab-list>
+    </ion-fab>
   </div>
 </ion-content>

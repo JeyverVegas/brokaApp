@@ -3,15 +3,13 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AlertPage } from '../alert/alert.page';
-import { FiltrosPage } from '../filtros/filtros.page';
 import { Filtros2Page } from '../filtros2/filtros2.page';
-import { BrokaMarkers } from '../interface';
+import { BrokaMarkers, googleMapsControlOpts } from '../interface';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
 import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
-import { ShowProductPage } from '../show-product/show-product.page';
 declare var google: any;
 
 @Component({
@@ -25,10 +23,23 @@ export class InicioPage {
   @ViewChildren('containerx') protected containerx: QueryList<ElementRef>;
   productos = new BehaviorSubject([]);
   total = new BehaviorSubject(0);
+  MapBrokaControls: googleMapsControlOpts = {
+    showMyPositionButton: false,
+    showRadiusButton: false,
+    draggable: false,
+    zoom: 15
+  }
 
   deviceWidth = null;
   showdelete = false;
   showmatch = false;
+  showAlert = false;
+
+  searchName: string = '';
+
+  canSave = false;
+
+  guardarBusqueda = false;
   constructor(
     private productosService: ProductosService,
     private modalCtrl: ModalController,
@@ -42,10 +53,9 @@ export class InicioPage {
     private chatService: ChatService
   ) { }
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
 
-    this.productos = this.productosService.getProducts();
-    
+    this.productos = await this.productosService.getProducts();
     this.mapas.changes.subscribe((elements: any) => {
       var mapas: any[] = elements.toArray();
 
@@ -61,7 +71,7 @@ export class InicioPage {
     if (google) {
       var map = new google.maps.Map(mapa, {
         center: { lat: product.address.latitude, lng: product.address.longitude },
-        zoom: 10,
+        zoom: 15,
         mapTypeControl: false,
         zoomControl: false,
         scaleControl: false,
@@ -133,15 +143,34 @@ export class InicioPage {
     modal.present();
   }
 
-  async saveSearch() {
+  async toggleSaveSearch() {
     this.playSound();
-    const modal = await this.modalCtrl.create({
-      cssClass: ['alertModal'],
-      animated: true,
-      component: AlertPage,
-    });
 
-    modal.present();
+    this.showAlert = !this.showAlert;
+
+    if (!this.showAlert) {
+      this.searchName = '';
+      this.guardarBusqueda = false;
+      this.canSave = false;
+    }
+  }
+
+  saveSearch() {
+    this.playSound();
+    this.authService.saveSearch(this.searchName, this.productosService.filtros).then(() => {
+      this.guardarBusqueda = true;
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  tipiando(event) {
+    let name: string = event.target.value;
+    if (name.length > 0) {
+      this.canSave = true;
+    } else {
+      this.canSave = false;
+    }
   }
 
   async descartar(product) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { selectMultipleErrors } from 'src/app/interface';
 
 @Component({
@@ -10,13 +10,14 @@ export class SelectMultipleComponent implements OnInit {
 
   @Input() numberOptions: number;
   @Input() multiple: boolean = false;
-  @Input() values: number[] = [1, 2];
+  @Input() values: number[] = [];
   @Input() color: string = "primary";
-
+  @Input() size: string = "normal";
 
   error: selectMultipleErrors = {};
-
   selectOptions = [];
+
+  @Output() change = new EventEmitter<number[]>();
   constructor() { }
 
   ngOnInit() {
@@ -34,7 +35,15 @@ export class SelectMultipleComponent implements OnInit {
     } else {
       this.values = [Number(value), ...this.values];
     }
+
+    this.change.emit(this.values);
   }
+
+
+
+
+
+
 
 
 

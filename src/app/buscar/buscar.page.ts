@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { ImageModalPage } from '../image-modal/image-modal.page';
+import { PropertyCardPage } from '../property-card/property-card.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -34,7 +35,7 @@ export class BuscarPage implements OnInit {
   }
 
   async ionViewDidEnter() {
-    this.productos = this.productosService.getProducts();
+    this.productos = await this.productosService.getProducts();
     this.initializedItems();
   }
 
@@ -49,18 +50,18 @@ export class BuscarPage implements OnInit {
   }
 
   async openProduct(producto) {
-    /* this.playSound();
+    this.playSound();
     const modal = await this.modalCtrl.create({
-      component: ShowProductPage,
+      component: PropertyCardPage,
       componentProps: {
-        producto: producto
+        property: producto
       }
     });
-    modal.present(); */
+    modal.present();
   }
 
   filtrar(ev) {
-    this.initializedItems();
+    this.filtro = this.productos.getValue();
 
     const valor = ev.target.value;
 
@@ -153,12 +154,17 @@ export class BuscarPage implements OnInit {
 
   findPrice(prices: any[]) {
     var price = null;
+
     if (this.productosService.filtros.currency) {
       price = prices.find(price => price.currency.id == this.productosService.filtros.currency);
     } else {
       price = prices[0];
     }
-    price.price_value = parseInt(price.price_value, 0);
+
+    if (price) {
+      price.price_value = parseInt(price.price_value, 0);
+    }
+
     return price;
   }
 

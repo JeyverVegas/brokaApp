@@ -34,7 +34,7 @@
                 <ion-button (click)="goBack()" color="danger">
                     Cancelar
                 </ion-button>
-                <ion-button (click)="slideNext()" [disabled]="user.profile.image == '' || user.profile.image == null">
+                <ion-button (click)="slideNext()">
                     Siguiente
                     <ion-icon name="arrow-forward" slot="end"></ion-icon>
                 </ion-button>
@@ -54,13 +54,15 @@
                         <ion-col>
                             <ion-item mode="md">
                                 <ion-label position="floating" color="primary">Nombre</ion-label>
-                                <ion-input [(ngModel)]="user.profile.firstname" name="firstname"></ion-input>
+                                <ion-input [(ngModel)]="user.profile.firstname" (ionChange)="setFirstLetterUpperCase()"
+                                    name="firstname"></ion-input>
                             </ion-item>
                         </ion-col>
                         <ion-col>
                             <ion-item mode="md">
                                 <ion-label position="floating" color="primary">Apellido</ion-label>
-                                <ion-input [(ngModel)]="user.profile.lastname" name="lastname"></ion-input>
+                                <ion-input [(ngModel)]="user.profile.lastname" (ionChange)="setFirstLetterUpperCase()"
+                                    name="lastname"></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>

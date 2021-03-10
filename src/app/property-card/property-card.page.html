@@ -1,0 +1,61 @@
+<ion-content>
+  <ion-fab vertical="top" horizontal="start" fill="clear" slot="fixed">
+    <ion-fab-button class="buttons-top" (click)="closeModal()">
+      <ion-icon name="close"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <div class="img-container">
+    <div class="show-image" style="border-radius: 15px; overflow: hidden;" *ngFor="let image of property.images">
+      <img [src]="image.url" style="max-width: 100%;" alt="">
+    </div>
+    <div class="product-description">
+      <h3 style="text-align: right;">
+        <ion-text color="light">
+          <ion-icon *ngIf="property.type.id == 1" name="home"></ion-icon>
+          <ion-icon *ngIf="property.type.id == 2" name="business"></ion-icon>
+          {{property.type.name}}
+        </ion-text>
+        <p>
+          <ion-text color="light">
+            {{findPrice(property.prices)?.currency?.code}}
+            {{findPrice(property.prices)?.price_value.toLocaleString('de-DE')}}
+          </ion-text>
+        </p>
+      </h3>
+
+      <span class="property-features">
+        <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
+        {{property.bathrooms}} Baños
+      </span>
+
+      <span class="property-features">
+        <img src="../../assets/icon/light/habitaciones.png" style="width: 20px; height: 20px;" alt="">
+        {{property.rooms}} habitaciones
+      </span>
+
+      <span class="property-features">
+        <img src="../../assets/icon/light/m2.png" style="width: 20px; height: 20px;" alt="">
+        {{property.square_meters}}M2
+      </span>
+
+      <span *ngFor="let feature of property.features" class="property-features">
+        {{feature.name}}
+      </span>
+
+      <span class="property-features">
+        {{property.type.name}}
+      </span>
+
+      <span class="property-features">
+        {{property.status.name}}
+      </span>
+      <p class="property-address">
+        <ion-icon name="location"></ion-icon>
+        En donde: {{property.address.address}}.
+      </p>
+    </div>
+  </div>
+  <div #googlemapproduct class="google-map-property">
+
+  </div>
+</ion-content>

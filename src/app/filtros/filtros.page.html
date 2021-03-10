@@ -45,17 +45,14 @@
           ¿DE CUANTOS AMBIENTES?
         </ion-text>
       </h2>
-      <ion-segment style="width: 100%;" (ionChange)="setEnvironmentsBetween($event)"
-        [(ngModel)]="filtros.environmentsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
-        <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
-          *ngFor="let enviroment of optioValues; let i = index" [value]="(i+1)">
-          <ion-label>
-            <span>
-              {{i == 5 ? '+6' : (i + 1)}}
-            </span>
-          </ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <app-select-multiple (change)="handleEnviromentsChange($event)" numberOptions="6" color="primary" size="normal">
+      </app-select-multiple>
+      <br>
+      <div class="ion-text-center">
+        <ion-button (click)="slideNext()">
+          aceptar
+        </ion-button>
+      </div>
     </ion-slide> -->
 
     <!--LUGAR-->
@@ -75,9 +72,10 @@
 
       <br>
 
-      <ion-button expand="block" (click)="slideNext(4)">Abrir mapa</ion-button>
+      <ion-button expand="block" (click)="goToMap()">Abrir mapa</ion-button>
     </ion-slide>
 
+    <!-- Direccion -->
     <ion-slide style="height: 100%;">
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
@@ -85,15 +83,15 @@
       <div style="margin-top: 50%;">
         <ion-item lines="none" class="select-address">
           <ion-select placeholder="Provincias" [(ngModel)]="filtros.state" (ionChange)="setState()">
-            <ion-select-option [value]="0">Provincias</ion-select-option>
-            <ion-select-option *ngFor="let provincy of provincies" [value]="provincy.id">{{provincy.name}}
+            <ion-select-option [value]="'todas'">Provincias</ion-select-option>
+            <ion-select-option *ngFor="let provincy of provincies" [value]="provincy.name">{{provincy.name}}
             </ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item class="select-address" *ngIf="filtros.state != 0" lines="none">
+        <ion-item class="select-address" *ngIf="filtros.state != 'todas'" lines="none">
           <ion-select [(ngModel)]="filtros.city">
-            <ion-select-option [value]="0">Partidos</ion-select-option>
-            <ion-select-option *ngFor="let partido of partidos" [value]="partido.id">{{partido.name}}
+            <ion-select-option [value]="'todas'">Partidos</ion-select-option>
+            <ion-select-option *ngFor="let partido of partidos" [value]="partido.name">{{partido.name}}
             </ion-select-option>
           </ion-select>
         </ion-item>
@@ -102,24 +100,19 @@
         </ion-button>
       </div>
     </ion-slide>
+
+    <!-- MAPA -->
     <ion-slide style="position: relative">
-      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(2)">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(null, true)">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
-      <div style="height: 100%;" #googlemaps2></div>
-      <div class="map-button radio-button ion-activatable ripple-parent">
-        <ion-icon name="radio-button-off-outline"></ion-icon>
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
-      <div class="map-button location-button ion-activatable ripple-parent">
-        <ion-icon slot="icon-only" name="location-outline"></ion-icon>
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
+      <app-google-map [productsForMarkers]="inmuebles"></app-google-map>
+      <!-- <div style="height: 100%;" #googlemaps2></div> -->
     </ion-slide>
 
     <!--PRECIO Y MONEDA-->
     <ion-slide style="display: block;" class="ion-padding">
-      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack()">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(null, true)">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
 

@@ -1,6 +1,7 @@
 <ion-tabs>
 
-  <ion-tab-bar [class.hidden]="selectedPath == '/tabs/tabs/inicio'" slot="bottom">
+  <ion-tab-bar [class.hidden]="selectedPath == '/tabs/tabs/inicio' || selectedPath == '/tabs/tabs/map-products'"
+    slot="bottom">
     <ion-tab-button mode="md" tab="inicio" (click)="playSound()">
       <ion-icon name="home"></ion-icon>
     </ion-tab-button>
@@ -9,7 +10,7 @@
       <ion-icon name="search-outline"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button mode="md" routerLink="/map">
+    <ion-tab-button mode="md" tab="map-products" (click)="playSound()">
       <ion-icon name="globe-outline"></ion-icon>
     </ion-tab-button>
 

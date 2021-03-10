@@ -411,4 +411,15 @@ export class UserProfilePage implements OnInit {
   slideNext() {
     this.slidesSteps.slideNext();
   }
+
+  setFirstLetterUpperCase() {
+    if (this.user.profile.firstname.length > 0) {
+      this.user.profile.firstname = this.user.profile.firstname.charAt(0).toUpperCase() + this.user.profile.firstname.slice(1);
+    }
+
+    if (this.user.profile.lastname.length > 0) {
+      console.log('hola');
+      this.user.profile.lastname = this.user.profile.lastname.charAt(0).toUpperCase() + this.user.profile.lastname.slice(1);
+    }
+  }
 }

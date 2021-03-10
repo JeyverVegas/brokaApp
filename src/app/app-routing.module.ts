@@ -28,11 +28,6 @@ const routes: Routes = [
     path: 'registro',
     loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule),
     canLoad: [AutoLoginGuard]
-  },  
-  {
-    path: 'map',
-    loadChildren: () => import('./map/map.module').then(m => m.MapPageModule),
-    canLoad: [AuthGuard]
   },
   {
     path: 'introduction',
@@ -52,11 +47,14 @@ const routes: Routes = [
     path: 'filtros',
     loadChildren: () => import('./filtros/filtros.module').then(m => m.FiltrosPageModule),
     canLoad: [AuthGuard]
-  },   {
+  }, {
     path: 'filtros2',
-    loadChildren: () => import('./filtros2/filtros2.module').then( m => m.Filtros2PageModule)
-  }
- 
+    loadChildren: () => import('./filtros2/filtros2.module').then(m => m.Filtros2PageModule)
+  },
+  {
+    path: 'property-card',
+    loadChildren: () => import('./property-card/property-card.module').then(m => m.PropertyCardPageModule)
+  },
 ];
 @NgModule({
   imports: [

@@ -1,10 +1,38 @@
-<ion-content>
+<ion-content style="max-height: 100vh; overflow: hidden;">
     <div *ngIf="showdelete" class="delete-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="close" color="light"></ion-icon>
     </div>
 
     <div *ngIf="showmatch" class="delete-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="heart" color="success"></ion-icon>
+    </div>
+
+    <div *ngIf="showAlert" class="alert-container animate__animated animate__fadeInUp animate__faster">
+        <div class="alert-description ion-text-center">
+            <ion-icon style="font-size: xx-large;" [color]="guardarBusqueda ?  'primary' : 'medium'"
+                [name]="guardarBusqueda ? 'checkmark-circle-outline' : 'notifications'">
+            </ion-icon>
+            <p *ngIf="!guardarBusqueda" style="margin: 5px 0;">
+                <ion-text color="medium">
+                    ¿Te avisamos si hay <b>novedades</b>? <br>
+                    Recibe <b>notificaciones</b> de esta búsqueda.
+                </ion-text>
+            </p>
+            <p *ngIf="guardarBusqueda">
+                <ion-text color="medium">
+                    Se ha guardado la busqueda: <b>{{searchName}}</b>.
+                </ion-text>
+            </p>
+            <ion-item *ngIf="!guardarBusqueda" style="margin-bottom: 3px;">
+                <ion-label color="medium">Nombre:</ion-label>
+                <ion-input [(ngModel)]="searchName" style="font-weight: bold;" (ionChange)="tipiando($event)">
+                </ion-input>
+            </ion-item>
+            <ion-button [disabled]="!canSave" color="secondary"
+                (click)="guardarBusqueda ? toggleSaveSearch() : saveSearch()">
+                {{guardarBusqueda ? '¡Se ha Guardado la busqueda!' : 'Guardar Búsqueda'}}
+            </ion-button>
+        </div>
     </div>
 
     <ion-fab vertical="top" horizontal="start" fill="clear" slot="fixed" *ngIf="productos.getValue().length > 0">
@@ -14,8 +42,8 @@
     </ion-fab>
 
     <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="productos.getValue().length > 0">
-        <ion-fab-button class="buttons-top" fill="clear" (click)="saveSearch()">
-            <ion-icon name="download-outline"></ion-icon>
+        <ion-fab-button class="buttons-top" fill="clear" (click)="toggleSaveSearch()">
+            <ion-icon [name]="showAlert ? 'close' : 'download-outline'"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
@@ -46,24 +74,32 @@
                     <img [src]="image.url" style="max-width: 100%;" alt="">
                 </div>
                 <div class="product-description">
-                    <h6>
+                    <h3 style="text-align: right;">
                         <ion-text color="light">
-                            En pocas palabras
+                            <ion-icon *ngIf="producto.type.id == 1" name="home"></ion-icon>
+                            <ion-icon *ngIf="producto.type.id == 2" name="business"></ion-icon>
+                            {{producto.type.name}}
                         </ion-text>
-                    </h6>
+                        <p>
+                            <ion-text color="light">
+                                {{findPrice(producto.prices)?.currency?.code}}
+                                {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
+                            </ion-text>
+                        </p>
+                    </h3>
 
                     <span class="property-features">
-                        <img src="../../assets/icon/banos.PNG" style="width: 20px; height: 20px;" alt="">
+                        <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
                         {{producto.bathrooms}} Baños
                     </span>
 
                     <span class="property-features">
-                        <img src="../../assets/icon/habitaciones.PNG" style="width: 20px; height: 20px;" alt="">
+                        <img src="../../assets/icon/light/habitaciones.png" style="width: 20px; height: 20px;" alt="">
                         {{producto.rooms}} habitaciones
                     </span>
 
                     <span class="property-features">
-                        <img src="../../assets/icon/M2.PNG" style="width: 20px; height: 20px;" alt="">
+                        <img src="../../assets/icon/light/m2.png" style="width: 20px; height: 20px;" alt="">
                         {{producto.square_meters}}M2
                     </span>
 
@@ -78,26 +114,32 @@
                     <span class="property-features">
                         {{producto.status.name}}
                     </span>
+                    <p class="property-address">
+                        <ion-icon name="location"></ion-icon>
+                        En donde: {{producto.address.address}}.
+                    </p>
                 </div>
-                <div #mapa class="mapita" [attr.data-index]="i"></div>
+                <app-google-map [BrokaControls]="MapBrokaControls" for="product" [productsForMarkers]="[producto]">
+                </app-google-map>
+                <!-- <div #mapa class="mapita" [attr.data-index]="i"></div> -->
             </div>
 
             <div class="description-container">
-                <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;"
+                <!-- <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;"
                     (click)="openProduct(producto)">
                     <h5 style="color: white; margin: 0;">
                         <ion-icon name="location"></ion-icon>
                         {{(producto.address.address.length>25)? (producto.address.address |
                         slice:0:25)+'...':(producto.address.address)}}
                     </h5>
-                    <!-- <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Ambientes:
+                    <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Ambientes:
                         {{producto.environments}}</p>
                     <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Precio:
                         {{findPrice(producto.prices)?.currency?.code}}
                         {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
-                    </p> -->
+                    </p>
                     <ion-ripple-effect></ion-ripple-effect>
-                </div>
+                </div> -->
                 <ion-buttons class="buttons-container">
                     <div class="boton-redondo" (click)="descartar(producto)">
                         <ion-icon name="close" color="medium"></ion-icon>
@@ -123,7 +165,7 @@
         <ion-button color="light" routerLink="/tabs/tabs/buscar">
             <ion-icon name="search-outline"></ion-icon>
         </ion-button>
-        <ion-button color="light" routerLink="/map">
+        <ion-button color="light" routerLink="/tabs/tabs/map-products">
             <ion-icon name="globe-outline"></ion-icon>
         </ion-button>
         <ion-button color="light" routerLink="/tabs/tabs/chat">
@@ -133,7 +175,4 @@
             <ion-icon name="person-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
-
-
-
 </ion-content>
