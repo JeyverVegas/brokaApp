@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { } from 'googlemaps';
 
-declare var google: any;
 @Component({
   selector: 'app-map-config',
   templateUrl: './map-config.page.html',

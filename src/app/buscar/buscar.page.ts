@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { PropertyCardPage } from '../property-card/property-card.page';
 import { AuthenticationService } from '../servicios/authentication.service';
+import { ChatService } from '../servicios/chat.service';
+import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
-import { ShowProductPage } from '../show-product/show-product.page';
 
 @Component({
   selector: 'app-buscar',
@@ -16,6 +18,7 @@ import { ShowProductPage } from '../show-product/show-product.page';
 })
 export class BuscarPage implements OnInit {
 
+  showmatch: boolean = false;
   productos = new BehaviorSubject([]);
   filtro = [];
   refrescando: any = null;
@@ -27,7 +30,10 @@ export class BuscarPage implements OnInit {
     private smartAudio: SmartAudioService,
     private toastController: ToastController,
     private http: HttpClient,
-
+    private router: Router,
+    private alertCtrl: AlertController,
+    private matchService: MatchService,
+    private chatService: ChatService
   ) { }
 
   async ngOnInit() {
@@ -148,6 +154,52 @@ export class BuscarPage implements OnInit {
       })
     } else {
       event.target.complete();
+    }
+  }
+
+  async matchear(product) {
+    this.playSound();
+
+    if (this.authService.user.profile && this.authService.user.address) {
+      this.playSound();
+      this.showmatch = true;
+      this.matchService.storeMatch({ property_id: product.id }).then(response => {
+        this.chatService.getChats();
+        for (let [index, p] of this.productos.getValue().entries()) {
+          if (p.id === product.id) {
+
+            this.productos.getValue().splice(index, 1);
+          }
+        }
+        if (this.productos.value.length == 0) {
+          this.productosService.getProducts();
+        }
+      }).catch(err => {
+        console.log(err);
+        this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+      }).finally(async () => {
+        this.showmatch = false;
+      });
+    } else {
+      this.alertCtrl.create({
+        header: 'Debe completar primero su perfil',
+        message: 'Para poder matchear una propiedad primero debe completar su perfil ;).',
+        buttons: [
+          {
+            text: 'SEGUIR MIRANDO',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'COMPLETAR PERFIL',
+            handler: async () => {
+              this.playSound();
+              this.router.navigateByUrl('/user-profile');
+            }
+          }
+        ]
+      }).then(a => a.present());
     }
   }
 

@@ -40,7 +40,8 @@
             <ion-button size="small" color="danger" (click)="deleteMatch(match)">
               <ion-icon slot="start" name="close"></ion-icon> Eliminar
             </ion-button>
-            <ion-button size="small" color="success" (click)="openChat(match)">
+            <ion-button size="small" [disabled]="match.status == 'pendiente' ? true : false" color="success"
+              (click)="openChat(match)">
               <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon> Mensaje
             </ion-button>
           </ion-buttons>

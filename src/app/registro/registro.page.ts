@@ -13,11 +13,13 @@ export class RegistroPage implements OnInit {
 
   usuario = {
     email: "",
-    password: "",    
+    password: "",
     terms: false,
     device_name: "hola",
     password_confirmation: ""
   }
+
+  isRegistered: boolean = false;
 
   error = {
     message: '',
@@ -37,31 +39,37 @@ export class RegistroPage implements OnInit {
   ngOnInit() {
   }
 
-  async onSubmit() {    
+  async onSubmit() {
     this.playSound();
     this.usuario.password_confirmation = this.usuario.password;
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
-      message: 'Cargando...',      
+      message: 'Cargando...',
+      duration: 10000
     });
 
+    loading.onDidDismiss().then(() => {
+      if (!this.isRegistered && !this.error.displayError) {
+        this.presentToast('Ha ocurrido un error al registrarse, por favor verifique su conexion a internet.', 'danger');
+      }
+    })
+
     loading.present();
-    
-    this.authService.register(this.usuario).subscribe( async (response) =>{
-      await loading.dismiss();      
-      this.router.navigateByUrl('/filtros', {replaceUrl: true});
-    }, async (err) =>{
 
-      await loading.dismiss();      
-
+    this.authService.register(this.usuario).subscribe(async (response) => {
+      this.isRegistered = true;
+      await loading.dismiss();
+      this.router.navigateByUrl('/filtros', { replaceUrl: true });
+    }, async (err) => {
       this.presentToast('error al registrar el usuario', 'danger');
       this.error.message = err.error.message;
       this.error.errors = err.error.errors;
-      this.error.displayError = true;      
-    })
+      this.error.displayError = true;
+      await loading.dismiss();
+    });
   }
 
-  async presentToast(mensaje, color){
+  async presentToast(mensaje, color) {
     const toast = await this.toastCtrl.create({
       message: mensaje,
       color: color,
@@ -72,11 +80,11 @@ export class RegistroPage implements OnInit {
     toast.present();
   }
 
-  goToLogin(){
-    this.router.navigateByUrl('login', {replaceUrl: true});
+  goToLogin() {
+    this.router.navigateByUrl('login', { replaceUrl: true });
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 

@@ -54,6 +54,11 @@ export interface ContractType extends State { }
 export interface PropertyStatus extends State { }
 export interface PropertyFeatures extends State { }
 
+export interface LatLng {
+  lat: number,
+  lng: number
+}
+
 export interface ProductFilters {
   name?: string;
   type?: Array<number>;
@@ -74,6 +79,7 @@ export interface ProductFilters {
   state?: string;
   priceBetween?: [number, number];
   currency?: number;
+  within?: LatLng[];
 }
 
 export interface googleMapsControlOpts {
@@ -116,12 +122,11 @@ export interface Match {
 
 }
 
-export class BrokaMarkers extends google.maps.OverlayView {
+/* export class BrokaMarkers extends google?.maps?.OverlayView {
   private latlng_: google.maps.LatLng;
   private imageSrc: string;
   private callback: any;
   private user: boolean;
-
   private div_: HTMLElement | null;
 
   constructor(latlng: any, imageSrc: string, callback?: any, user?: boolean) {
@@ -155,8 +160,11 @@ export class BrokaMarkers extends google.maps.OverlayView {
     this.div_.appendChild(img2);
 
     const panes = this.getPanes();
+
     panes.overlayMouseTarget.appendChild(this.div_);
+
   }
+
 
   draw() {
     const overlayProjection = this.getProjection();
@@ -182,3 +190,4 @@ export class BrokaMarkers extends google.maps.OverlayView {
     }
   }
 }
+ */

@@ -1,8 +1,8 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { BrokaMarkers } from '../interface';
 import { ProductosService } from '../servicios/productos.service';
 import { } from 'googlemaps';
+import { GoogleMapsApiService } from '../servicios/google-maps-api.service';
 
 @Component({
   selector: 'app-property-card',
@@ -17,13 +17,14 @@ export class PropertyCardPage implements OnInit {
 
   map: google.maps.Map;
 
-  productMarker: BrokaMarkers;
+  productMarker: any;
 
 
 
   constructor(
     private modalCtrl: ModalController,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private googleMapsApiService: GoogleMapsApiService
   ) { }
 
   ngOnInit() {
@@ -47,7 +48,8 @@ export class PropertyCardPage implements OnInit {
   }
 
   setMarker(map?) {
-    this.productMarker = new BrokaMarkers(
+    var brokaMarkerClass = this.googleMapsApiService.getBrokaMarker();
+    this.productMarker = new brokaMarkerClass(
       new google.maps.LatLng(this.property.address.latitude, this.property.address.longitude),
       this.property.images[0].url,
       null,

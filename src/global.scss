@@ -267,7 +267,7 @@ ion-input, ion-item{
     background: #ffffff;
     border-radius: 20px;
     padding: 20px;
-    max-height: 30vh;
+    max-height: 250px;
     overflow-y: auto;
 }
 
@@ -276,8 +276,7 @@ ion-input, ion-item{
     justify-content: space-between;
     left: 0;
     bottom: 0;
-    width: 100%;
-    border-top: 1px solid var(--ion-color-light);
+    width: 100%;    
     z-index: 9999;
     ion-button{
         width: 50px;
@@ -286,6 +285,28 @@ ion-input, ion-item{
         font-size: 20px;
         font-weight: bold;
     }
+}
 
+.tabs-inicio-light{
+    border-top: 1px solid var(--ion-color-light) !important;
+}
+
+.tabs-inicio-primary{
+    border-top: 1px solid var(--ion-color-primary) !important;
+}
+
+.tabs-inicio-medium{
+    border-top: 1px solid var(--ion-color-medium) !important;
+}
+
+
+.match-discard-container{
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 9999;
+    font-size: 50px;
 }
 

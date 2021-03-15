@@ -1,9 +1,10 @@
 <ion-content style="max-height: 100vh; overflow: hidden;">
-    <div *ngIf="showdelete" class="delete-container animate__animated animate__fadeInUp animate__faster">
+
+    <div *ngIf="showdelete" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="close" color="light"></ion-icon>
     </div>
 
-    <div *ngIf="showmatch" class="delete-container animate__animated animate__fadeInUp animate__faster">
+    <div *ngIf="showmatch" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="heart" color="success"></ion-icon>
     </div>
 
@@ -42,24 +43,34 @@
     </ion-fab>
 
     <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="productos.getValue().length > 0">
-        <ion-fab-button class="buttons-top" fill="clear" (click)="toggleSaveSearch()">
+        <ion-fab-button class="{{showAlert ? 'buttons-top-danger' : null}} buttons-top" fill="clear"
+            (click)="toggleSaveSearch()">
             <ion-icon [name]="showAlert ? 'close' : 'download-outline'"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
-    <div class="ion-text-center ion-padding" style="margin-top: 22vh" *ngIf="productos.getValue().length === 0">
-        <ion-icon name="sad-outline" color="primary" style="font-size: 20vw;"></ion-icon>
-        <p>
-            <ion-text color="medium">
-                En este momento no tenemos inmuebles o inmobiliarias que coincidan
-                con lo que estas buscando.
-            </ion-text>
-        </p>
-        <ion-button color="primary" class="animate__animated animate__infinite animate__pulse" mode="ios"
-            (click)="abriFiltros()">
-            <ion-icon slot="start" name="options-outline"></ion-icon>
-            Cambiar filtros
-        </ion-button>
+    <div *ngIf="productos.getValue().length === 0" class="not-found-container">
+        <div class="traslucent-bg"></div>
+        <div class="image-bg"></div>
+        <div class="ion-text-center ion-padding" style="margin: auto; z-index: 2;">
+            <img src="../../assets/images/logo-completo.png" style="max-width: 50%;" class="logo-img">
+            <h2>
+                <ion-text color="light">
+                    ¿No encuentras lo que buscas?
+                </ion-text>
+            </h2>
+            <p>
+                <ion-text color="light">
+                    Puedes explorar el mapa o cambiar los filtros de busqueda para encontrar propiedades cerca de
+                    tí.
+                </ion-text>
+            </p>
+            <ion-button color="secondary" shape="round" class="animate__animated animate__infinite animate__pulse"
+                mode="ios" (click)="abriFiltros()">
+                <ion-icon slot="start" name="options-outline"></ion-icon>
+                Cambiar filtros
+            </ion-button>
+        </div>
     </div>
     <div class="display-total ion-padding" style="display: none;" [class.hidden]="productos.getValue().length == 0">
         <ion-icon name="home" slot="start"></ion-icon> Resultados: {{total | async}}
@@ -158,20 +169,21 @@
             </div>
         </div>
     </div>
-    <ion-buttons class="tabs-inicio">
-        <ion-button color="light" routerLink="/tabs/tabs/inicio">
-            <ion-icon name="home"></ion-icon>
+    <ion-buttons class="tabs-inicio {{productos.getValue().length === 0 ? 'tabs-inicio-light' : 'tabs-inicio-light'}}">
+        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/inicio">
+            <ion-icon name="home" color="{{productos.getValue().length === 0 ? 'light' : 'light'}}"></ion-icon>
         </ion-button>
-        <ion-button color="light" routerLink="/tabs/tabs/buscar">
+        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/buscar">
             <ion-icon name="search-outline"></ion-icon>
         </ion-button>
-        <ion-button color="light" routerLink="/tabs/tabs/map-products">
+        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}"
+            routerLink="/tabs/tabs/map-products">
             <ion-icon name="globe-outline"></ion-icon>
         </ion-button>
-        <ion-button color="light" routerLink="/tabs/tabs/chat">
+        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/chat">
             <ion-icon name="chatbubble-outline"></ion-icon>
         </ion-button>
-        <ion-button color="light" routerLink="/tabs/tabs/usuario">
+        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/usuario">
             <ion-icon name="person-outline"></ion-icon>
         </ion-button>
     </ion-buttons>

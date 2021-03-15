@@ -68,7 +68,7 @@
 
       <br>
 
-      <ion-button expand="block" (click)="slideNext()">Seleccionar Direccion</ion-button>
+      <ion-button expand="block" (click)="goToAddress()">Seleccionar Direccion</ion-button>
 
       <br>
 
@@ -103,11 +103,18 @@
 
     <!-- MAPA -->
     <ion-slide style="position: relative">
-      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(null, true)">
+      <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(2)">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
-      <app-google-map [productsForMarkers]="inmuebles"></app-google-map>
-      <!-- <div style="height: 100%;" #googlemaps2></div> -->
+      <app-google-map (onMapLoaded)="setRadiusAndPosition($event)" (onDrawing)="drawing($event)"
+        (onAreaSet)="loadProductsByArea($event)" (onChangeRadius)="changeRadius($event)" size="normal"
+        [BrokaControls]="BrokaControls" [productsForMarkers]="inmuebles" [radius]="radius">
+      </app-google-map>
+      <ion-fab vertical="bottom" horizontal="end">
+        <ion-fab-button [disabled]="!canAcceptMap" (click)="slideNext()">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
     </ion-slide>
 
     <!--PRECIO Y MONEDA-->

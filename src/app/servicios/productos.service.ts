@@ -40,6 +40,7 @@ export class ProductosService {
         this.filtros.state = null;
         this.filtros.priceBetween = null;
         this.filtros.currency = null;
+        this.filtros.within = null;
         return;
       }
 
@@ -130,8 +131,11 @@ export class ProductosService {
   async getProducts(): Promise<BehaviorSubject<any[]>> {
     this.loading = await this.loadingCtrl.create({
       message: 'Cargando propiedades...',
-      spinner: 'bubbles'
+      spinner: 'bubbles',
+      duration: 10000
     });
+
+
     try {
       this.loading.present();
       var response: any = await this.http.get(this.authService.api + '/properties' + this.getFilters(), {
@@ -241,12 +245,21 @@ export class ProductosService {
         queryString = queryString + 'filter[price_between]=' + this.filtros.currency + ',' + this.filtros.priceBetween.join(',') + '&';
       }
 
+      if (this.filtros.within && this.filtros.within.length > 1) {
+        queryString = queryString + 'filter[within]=' + this.filtros.within.reduce((acum, coord) => `${acum}${coord.lat}|${coord.lng},`, '')
+          .concat(`${this.filtros.within[0].lat}|${this.filtros.within[0].lng}`);
+
+        queryString = queryString + '&';
+      }
+
       //Products for Page
       if (this.filtros.per_page) {
         queryString = queryString + 'per_page=' + this.filtros.per_page;
+      } else {
+        queryString = queryString + 'per_page=10';
       }
 
-      queryString = queryString.slice(0, -1);
+      //queryString = queryString.slice(0, -1);
 
       console.log(queryString);
 

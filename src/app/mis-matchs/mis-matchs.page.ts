@@ -146,8 +146,6 @@ export class MisMatchsPage {
   }
 
   async openProduct(producto) {
-    console.log(producto);
-    /* 
     this.playSound();
     const modal = await this.modalCtrl.create({
       component: PropertyCardPage,
@@ -155,7 +153,7 @@ export class MisMatchsPage {
         property: producto
       }
     });
-    modal.present(); */
+    modal.present();
   }
 
   async openChat(match: Match) {

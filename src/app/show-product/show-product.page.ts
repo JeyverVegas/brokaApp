@@ -150,7 +150,7 @@ export class ShowProductPage implements OnInit {
   }
 
   async descartar() {
-    this.playSound();    
+    this.playSound();
     const loading = await this.loadingCtrl.create({
       spinner: 'dots',
       message: 'Cargando...'
@@ -170,7 +170,7 @@ export class ShowProductPage implements OnInit {
     });
   }
 
-  async matchear(producto) {
+  /* async matchear(producto) {
     this.playSound();
 
     if (this.authService.user.profile && this.authService.user.address) {
@@ -213,7 +213,7 @@ export class ShowProductPage implements OnInit {
         ]
       }).then(a => a.present());
     }
-  }
+  } */
 
   async presentToast(text, color) {
     const toast = await this.toastController.create({

@@ -27,6 +27,21 @@
 <ion-content class="ion-padding">
   <div *ngIf="showSegment == 'filtros'">
 
+    <ion-chip *ngIf="filtros.radius" color="primary" (click)="removeRadius()">
+      <ion-label>Radio: {{filtros.radius[0]}}Km</ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+
+    <ion-chip *ngIf="filtros.state !== 'todas'" color="primary" (click)="removeState()">
+      <ion-label>{{filtros.state}}</ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+
+    <ion-chip *ngIf="filtros.city !== 'todas'" color="primary" (click)="removeCity()">
+      <ion-label>{{filtros.city}}</ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+
     <ion-segment *ngIf="filtros.contractType" mode="md" scrollable [(ngModel)]="filtros?.contractType[0]">
       <ion-segment-button *ngFor="let contractType of contractTypes" [value]="contractType?.id">
         <img style="max-width: 20%;" [src]="contractType?.image" alt="">
@@ -55,16 +70,6 @@
     <app-select-multiple [values]="filtros.rooms" (change)="handleRoomsChange($event)" numberOptions="6" color="primary"
       size="normal">
     </app-select-multiple>
-    <!-- <ion-segment [(ngModel)]="filtros.roomsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
-      <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
-        *ngFor="let room of optioValues; let i = index" [value]="(i+1)">
-        <ion-label>
-          <span>
-            {{i == 5 ? '+6' : (i + 1)}}
-          </span>
-        </ion-label>
-      </ion-segment-button>
-    </ion-segment> -->
 
     <h6>
       Baños
@@ -72,16 +77,6 @@
     <app-select-multiple [values]="filtros.bathrooms" (change)="handleBathroomsChange($event)" numberOptions="6"
       color="primary" size="normal">
     </app-select-multiple>
-    <!-- <ion-segment [(ngModel)]="filtros.bathroomsBetween[0]" class="ion-justify-content-between" mode="md" scrollable>
-      <ion-segment-button class="segment-button segment-button-normal segment-button-primary"
-        *ngFor="let bathrooms of optioValues; let i = index" [value]="(i+1)">
-        <ion-label>
-          <span>
-            {{i == 5 ? '+6' : (i + 1)}}
-          </span>
-        </ion-label>
-      </ion-segment-button>
-    </ion-segment> -->
 
     <div class="line line-medium ion-margin-vertical"></div>
 
@@ -115,8 +110,9 @@
       </ion-row>
     </ion-grid>
 
-    <!-- <div class="line line-medium ion-margin-vertical"></div>
+    <div class="line line-medium ion-margin-vertical"></div>
 
+    <!--
     <h6>
       Ambientes
     </h6>

@@ -3,6 +3,15 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <div *ngIf="showdelete" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
+    <ion-icon name="close" color="light"></ion-icon>
+  </div>
+
+  <div *ngIf="showmatch" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
+    <ion-icon name="heart" color="success"></ion-icon>
+  </div>
+
   <ion-searchbar mode="ios" (ionInput)="filtrar($event)" placeholder="buscar..."></ion-searchbar>
   <div class="ion-padding">
 
@@ -18,32 +27,33 @@
         <ion-col size="5" class="ion-align-self-center">
           <img class="img-list" src="{{producto.images[0].url}}" alt="" (click)="openProduct(producto)">
         </ion-col>
-        <ion-col style="position: relative;" size="7" class="ion-align-self-center ion-activatable ripple-parent"
-          (click)="openProduct(producto)">
-          <h4 style="margin: 0;">
+        <ion-col style="position: relative;" size="7" class="ion-align-self-center ion-activatable ripple-parent">
+          <h4 style="margin: 0;" (click)="openProduct(producto)">
             <ion-text color="dark">{{(producto.name.length>20)? (producto.name | slice:0:20)+'...':(producto.name)}}
             </ion-text>
           </h4>
 
-          <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
-            <img class="img-icon-start" src="../../assets/icon/medium/banos.png" alt="">
-            <p>
-              <ion-text color="medium">Baños: {{producto.bathrooms}}</ion-text>
-            </p>
-          </div>
+          <div (click)="openProduct(producto)">
+            <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
+              <img class="img-icon-start" src="../../assets/icon/medium/banos.png" alt="">
+              <p>
+                <ion-text color="medium">Baños: {{producto.bathrooms}}</ion-text>
+              </p>
+            </div>
 
-          <div class="atribute-container" *ngIf="producto.square_meters" style="display: flex; align-items: center;">
-            <img class="img-icon-start" src="../../assets/icon/medium/m2.png" alt="">
-            <p>
-              <ion-text color="medium">{{producto.square_meters}}m2</ion-text>
-            </p>
-          </div>
+            <div class="atribute-container" *ngIf="producto.square_meters" style="display: flex; align-items: center;">
+              <img class="img-icon-start" src="../../assets/icon/medium/m2.png" alt="">
+              <p>
+                <ion-text color="medium">{{producto.square_meters}}m2</ion-text>
+              </p>
+            </div>
 
-          <div class="atribute-container" *ngIf="producto.type" style="display: flex; align-items: center;">
-            <img class="img-icon-start" src="../../assets/icon/medium/propiedad.png" alt="">
-            <p>
-              <ion-text color="medium">{{producto.type?.name}}</ion-text>
-            </p>
+            <div class="atribute-container" *ngIf="producto.type" style="display: flex; align-items: center;">
+              <img class="img-icon-start" src="../../assets/icon/medium/propiedad.png" alt="">
+              <p>
+                <ion-text color="medium">{{producto.type?.name}}</ion-text>
+              </p>
+            </div>
           </div>
 
           <div class="price-container" *ngIf="producto.prices">
@@ -53,12 +63,16 @@
                 {{findPrice(producto.prices)?.price_value?.toLocaleString('de-DE')}}
               </ion-text>
             </p>
-            <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
+            <ion-button color="success" fill="clear" (click)="matchear(producto)">
+              <ion-icon name="heart" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <!-- <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
               {{producto.favorite_to_count}} <ion-icon slot="end" name="heart-outline" color="danger"></ion-icon>
             </ion-button>
             <ion-button *ngIf="producto.is_favorite" color="dark" fill="clear" (click)="removeFromFavorite(producto)">
               {{producto.favorite_to_count}} <ion-icon slot="end" name="heart" color="danger"></ion-icon>
-            </ion-button>
+            </ion-button> -->
           </div>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-col>

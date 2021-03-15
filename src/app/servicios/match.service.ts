@@ -18,7 +18,7 @@ export class MatchService {
     }).toPromise();
   }
 
-  storeMatch(data: { property_id: number, message: string }) {
+  storeMatch(data: { property_id: number }) {
     return this.http.post(this.authService.api + '/matches', data, {
       headers: this.authService.authHeader
     }).toPromise();

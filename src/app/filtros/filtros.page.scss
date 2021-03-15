@@ -86,6 +86,12 @@ h2{
     --background: var(--ion-color-primary);
     color: var(--ion-color-primary-contrast);
     padding: 10px;
-    --border-radius: 20px;
+    --border-radius: 20px;   
+}
+
+.accept-map-button{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
     
 }

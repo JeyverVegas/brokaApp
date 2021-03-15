@@ -16,13 +16,14 @@ export class Filtros2Page implements OnInit {
   errorContractTypes: boolean = false;
 
   propertyTypes: PropertyType[] = [];
-  errorpropertyTypes: boolean = true;
+  errorpropertyTypes: boolean = false;
 
   rooms = [1];
 
   optioValues = Array.from(Array(6));
 
   currencies = [];
+  errorLoadingCurrencies: boolean = false;
 
   filtros: ProductFilters = {
     city: 'todas',
@@ -30,7 +31,7 @@ export class Filtros2Page implements OnInit {
     sizeBetween: [],
     state: 'todas',
     contractType: [],
-    type: [],
+    type: [null],
     currency: null,
     environments: [],
     environmentsBetween: [],
@@ -38,7 +39,7 @@ export class Filtros2Page implements OnInit {
     bathroomsBetween: [],
     rooms: [],
     roomsBetween: [],
-    priceBetween: [null, null]
+    priceBetween: [null, null],
   };
   constructor(
     private modalCtrl: ModalController,
@@ -51,6 +52,17 @@ export class Filtros2Page implements OnInit {
 
     if (Object.keys(this.productosService.filtros).length > 1) {
       this.filtros = this.productosService.filtros;
+      if (!this.productosService.filtros.rooms) {
+        this.filtros.rooms = []
+      }
+
+      if (!this.productosService.filtros.bathrooms) {
+        this.filtros.bathrooms = []
+      }
+
+      if (!this.filtros.type) {
+        this.filtros.type = [];
+      }
     }
 
     const loading = await this.loadingCtrl.create({
@@ -60,7 +72,7 @@ export class Filtros2Page implements OnInit {
     });
 
     loading.onDidDismiss().then(() => {
-      if (this.contractTypes.length < 1 || this.currencies.length < 1 || this.propertyTypes.length < 1) {
+      if (this.errorContractTypes || this.errorpropertyTypes || this.errorLoadingCurrencies) {
         console.log(this.contractTypes, this.currencies, this.propertyTypes)
         this.presentToast('Ha ocurrido un error al cargar los filtros, por favor intente mas tarde.', 'danger');
         this.modalCtrl.dismiss();
@@ -87,6 +99,7 @@ export class Filtros2Page implements OnInit {
 
       this.currencies = await (await this.productosService.getFiltersRange()).prices;
       if (this.currencies.length < 1) {
+        this.errorLoadingCurrencies = true;
         loading.dismiss();
         return;
       }
@@ -141,6 +154,19 @@ export class Filtros2Page implements OnInit {
 
   handleBathroomsChange(values) {
     this.filtros.bathrooms = values;
+  }
+
+  removeRadius() {
+    this.filtros.radius = null;
+  }
+
+  removeState() {
+    this.filtros.state = 'todas';
+    this.filtros.city = 'todas';
+  }
+
+  removeCity() {
+    this.filtros.city = 'todas';
   }
 
 

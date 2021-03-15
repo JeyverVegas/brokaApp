@@ -1,16 +1,16 @@
-import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { AlertPage } from '../alert/alert.page';
 import { Filtros2Page } from '../filtros2/filtros2.page';
-import { BrokaMarkers, googleMapsControlOpts } from '../interface';
+import { googleMapsControlOpts } from '../interface';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { ChatService } from '../servicios/chat.service';
+import { GoogleMapsApiService } from '../servicios/google-maps-api.service';
 import { MatchService } from '../servicios/match.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
-declare var google: any;
+
 
 @Component({
   selector: 'app-inicio',
@@ -50,7 +50,8 @@ export class InicioPage {
     private authService: AuthenticationService,
     private matchService: MatchService,
     private router: Router,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private googleMapsApi: GoogleMapsApiService
   ) { }
 
   async ionViewDidEnter() {
@@ -95,27 +96,14 @@ export class InicioPage {
         const element: HTMLElement = this.containerx.toArray().find(elements => Number(elements.nativeElement.dataset.index) == index).nativeElement;
         element.style.overflow = "auto";
       })
-
-      var marker = new BrokaMarkers(
+      var brokaMarkerClass = this.googleMapsApi.getBrokaMarker();
+      var marker = new brokaMarkerClass(
         new google.maps.LatLng(product.address.latitude, product.address.longitude),
         product.images[0].url
       );
 
       marker.setMap(map);
     }
-  }
-
-  async openProduct(producto) {
-
-    /* this.playSound();
-    const modal = await this.modalCtrl.create({
-      component: ShowProductPage,
-      componentProps: {
-        producto: producto
-      }
-    });
-
-    modal.present(); */
   }
 
   findPrice(prices: any[]) {
@@ -200,7 +188,7 @@ export class InicioPage {
     if (this.authService.user.profile && this.authService.user.address) {
       this.playSound();
       this.showmatch = true;
-      this.matchService.storeMatch({ property_id: product.id, message: 'Hola quisiera matchear: ' + product.name }).then(response => {
+      this.matchService.storeMatch({ property_id: product.id }).then(response => {
         this.chatService.getChats();
         for (let [index, p] of this.productos.getValue().entries()) {
           if (p.id === product.id) {

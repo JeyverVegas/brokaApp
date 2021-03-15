@@ -1,9 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, Inject, Renderer2 } from '@angular/core';
+import { DOCUMENT } from '@angular/common'
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { BrokaMarkers, googleMapsControlOpts, } from 'src/app/interface';
+import { googleMapsControlOpts, LatLng, } from 'src/app/interface';
 import { AuthenticationService } from 'src/app/servicios/authentication.service';
 import { } from 'googlemaps';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { PropertyCardPage } from 'src/app/property-card/property-card.page';
+import { SmartAudioService } from 'src/app/servicios/smart-audio.service';
+import { GoogleMapsApiService } from 'src/app/servicios/google-maps-api.service';
 
 @Component({
   selector: 'app-google-map',
@@ -28,10 +32,13 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   @Input() zoom: number = 8;
 
   //OUTPUTS
-  @Output() onChangeRadius = new EventEmitter<number>();
+  @Output() onMapLoaded = new EventEmitter<any>();
+  @Output() onDrawing = new EventEmitter<boolean>();
+  @Output() onChangeRadius = new EventEmitter<any>();
   @Output() onDeleteMarkers = new EventEmitter<any>();
   @Output() onChangeZoom = new EventEmitter<number>();
   @Output() currentPosition = new EventEmitter<{ lat: number, lng: number }>();
+  @Output() onAreaSet = new EventEmitter<LatLng[]>();
   @Output() onError = new EventEmitter<{ error: boolean, message: string }>();
 
   //Map html element
@@ -45,7 +52,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   userMarker = null;
 
   //broka markers array;
-  brokaMarkers: BrokaMarkers[] = [];
+  brokaMarkers: any[] = [];
 
   //Hidden - Show zoom control.
   showRadio = false;
@@ -60,17 +67,27 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   polygonMarkers: google.maps.Marker[] = [];
 
   //Radius
-  radius: number = 1;
+  @Input() radius: number = 1;
   radiusShape: google.maps.Circle;
 
   constructor(
     private geolocation: Geolocation,
     private authService: AuthenticationService,
     private loadingCtrl: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
+    private smartAudio: SmartAudioService,
+    @Inject(DOCUMENT) private document: Document,
+    private renderer2: Renderer2,
+    private googleMapApi: GoogleMapsApiService
   ) { }
 
   async ngOnInit() {
+    //var loadedMap = await this.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyDkAJA-uOdmLgb0WSrMePZp4pvA4s6fT7w&libraries=geometry&libraries=drawing');
+
+    //console.log(loadedMap);
+
     if (!google) {
       return this.onError.emit({ error: true, message: 'ha ocurrido un error al cargar el mapa, por favor intente mas tarde.' });
     }
@@ -100,8 +117,8 @@ export class GoogleMapComponent implements OnInit, OnChanges {
 
     switch (this.for) {
       case 'user':
-        this.displayMapForUser();
-        this.setMarkers();
+        await this.displayMapForUser();
+        await this.setMarkers();
         this.polygon = new google.maps.Polygon({
           strokeColor: "#000000",
           fillColor: "#001c5b",
@@ -112,22 +129,57 @@ export class GoogleMapComponent implements OnInit, OnChanges {
         this.polygon.setMap(this.map);
         break;
       case 'product':
-        this.displayMapForProduct();
-        this.setMarkers();
+        await this.displayMapForProduct();
+        await this.setMarkers();
         break;
     }
 
     this.map.addListener('click', (e) => {
       this.onClickTheMap(e);
     });
+
+    this.onMapLoaded.emit({ position: this.center, radius: this.radius });
+    google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.googlemap.nativeElement);
   }
 
   toggleDraw() {
     this.draw = !this.draw;
     if (this.draw) {
-      /* this.map.setOptions({ draggable: false }); */
+
+      this.clearPolygon();
+
+      if (this.brokaMarkers.length > 0) {
+        this.brokaMarkers.forEach(marker => {
+          marker.setMap(null);
+        });
+
+        this.brokaMarkers = [];
+      }
+
+      if (this.brokaMarkers.length > 0) {
+        this.brokaMarkers.forEach(marker => {
+          marker.setMap(null);
+        });
+      }
+
+      if (this.userMarker) {
+        this.userMarker.setMap(null);
+      }
+      if (this.radiusShape) {
+        this.radiusShape.setMap(null);
+      }
+
+      this.map.setClickableIcons(false);
     } else {
-      /* this.map.setOptions({ draggable: true }); */
+
+      if (this.userMarker) {
+        this.userMarker.setMap(this.map);
+      }
+
+      if (this.radiusShape) {
+        this.radiusShape.setMap(this.map);
+      }
+
       if (this.polygon) {
         this.polygon.setPath([]);
         this.polygonMarkers.forEach(polygonMarker => {
@@ -136,10 +188,16 @@ export class GoogleMapComponent implements OnInit, OnChanges {
         this.polygonMarkers = [];
         this.isAreaSet = false;
       }
+
+      this.map.setCenter(this.center);
+
+      this.map.setClickableIcons(true);
     }
+
+    this.onDrawing.emit(this.draw);
   }
 
-  onClickTheMap(googleMapsClickEvent: google.maps.MapMouseEvent) {
+  async onClickTheMap(googleMapsClickEvent: google.maps.MapMouseEvent) {
     if (this.draw) {
       var path: google.maps.MVCArray<google.maps.LatLng>;
       if (this.polygon) {
@@ -160,19 +218,46 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       } else {
         this.isAreaSet = false;
       }
+    } else {
+      if (this.for == 'user') {
+        const alert = await this.alertCtrl.create({
+          header: '¿Cambiar tu Ubicación?',
+          message: '¿Queres cambiar tu ubicacion al lugar donde pulsaste?',
+          buttons: [
+            {
+              text: 'No'
+            },
+            {
+              text: 'Si',
+              handler: () => {
+                this.clearPolygon();
+                this.center = { lat: googleMapsClickEvent.latLng.lat(), lng: googleMapsClickEvent.latLng.lng() };
+                this.map.setCenter(this.center);
+                this.setUserMarker();
+                this.setRadius();
+              }
+            }
+          ]
+        });
+        await alert.present();
+      }
     }
   }
 
   findByArea() {
-    var firstMarker = this.polygon.getPaths().getAt(0);
-    console.log(firstMarker.getAt(0).lat(), firstMarker.getAt(0).lng());
-    console.log(firstMarker.getAt(1).lat(), firstMarker.getAt(1).lng());
+    var area: LatLng[] = [];
+    this.polygon.getPath().forEach(latLng => {
+      area.push({ lat: latLng.lat(), lng: latLng.lng() });
+    });
+
+    this.onAreaSet.emit(area);
+    this.draw = false;
+    this.onDrawing.emit(this.draw);
   }
 
   ngOnChanges(changes) {
     if (changes.productsForMarkers) {
       this.clearMarkers();
-      console.log(this.productsForMarkers);
       this.setMarkers();
     }
   }
@@ -196,7 +281,8 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       this.userMarker.setMap(null);
     }
     var img = this.authService.user?.profile?.image ? this.authService.user?.profile?.image : '../../assets/images/user.png';
-    this.userMarker = new BrokaMarkers(
+    var brokaMarkerClass = this.googleMapApi.getBrokaMarker();
+    this.userMarker = new brokaMarkerClass(
       new google.maps.LatLng(this.center.lat, this.center.lng),
       img,
       null,
@@ -217,11 +303,14 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   setMarkers() {
     if (this.productsForMarkers.length > 0) {
       this.productsForMarkers.forEach(product => {
-        var productMarker: BrokaMarkers = new BrokaMarkers(
+        var brokaMarkerClass = this.googleMapApi.getBrokaMarker();
+        var productMarker = new brokaMarkerClass(
           new google.maps.LatLng(product.address.latitude, product.address.longitude),
           product.images[0].url,
-          null,
-          false
+          () => {
+            this.showProductCard(product);
+          },
+          false,
         );
         productMarker.setMap(this.map);
         this.brokaMarkers.push(productMarker);
@@ -237,8 +326,10 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     await loading.present();
     try {
       var curentLocation = await (await this.geolocation.getCurrentPosition({ timeout: 6001 })).coords;
+      this.clearPolygon();
       this.center = { lat: curentLocation.latitude, lng: curentLocation.longitude }
       this.map.setCenter(this.center);
+      this.setRadius();
       this.setUserMarker();
       await loading.dismiss();
     } catch (error) {
@@ -246,6 +337,33 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       this.presentToast('ha ocurrido un error al obtener tu ubicación, porfavor intente más tarde.', 'danger');
 
     }
+  }
+
+  clearPolygon() {
+    if (this.polygon) {
+      this.polygon.getPath().clear();
+    }
+
+    if (this.polygonMarkers.length > 0) {
+      this.polygonMarkers.forEach(marker => {
+        marker.setMap(null);
+      });
+
+      this.polygonMarkers = [];
+    }
+
+    this.isAreaSet = false;
+  }
+
+  async showProductCard(product: any) {
+    this.playSound();
+    const modal = await this.modalCtrl.create({
+      component: PropertyCardPage,
+      componentProps: {
+        property: product
+      }
+    });
+    modal.present();
   }
 
 
@@ -282,6 +400,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     });
 
     this.radiusShape.setMap(this.map);
+    this.onChangeRadius.emit({ radius: this.radius, position: this.center });
   }
 
 
@@ -295,6 +414,21 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     this.radius++;
   }
 
+  playSound() {
+    this.smartAudio.play('tabSwitch');
+  }
 
-
+  /* loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const script = this.renderer2.createElement('script');
+      script.type = 'text/javascript';
+      script.src = url;
+      script.text = ``;
+      script.async = true;
+      script.defer = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      this.renderer2.appendChild(this.document.body, script);
+    });
+  } */
 }
