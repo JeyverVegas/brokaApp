@@ -64,6 +64,7 @@ export class MapProductsPage implements OnInit {
   async changeRadius(event: any) {
     if (this.firtsRender) {
       this.productService.filtros.radius = [event.radius, event.position.lat, event.position.lng];
+      this.productService.filtros.within = null;
       this.products = await (await this.productService.getProducts()).getValue();
     }
   }

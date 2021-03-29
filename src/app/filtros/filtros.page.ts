@@ -32,6 +32,8 @@ export class FiltrosPage implements OnInit {
     showRadiusButton: true
   }
 
+  activeIndex: number = null;
+
   firtsRender = false;
 
   slidesOpts = {
@@ -106,9 +108,11 @@ export class FiltrosPage implements OnInit {
       duration: 10000
     });
 
-    loading.onWillDismiss().then(() => {
+    let alert: any = null;
+
+    loading.onWillDismiss().then(async () => {
       if (!this.isLoadingFirstRenderData) {
-        this.presentAlert();
+        alert = await this.presentAlert();
       }
     })
 
@@ -118,10 +122,12 @@ export class FiltrosPage implements OnInit {
       this.propertyTypes = await this.productosService.getPropertyType();
       this.minMaxRange = await this.productosService.getFiltersRange();
       this.currencies = this.minMaxRange.prices;
-      console.log(this.minMaxRange);
       this.provincies = await this.addressService.getStates();
       this.radiusActivated = this.productosService.filtros.radius;
       this.isLoadingFirstRenderData = true;
+      if (alert) {
+        alert.dismiss();
+      }
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
@@ -138,9 +144,11 @@ export class FiltrosPage implements OnInit {
       duration: 10000
     });
 
+    let alert: any = null;
+
     loading.onWillDismiss().then(() => {
       if (!this.isLoadingFirstRenderData) {
-        this.presentAlert();
+        alert = this.presentAlert();
       }
     })
 
@@ -154,6 +162,7 @@ export class FiltrosPage implements OnInit {
       this.provincies = await this.addressService.getStates();
       this.radiusActivated = this.productosService.filtros.radius;
       this.isLoadingFirstRenderData = true;
+      alert.dismiss();
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
@@ -176,6 +185,7 @@ export class FiltrosPage implements OnInit {
       ]
     });
     alert.present();
+    return alert;
   }
 
   goBack(index: number, comeFrom: boolean) {
@@ -333,6 +343,15 @@ export class FiltrosPage implements OnInit {
     } else {
       this.router.navigateByUrl('/tabs', { replaceUrl: true });
     }
+  }
+
+  tutorialComplete(event) {
+    console.log(event);
+  }
+
+  async setActiveIndex() {
+    this.activeIndex = await this.slides.getActiveIndex();
+    console.log(this.activeIndex);
   }
 
   async presentToast(text, color) {

@@ -1,7 +1,56 @@
 <app-top-bar></app-top-bar>
 
 <ion-content>
-  <div *ngIf="misMatchs.length < 1" class="no-matchs-container animate__animated animate__fadeIn">
+
+  <ion-refresher slot="fixed" color="secondary" (ionRefresh)="retryLoad($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="loading && !errorMisMatchs" class="ion-padding">
+    <ion-list>
+      <ion-list-header>
+        <ion-label>
+          <ion-skeleton-text animated style="width: 40%; height: 30px; margin: 10px 0;"></ion-skeleton-text>
+          <ion-label class="ion-text-right" style="margin-top: 100px;">
+            <ion-skeleton-text slot="end" animated
+              style="margin-left: auto; width: 80%; height: 30px; border-radius: 20px;">
+            </ion-skeleton-text>
+          </ion-label>
+        </ion-label>
+      </ion-list-header>
+      <ion-item *ngFor="let skeleton of textSkeleton">
+        <ion-thumbnail slot="start">
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-thumbnail>
+        <ion-label>
+          <h3>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="errorMisMatchs" class="no-matchs-container animate__animated animate__fadeIn">
+    <div class="no-matchs-description">
+      <ion-icon name="sad-outline" color="danger"></ion-icon>
+      <ion-text color="medium">
+        <h3>Ha ocurrido un error al cargar.</h3>
+      </ion-text>
+      <ion-button (click)="retryLoad()" shape="round" color="danger">
+        Reintentar
+      </ion-button>
+    </div>
+  </div>
+
+  <div *ngIf="misMatchs?.length < 1 && !loading && !errorMisMatchs"
+    class="no-matchs-container animate__animated animate__fadeIn">
     <div class="no-matchs-description">
       <ion-text color="medium">
         <ion-icon name="sad-outline"></ion-icon>
@@ -11,7 +60,7 @@
     </div>
   </div>
 
-  <div *ngIf="misMatchs.length > 0" class="ion-padding">
+  <div *ngIf="misMatchs?.length > 0 && !loading && !errorMisMatchs" class="ion-padding">
     <h3>Mis Matchs</h3>
     <div class="ion-text-right">
       <ion-button shape="round" color="danger" fill="outline" size="small" mode="md" (click)="deleteAllMatchs()">
@@ -20,7 +69,7 @@
       </ion-button>
     </div>
     <br>
-    <ion-list class="animate__animated animate__fadeInUp">
+    <ion-list class="animate__animated animate__fadeIn">
       <ion-item *ngFor="let match of misMatchs">
         <ion-thumbnail slot="start">
           <ion-img (click)="openProduct(match.property)" [src]="match.property.images[0].url"
@@ -29,7 +78,7 @@
         </ion-thumbnail>
         <ion-label>
           <p (click)="openProduct(match.property)">{{match.status}}</p>
-          <h3 (click)="openProduct(match.property)">{{match.property.name}}</h3>
+          <h3 (click)="openProduct(match.property)">{{match.property.address.address}}</h3>
           <p (click)="openProduct(match.property)">
             <ion-icon name="call-outline" slot="start"></ion-icon> {{match.property.realEstateAgency.phone}}
           </p>
@@ -40,8 +89,7 @@
             <ion-button size="small" color="danger" (click)="deleteMatch(match)">
               <ion-icon slot="start" name="close"></ion-icon> Eliminar
             </ion-button>
-            <ion-button size="small" [disabled]="match.status == 'pendiente' ? true : false" color="success"
-              (click)="openChat(match)">
+            <ion-button size="small" color="success" (click)="openChat(match)">
               <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon> Mensaje
             </ion-button>
           </ion-buttons>

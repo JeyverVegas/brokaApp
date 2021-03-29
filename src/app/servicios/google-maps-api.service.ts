@@ -68,6 +68,8 @@ export class GoogleMapsApiService {
 
         }
 
+        
+
 
         draw() {
           const overlayProjection = this.getProjection();

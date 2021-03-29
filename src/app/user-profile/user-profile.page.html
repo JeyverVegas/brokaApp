@@ -5,11 +5,14 @@
         </ion-button>
     </div>
     <ion-slides pager="true" style="height: 100%;" #slidessteps [options]="slideOpts">
+
+        <!--Primer Paso-->
         <ion-slide>
             <br>
             <h2 style="margin-top: 50px;">
                 <ion-text color="primary">
-                    1er. Paso: Por favor carga una imagen de Perfil.
+                    <!-- 1er. Paso:  -->Por favor carga una imagen de Perfil
+                    <!-- (OPCIONAL). -->
                 </ion-text>
             </h2>
             <br>
@@ -35,16 +38,18 @@
                     Cancelar
                 </ion-button>
                 <ion-button (click)="slideNext()">
-                    Siguiente
-                    <ion-icon name="arrow-forward" slot="end"></ion-icon>
+                    Aceptar
+                    <!-- <ion-icon name="arrow-forward" slot="end"></ion-icon> -->
                 </ion-button>
             </div>
         </ion-slide>
+
+        <!--Segundo Paso-->
         <ion-slide>
             <br>
             <h2 style="margin-top: 50px;">
                 <ion-text color="primary">
-                    2do. Paso: Añade tu informacion personal.
+                    Añade tu informacion personal
                 </ion-text>
             </h2>
 
@@ -70,7 +75,8 @@
                         <ion-col>
                             <ion-item mode="md">
                                 <ion-label position="floating" color="primary">Teléfono</ion-label>
-                                <ion-input [(ngModel)]="user.profile.phone" name="phone"></ion-input>
+                                <ion-input [(ngModel)]="user.profile.phone" type="text"
+                                    (ionChange)="validateSecondStep()" name="phone"></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>
@@ -87,21 +93,16 @@
 
             <div class="ion-margin-top">
                 <ion-button (click)="slideBack()" color="primary">
-                    <ion-icon name="arrow-back" slot="start"></ion-icon>
+                    <!-- <ion-icon name="arrow-back" slot="start"></ion-icon> -->
                     Anterior
                 </ion-button>
-                <ion-button (click)="slideNext()" [disabled]="user.profile.phone == null || 
-                user.profile.phone == '' || 
-                user.profile.lastname == null || 
-                user.profile.lastname == '' ||
-                user.profile.firstname == null ||
-                user.profile.firstname == ''">
-                    Siguiente
-                    <ion-icon name="arrow-forward" slot="end"></ion-icon>
+                <ion-button (click)="saveProfile()" [disabled]="!validateSecondStep()">
+                    Aceptar
+                    <!-- <ion-icon name="arrow-forward" slot="end"></ion-icon> -->
                 </ion-button>
             </div>
         </ion-slide>
-        <ion-slide class="ion-padding">
+        <!-- <ion-slide class="ion-padding">
             <br>
             <h2 style="margin-top: 20px;">
                 <ion-text color="primary">
@@ -167,6 +168,6 @@
             <div class="ion-margin-top">
 
             </div>
-        </ion-slide>
+        </ion-slide> -->
     </ion-slides>
 </ion-content>

@@ -41,6 +41,8 @@ export class Filtros2Page implements OnInit {
     roomsBetween: [],
     priceBetween: [null, null],
   };
+
+  selectedContract: ContractType = null;
   constructor(
     private modalCtrl: ModalController,
     private toastController: ToastController,
@@ -114,12 +116,16 @@ export class Filtros2Page implements OnInit {
     }
   }
 
+  changeContractType() {
+    this.selectedContract = this.contractTypes.find(contract => contract.id == this.filtros.contractType[0]);
+  }
+
   clearFilters() {
     this.filtros = {
-      city: null,
+      city: 'todas',
       hasAnyFeatures: [],
       sizeBetween: [],
-      state: null,
+      state: 'todas',
       contractType: [],
       type: [],
       currency: null,
@@ -167,6 +173,10 @@ export class Filtros2Page implements OnInit {
 
   removeCity() {
     this.filtros.city = 'todas';
+  }
+
+  removeContract() {
+    this.filtros.contractType = [];
   }
 
 

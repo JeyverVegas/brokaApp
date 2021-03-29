@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import { ContractType, ProductFilters, ProductRelationships, PropertyFeatures, PropertyType } from '../interface'
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +16,15 @@ export class ProductosService {
   filtros: ProductFilters = {};
   filtrado = false;
   loading = null;
+
+  alert = null;
+
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController
   ) { }
 
   onLoad() {
@@ -129,12 +133,19 @@ export class ProductosService {
   }
 
   async getProducts(): Promise<BehaviorSubject<any[]>> {
+    let success = null;
+
     this.loading = await this.loadingCtrl.create({
       message: 'Cargando propiedades...',
       spinner: 'bubbles',
       duration: 10000
-    });
+    })
 
+    this.loading.onWillDismiss().then(() => {
+      if (!success) {
+        this.presentAlert();
+      }
+    })
 
     try {
       this.loading.present();
@@ -148,7 +159,11 @@ export class ProductosService {
       this.productos.next(response.data);
       this.total.next(response.meta.total);
       this.next = response.links.next;
+      success = true;
       await this.loading.dismiss();
+      if (this.alert) {
+        this.alert.dismiss();
+      }
       console.log(response.data);
       return this.productos;
     } catch (error) {
@@ -361,6 +376,24 @@ export class ProductosService {
       duration: 3000
     });
     toast.present();
+  }
+
+  async presentAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Error de conexión',
+      message: 'ha ocurrido un error de conexion',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'reintentar',
+          handler: () => {
+            this.getProducts();
+          }
+        }
+      ]
+    });
+    alert.present();
+    return alert;
   }
 }
 

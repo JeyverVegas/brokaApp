@@ -16,8 +16,13 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 })
 export class MisMatchsPage {
 
-  misMatchs: Match[] = [];
+  misMatchs: Match[] = null;
 
+  errorMisMatchs = null;
+  errorChats = null;
+
+  loading: boolean = true;
+  textSkeleton = Array.from(Array(6));
   constructor(
     private matchService: MatchService,
     private loadingCtrl: LoadingController,
@@ -30,24 +35,75 @@ export class MisMatchsPage {
   ) { }
 
   async ionViewDidEnter() {
-    const loading = await this.loadingCtrl.create({
-      spinner: 'bubbles',
-      message: 'Cargando...'
-    });
 
-    loading.present();
+    setTimeout(() => {
+      if (this.loading) {
+        this.presentToast('Parece que tu conexion de internet esta lenta.', 'danger');
+      }
+    }, 5000)
 
-    this.matchService.getMatchs().then((response: { data: Match[] }) => {
-      this.misMatchs = response.data;
-      this.chatService.returnChats().subscribe(chats => {
-        console.log(chats);
-      });
-      console.log(response);
-      loading.dismiss();
-    }).catch(err => {
-      console.log(err);
-      loading.dismiss();
-    })
+    try {
+
+      this.misMatchs = await (await this.matchService.getMatchs()).data;
+      if (!this.misMatchs) {
+        this.errorMisMatchs = 'Ha ocurrido un error al cargar los matchs.';
+      } else {
+        this.errorMisMatchs = null;
+      }
+
+      let chats = await this.chatService.returnChats();
+
+      if (!chats) {
+        this.errorChats = 'Ha ocurrido un error al cargar los chats.';
+      } else {
+        this.errorChats = null;
+      }
+    } catch (error) {
+      this.errorMisMatchs = 'Ha ocurrido un error al cargar los matchs.';
+    }
+
+    this.loading = false;
+  }
+
+  async retryLoad(event) {
+
+    setTimeout(() => {
+      if (this.loading) {
+        this.presentToast('Parece que tu conexion de internet esta lenta.', 'danger');
+      }
+    }, 5000);
+
+    try {
+      this.loading = true;
+      this.errorMisMatchs = null;
+      this.errorChats = null;
+
+      this.misMatchs = await (await this.matchService.getMatchs()).data;
+      if (!this.misMatchs) {
+        this.errorMisMatchs = 'Ha ocurrido un error al cargar los matchs.';
+      } else {
+        this.errorMisMatchs = null;
+      }
+
+      let chats = await this.chatService.returnChats();
+
+      if (!chats) {
+        this.errorChats = 'Ha ocurrido un error al cargar los chats.';
+      } else {
+        this.errorChats = null;
+      }
+
+      this.loading = false;
+      if (event) {
+        event.target.complete();
+      }
+    } catch (error) {
+      this.loading = false;
+      this.errorMisMatchs = 'Ha ocurrido un error al cargar los matchs.';
+      if (event) {
+        event.target.complete();
+      }
+    }
   }
 
   async openPreview(image) {
@@ -158,7 +214,7 @@ export class MisMatchsPage {
 
   async openChat(match: Match) {
     this.playSound();
-    const chat = this.chatService.returnChats().value.find(chats => chats.type === 'private' && chats.userIds.includes(match.property.realEstateAgency.user_id))
+    const chat = await (await this.chatService.returnChats()).value.find(chats => chats.type === 'private' && chats.userIds.includes(match.property.realEstateAgency.user_id))
     console.log(chat);
     const modal = await this.modalCtrl.create({
       component: ChatMensajesPage,

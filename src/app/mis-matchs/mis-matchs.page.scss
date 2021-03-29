@@ -1,18 +1,18 @@
-.no-matchs-container{
+.no-matchs-container {
     display: flex;
     height: 100%;
     align-items: center;
 }
 
-.no-matchs-description{
+.no-matchs-description {
     margin: auto;
     text-align: center;
-    ion-icon{
-        font-size: 50px;
+    ion-icon {
+        font-size: 80px;
     }
 }
 
-.hidden{
+.hidden {
     height: 0;
     width: 0;
     visibility: hidden;

@@ -1,7 +1,9 @@
 <div style="position: relative;" class="map-size-{{size}}">
+  <img src="../../assets/images/logo-completo.png" class="logo-img">
+
   <div *ngIf="showRadio"
     style="width: 80vw; position: absolute; top: 20vh; left: 20px; z-index: 9999; background: white; border-radius: 10px; text-align: center;">
-    <ion-text color="primary">Radio</ion-text>
+    <ion-text color="primary">Radio: {{radius}}Km</ion-text>
     <ion-item style="--padding-start: 0; --inner-padding-end: 0; border-radius: 10px; --background:transparent"
       lines="none">
       <ion-range min="1" [(ngModel)]="radius" max="50" step="1" debounce="300" (ionChange)="setRadius()">
@@ -14,18 +16,246 @@
       </ion-range>
     </ion-item>
   </div>
+
+  
+
+  <div *ngIf="tutorialStep == 1 && tutorial"
+    style="position: fixed; height: 100%; width: 100%; z-index: 999999999999; background: rgba(0, 0, 0, .8); color: white;"
+    class="ion-padding">
+    <!--Primer Paso "BIENVENIDA"-->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h3>
+          Bienvenido al mapa de:
+        </h3>
+        <img style="height: 40px; width: 90px; display: inline;" src="../../../assets/images/logo-completo.png" alt="">
+      </div>
+      <p style="margin-top: 50px;">
+        Aca podras encontrar las propiedades cerca de tí. Filtrando por un radio o incluso dibujando una zona
+        personalizada, pero en fin ya basta de charla y empezemos.
+      </p>
+      <div class="ion-text-center" style="margin-top: 30%;">
+        <ion-button class="animate__animated animate__pulse animate__infinite" shape="round" fill="outline" size="large"
+          color="light" (click)="tutorialStep = 2">
+          ¡Empezar Ya!
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 2 && tutorial" style="position: fixed; width: 100%; z-index: 999999999999; color: white;"
+    class="animate__animated animate__fadeInUp">
+    <!--Segundo Paso "Click en el mapa"-->
+    <div
+      style="transition: all .3s; background: {{secondStepSuccess ? 'rgba(76, 175, 80, .8)' : 'rgba(0, 0, 0, 0.7)' }}">
+      <p class="ion-padding">
+        Empezemos primero pulsando en el mapa para cambiar nuestra ubicación.
+      </p>
+
+      <div *ngIf="secondStepSuccess" class="ion-padding">
+        <h1 class="animate__animated animate__fadeInUp">
+          Perfecto
+        </h1>
+        <div class="animate__animated animate__fadeInLeft">
+          <p>ya sabes como cambiar tu ubicacion en el mapa. Tambien puedes hacerlo desde el boton de las opciones.</p>
+          <div class="ion-text-right">
+            <ion-button (click)="tutorialStep = 3" fill="outline" color="light" shape="round">
+              Vamos a probarlo
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="tutorialStep == 3 || tutorialStep == 4 || tutorialStep == 6 || tutorialStep == 7 || tutorialStep == 10 || tutorialStep == 11 && tutorial"
+    style="position: fixed;
+    z-index: 1;    
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, .5);
+    " class="animate__animated animate__fadeInUp">
+    <!--Tercer Paso "Obtener Ubicación"-->
+    <div *ngIf="tutorialStep == 3 || tutorialStep == 6 || tutorialStep == 10 && tutorial" style="
+    position: absolute;
+    display: flex; 
+    align-items: center;
+    left: 80px;
+    bottom: 22px;" class="animate__animated animate__pulse animate__infinite">
+      <ion-icon color="secondary" slot="start" style="font-size: 30px" name="arrow-back-outline"></ion-icon>
+      <ion-label color="light">
+        Pulsa este boton.
+      </ion-label>
+    </div>
+
+    <div *ngIf="tutorialStep == 11 && tutorial" style="
+    position: absolute;    
+    bottom: 186px;
+    left: 70px;
+    display: flex; 
+    align-items: center;" class="animate__animated animate__pulse animate__infinite">
+      <ion-icon color="secondary" slot="start" style="font-size: 30px" name="arrow-back-outline"></ion-icon>
+      <ion-label color="light">
+        Ahora pulsa este botón.
+      </ion-label>
+    </div>
+
+    <div *ngIf="tutorialStep == 7 && tutorial" style="
+    position: absolute;    
+    bottom: 135px;
+    left: 70px;
+    display: flex; 
+    align-items: center;" class="animate__animated animate__pulse animate__infinite">
+      <ion-icon color="secondary" slot="start" style="font-size: 30px" name="arrow-back-outline"></ion-icon>
+      <ion-label color="light">
+        Ahora pulsa este botón.
+      </ion-label>
+    </div>
+
+    <div *ngIf="tutorialStep == 4 && tutorial" style="
+    position: absolute;    
+    bottom: 85px;
+    left: 70px;
+    display: flex; 
+    align-items: center;" class="animate__animated animate__pulse animate__infinite">
+      <ion-icon color="secondary" slot="start" style="font-size: 30px" name="arrow-back-outline"></ion-icon>
+      <ion-label color="light">
+        Ahora pulsa este botón.
+      </ion-label>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 5 && tutorial" style="
+    position: absolute;    
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    " class="animate__animated animate__fadeInUp">
+    <div class="ion-padding ion-margin-top" style="color: white; background: rgba(76, 175, 80, .8)">
+      <h3>¡Muy Bien!</h3>
+      <p>
+        con esta función podes obtener tu ubicación actual y dibujar un radio alrededor de ella para así encontrar las
+        propiedades mas cercanas a vos.
+      </p>
+      <p>
+        Ahora vamos a intentar cambiar el radio de busqueda alrededor tuyo.
+      </p>
+      <div class="ion-text-right">
+        <ion-button (click)="tutorialStep = 6" color="light" shape="round" fill="outline">
+          Vamos a ello
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 8 && tutorial" style="
+    position: absolute;    
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    " class="animate__animated animate__fadeInUp">
+    <div class="ion-padding"
+      style="position: absolute; bottom: 40%; left: 0; color: white; background: rgba(76, 175, 80, .8)">
+      <div class="ion-text-center">
+        <ion-icon class="animate__animated animate__pulse animate__infinite" style="font-size: 50px;" name="arrow-up">
+        </ion-icon>
+      </div>
+      <h3>¡Muy Bien!</h3>
+      <p>
+        Ahora se ha mostrado el control que nos permite cambiar el radio.
+      </p>
+      <p>
+        Prueba cambiando el radio aumentandolo o disminuyendolo.
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 9 && tutorial" style="
+    position: absolute;    
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    " class="animate__animated animate__fadeInUp">
+    <div class="ion-padding"
+      style="position: absolute; bottom: 40%; left: 0; color: white; background: rgba(76, 175, 80, .8)">
+      <h3>¡Excelente!</h3>
+      <p>
+        Muy bien ya sabes como cambiar el radio alrededor de tu ubicación por ultimo vamos a ver como dibujar un area en
+        el mapa.
+      </p>
+      <div class="ion-text-right">
+        <ion-button (click)="tutorialStep = 10;" fill="outline" color="light" shape="round">
+          Dibujar area
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 12 && tutorial"
+    style="position: absolute; width: 100%; z-index: 999999999999; color: white;"
+    class="animate__animated animate__fadeInUp">
+    <!--Segundo Paso "Click en el mapa"-->
+    <div style="transition: all .3s; background: {{isAreaSet ? 'rgba(76, 175, 80, .8)' : 'rgba(0, 0, 0, 0.7)'}}">
+      <p class="ion-padding">
+        Por favor pulsa sobre el mapa para asi crear una area de busqueda.
+      </p>
+      <div *ngIf="isAreaSet" class="ion-padding animate__animated animate__fadeInLeft">
+        <h3>
+          Muy Bien
+        </h3>
+        <p>
+          Ya has colocado los marcadores necesarios. Ahora podes pulsa el boton de aceptar.
+        </p>
+        <p>
+          O si gustas podes seguir colocando marcadores para crear una zona mas especifica.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tutorialStep == 13 && tutorial"
+    style="position: fixed; height: 100%; width: 100%; z-index: 999999999999; background: rgba(0, 0, 0, .8); color: white;"
+    class="ion-padding animate__animated animate__fadeInUp">
+    <!--Ultimo Paso "Felicitaciones"-->
+    <div>
+
+      <h3 class="ion-text-center" style="margin-top: 30px;">
+        ¡Felicitaciones!
+      </h3>
+
+      <p style="margin-top: 50px;">
+        Enhorabuena has terminado el tutorial sobre las herramientas del mapa de broka por favor pulsa el boton para
+        finalizar el tutorial.
+      </p>
+      <div class="ion-text-center" style="margin-top: 30%;">
+        <ion-button class="animate__animated animate__pulse animate__infinite" shape="round" fill="outline" size="large"
+          color="light" (click)="finishTutorial()">
+          ¡Finalizar!
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+
   <div #googlemap class="map"></div>
 
   <ion-fab vertical="bottom" *ngIf="!draw && controls" horizontal="start">
-    <ion-fab-button>
+    <ion-fab-button [disabled]="disableOptionsButton()" (click)="doSomething()">
       <ion-icon name="options"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-fab-button (click)="getLocation()" *ngIf="BrokaControls.showMyPositionButton">
         <ion-icon name="location-outline"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button [color]="isAreaSet ? 'danger': showRadio ? 'primary' : null" [disabled]="isAreaSet ? true : false"
-        (click)="showRadio = ! showRadio" *ngIf="BrokaControls.showRadiusButton">
+      <ion-fab-button [color]="isAreaSet ? 'danger': showRadio ? 'primary' : null" (click)="toggleRadiusControl()"
+        *ngIf="BrokaControls.showRadiusButton">
         <ion-icon name="radio-button-off-outline"></ion-icon>
       </ion-fab-button>
       <ion-fab-button [color]="draw ? 'primary' : null" (click)="toggleDraw()">

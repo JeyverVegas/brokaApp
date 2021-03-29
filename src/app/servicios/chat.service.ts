@@ -66,7 +66,8 @@ export class ChatService {
     return this._echo;
   }
 
-  returnChats() {
+  async returnChats() {
+    await this.getChats();
     return this.chats;
   }
 

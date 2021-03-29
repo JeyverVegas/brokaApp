@@ -1,8 +1,8 @@
 <ion-content>
 
-  <img src="../../assets/images/logo-completo.png" class="logo-img">
+  <img *ngIf="activeIndex != 4" src="../../assets/images/logo-completo.png" class="logo-img">
 
-  <ion-slides #filtrosslider [options]="slidesOpts" class="filtros-container">
+  <ion-slides (ionSlideDidChange)="setActiveIndex()" #filtrosslider [options]="slidesOpts" class="filtros-container">
     <!--TIPO DE CONTRATO-->
     <ion-slide class="ion-padding">
       <h2 class="ion-text-center">
@@ -68,11 +68,11 @@
 
       <br>
 
-      <ion-button expand="block" (click)="goToAddress()">Seleccionar Direccion</ion-button>
+      <ion-button expand="block" (click)="goToAddress()">Elegir Ubicacion</ion-button>
 
       <br>
 
-      <ion-button expand="block" (click)="goToMap()">Abrir mapa</ion-button>
+      <ion-button expand="block" (click)="goToMap()">Buscar en el mapa</ion-button>
     </ion-slide>
 
     <!-- Direccion -->
@@ -106,7 +106,8 @@
       <ion-button class="button-back" fill="clear" color="primary" mode="md" (click)="goBack(2)">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
-      <app-google-map (onMapLoaded)="setRadiusAndPosition($event)" (onDrawing)="drawing($event)"
+      <app-google-map tutorial="false" (onMapLoaded)="setRadiusAndPosition($event)"
+        (tutorialComplete)="tutorialComplete($event)" (onDrawing)="drawing($event)"
         (onAreaSet)="loadProductsByArea($event)" (onChangeRadius)="changeRadius($event)" size="normal"
         [BrokaControls]="BrokaControls" [productsForMarkers]="inmuebles" [radius]="radius">
       </app-google-map>

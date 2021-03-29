@@ -14,49 +14,47 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 })
 export class ChatPage implements OnInit {
 
-    
+
   chats = new BehaviorSubject([]);
 
   constructor(
     private modalCtrl: ModalController,
-    private smartAudio: SmartAudioService,    
+    private smartAudio: SmartAudioService,
     private chatService: ChatService,
-    private authService: AuthenticationService,    
+    private authService: AuthenticationService,
   ) { }
 
-  ngOnInit() {        
+  ngOnInit() {
   }
 
-  ionViewWillEnter(){    
-    this.chats = this.chatService.returnChats();
+  async ionViewWillEnter() {
+    this.chats = await this.chatService.returnChats();
     console.log(this.chats.value);
-    this.chatService.getChats(true).finally(() =>{
-      this.chatService.setNewMewssagesCount0();    
-    });
+    this.chatService.setNewMewssagesCount0();
   }
 
-  doRefresh(event){
-    this.chatService.getChats(true).then(()=>{
+  doRefresh(event) {
+    this.chatService.getChats(true).then(() => {
       event.target.complete();
-    }).catch(err =>{
-      console.log(err);     
+    }).catch(err => {
+      console.log(err);
     });
   }
 
-  async openChat(chat){
-      this.playSound();
-      const modal = await this.modalCtrl.create({
-        component: ChatMensajesPage,
-        componentProps: {
-          usuario: this.authService.user,
-          chat: chat
-        }
-      });
-      modal.present();
+  async openChat(chat) {
+    this.playSound();
+    const modal = await this.modalCtrl.create({
+      component: ChatMensajesPage,
+      componentProps: {
+        usuario: this.authService.user,
+        chat: chat
+      }
+    });
+    modal.present();
   }
-  
-  playSound(){
+
+  playSound() {
     this.smartAudio.play('tabSwitch');
-  }  
+  }
 
 }

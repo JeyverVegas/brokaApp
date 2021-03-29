@@ -208,7 +208,7 @@ export class InicioPage {
     } else {
       this.alertCtrl.create({
         header: 'Debe completar primero su perfil',
-        message: 'Para poder matchear una propiedad primero debe completar su perfil ;).',
+        message: 'Para poder darle me gusta a una propiedad y que quede en tu listado, tenes que completar el perfil.',
         buttons: [
           {
             text: 'SEGUIR MIRANDO',

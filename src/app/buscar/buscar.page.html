@@ -5,7 +5,7 @@
   </ion-refresher>
 
   <div *ngIf="showdelete" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
-    <ion-icon name="close" color="light"></ion-icon>
+    <ion-icon name="close" color="danger"></ion-icon>
   </div>
 
   <div *ngIf="showmatch" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
@@ -34,10 +34,10 @@
           </h4>
 
           <div (click)="openProduct(producto)">
-            <div class="atribute-container" *ngIf="producto.bathrooms" style="display: flex; align-items: center;">
-              <img class="img-icon-start" src="../../assets/icon/medium/banos.png" alt="">
+            <div class="atribute-container" *ngIf="producto.environments" style="display: flex; align-items: center;">
+              <!-- <img class="img-icon-start" src="../../assets/icon/medium/banos.png" alt=""> -->
               <p>
-                <ion-text color="medium">Baños: {{producto.bathrooms}}</ion-text>
+                <ion-text color="medium">Ambientes: {{producto.environments}}</ion-text>
               </p>
             </div>
 
@@ -63,7 +63,10 @@
                 {{findPrice(producto.prices)?.price_value?.toLocaleString('de-DE')}}
               </ion-text>
             </p>
-            <ion-button color="success" fill="clear" (click)="matchear(producto)">
+            <ion-button size="small" color="danger" fill="clear" (click)="descartar(producto)">
+              <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button size="small" color="success" fill="clear" (click)="matchear(producto)">
               <ion-icon name="heart" slot="icon-only"></ion-icon>
             </ion-button>
 

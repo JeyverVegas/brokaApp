@@ -3,7 +3,7 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/n
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ActionSheetController, IonSlides, LoadingController, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonSlides, LoadingController, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
 import { City, State, Usuario } from '../interface';
 import { MapConfigPage } from '../map-config/map-config.page';
 import { AddressService } from '../servicios/address.service';
@@ -76,7 +76,8 @@ export class UserProfilePage implements OnInit {
     private webview: WebView,
     private ref: ChangeDetectorRef,
     private toastController: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
@@ -303,11 +304,44 @@ export class UserProfilePage implements OnInit {
     toast.present();
   }
 
+  async presentAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Error de conexión',
+      message: 'Se ha tardado mucho tiempo en conectar con el servidor',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'reintentar',
+          handler: () => {
+            this.saveProfile();
+          }
+        }
+      ]
+    });
+    alert.present();
+    return alert;
+  }
+
+
+  validatePhoneNumber(event) {
+    console.log(this.phonenumber(this.user.profile.phone));
+  }
+
   async saveProfile() {
+
+    let success = null;
+
     const loading = await this.loadingCtrl.create({
       message: 'Guardando Información',
-      spinner: 'bubbles'
+      spinner: 'bubbles',
+      duration: 10000
     });
+
+    loading.onWillDismiss().then(() => {
+      if (!success) {
+        this.presentAlert();
+      }
+    })
 
     await loading.present();
 
@@ -324,10 +358,14 @@ export class UserProfilePage implements OnInit {
         formData.append('image', this.newUserImage.blob, this.newUserImage.name);
       }
       this.authService.addProfile(formData).subscribe(async (response) => {
+        success = true;
         await loading.dismiss();
+        this.goBack();
         this.error.displayError = false;
-        this.saveAddress();
+        this.presentToast('Se ha guardado el perfil exitosamente.', 'success');
+        //this.saveAddress();
       }, async (error) => {
+        success = true;
         await loading.dismiss();
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
@@ -341,9 +379,14 @@ export class UserProfilePage implements OnInit {
       }
       formData.append('_method', 'put');
       this.authService.updateProfile(formData).subscribe(async (response) => {
+        success = true;
         await loading.dismiss();
-        this.saveAddress();
+        this.goBack();
+        this.error.displayError = false;
+        this.presentToast('Se ha guardado el perfil exitosamente.', 'success');
+        //this.saveAddress();
       }, async (error) => {
+        success = true;
         await loading.dismiss();
         this.error.message = error.error.message;
         this.error.errors = error.error.errors;
@@ -353,7 +396,7 @@ export class UserProfilePage implements OnInit {
     }
   }
 
-  async saveAddress() {
+  /* async saveAddress() {
 
     const loading = await this.loadingCtrl.create({
       message: 'Guardando Ubicación...',
@@ -374,6 +417,7 @@ export class UserProfilePage implements OnInit {
       this.authService.addAddress(address).subscribe(async (response) => {
         await loading.dismiss();
         this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
+        this.goBack();
       }, async (error) => {
         await loading.dismiss();
         this.error.message = error.error.message;
@@ -385,6 +429,7 @@ export class UserProfilePage implements OnInit {
       this.authService.updateAddress(address).subscribe(async (response) => {
         await loading.dismiss();
         this.presentToast('La informacion ha sido guardada exitosamente.', 'success');
+        this.goBack();
       }, async (error) => {
         await loading.dismiss();
         this.error.message = error.error.message;
@@ -393,7 +438,7 @@ export class UserProfilePage implements OnInit {
         this.presentToast(this.firstError, 'danger');
       });
     }
-  }
+  } */
 
   public get errorList() {
     return Object.entries(this.error.errors)
@@ -421,5 +466,36 @@ export class UserProfilePage implements OnInit {
       console.log('hola');
       this.user.profile.lastname = this.user.profile.lastname.charAt(0).toUpperCase() + this.user.profile.lastname.slice(1);
     }
+
+    this.validateSecondStep();
   }
+
+  validateSecondStep() {
+    if (
+      this.user.profile.phone == null ||
+      this.user.profile.phone == '' ||
+      this.user.profile.lastname == null ||
+      this.user.profile.lastname == '' ||
+      this.user.profile.firstname == null ||
+      this.user.profile.firstname == '' ||
+      !this.phonenumber(this.user.profile.phone)
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  phonenumber(inputtxt: string) {
+    var reg = /^\d+$/;
+
+    if ((inputtxt.match(reg)) && inputtxt.length > 7) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+
 }

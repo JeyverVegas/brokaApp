@@ -152,8 +152,20 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </div> -->
                 <ion-buttons class="buttons-container">
-                    <div class="boton-redondo" (click)="descartar(producto)">
-                        <ion-icon name="close" color="medium"></ion-icon>
+                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                        <img style="max-width: 100%;" src="../../assets/icon/reload-circle.png" alt="">
+                        <!-- <div class="pulse12"></div> -->
+                    </div>
+                    <div class="boton-redondo boton-redondo-size-normal" (click)="descartar(producto)">
+                        <img style="max-width: 100%;" src="../../assets/icon/danger/close-circle.png" alt="">
+                        <!-- <div class="pulse12"></div> -->
+                    </div>
+                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                        <img style="max-width: 100%;" src="../../assets/icon/start-circle.png" alt="">
+                        <!-- <div class="pulse12"></div> -->
+                    </div>
+                    <div class="boton-redondo boton-redondo-size-normal" (click)="matchear(producto)">
+                        <img style="max-width: 100%;" src="../../assets/icon/heart-circle.png" alt="">
                         <!-- <div class="pulse12"></div> -->
                     </div>
                     <!-- <div class="boton-redondo" routerLink="/tabs/tabs/buscar" routerDirection="forward"
@@ -161,15 +173,15 @@
                         <img src="../../assets/icon/info.png" alt="">
                         <div class="pulse12"></div>
                     </div> -->
-                    <div class="boton-redondo" (click)="matchear(producto)">
-                        <ion-icon name="heart" color="success"></ion-icon>
+                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                        <img style="max-width: 100%;" src="../../assets/icon/thunder-circle.png" alt="">
                         <!-- <div class="pulse12"></div> -->
                     </div>
                 </ion-buttons>
             </div>
         </div>
     </div>
-    <ion-buttons class="tabs-inicio {{productos.getValue().length === 0 ? 'tabs-inicio-light' : 'tabs-inicio-light'}}">
+    <!-- <ion-buttons class="tabs-inicio {{productos.getValue().length === 0 ? 'tabs-inicio-light' : 'tabs-inicio-light'}}">
         <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/inicio">
             <ion-icon name="home" color="{{productos.getValue().length === 0 ? 'light' : 'light'}}"></ion-icon>
         </ion-button>
@@ -186,5 +198,5 @@
         <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/usuario">
             <ion-icon name="person-outline"></ion-icon>
         </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
 </ion-content>

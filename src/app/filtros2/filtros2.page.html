@@ -32,17 +32,23 @@
       <ion-icon name="close-circle" color="danger"></ion-icon>
     </ion-chip>
 
-    <ion-chip *ngIf="filtros.state !== 'todas'" color="primary" (click)="removeState()">
+    <ion-chip *ngIf="filtros.state !== 'todas' || null" color="primary" (click)="removeState()">
       <ion-label>{{filtros.state}}</ion-label>
       <ion-icon name="close-circle" color="danger"></ion-icon>
     </ion-chip>
 
-    <ion-chip *ngIf="filtros.city !== 'todas'" color="primary" (click)="removeCity()">
+    <ion-chip *ngIf="filtros.city !== 'todas' || null" color="primary" (click)="removeCity()">
       <ion-label>{{filtros.city}}</ion-label>
       <ion-icon name="close-circle" color="danger"></ion-icon>
     </ion-chip>
 
-    <ion-segment *ngIf="filtros.contractType" mode="md" scrollable [(ngModel)]="filtros?.contractType[0]">
+    <ion-chip *ngIf="selectedContract" color="primary" (click)="removeContract()">
+      <ion-label>{{selectedContract.name}}</ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+
+    <ion-segment *ngIf="filtros.contractType" mode="md" scrollable [(ngModel)]="filtros?.contractType[0]"
+      (ionChange)="changeContractType()">
       <ion-segment-button *ngFor="let contractType of contractTypes" [value]="contractType?.id">
         <img style="max-width: 20%;" [src]="contractType?.image" alt="">
         <ion-label>{{contractType?.name}}</ion-label>

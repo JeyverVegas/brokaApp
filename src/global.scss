@@ -25,11 +25,13 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 @import "~animate.css/animate.css";
+@import "./theme/botones-broka.scss";
 
 /*Estilos Globales de la App*/
 
 /*Estilos del select de categorias*/
-ion-input, ion-item{
+ion-input,
+ion-item {
     --highlight-color-valid: none !important;
     --highlight-color-invalid: none !important;
 }
@@ -57,7 +59,7 @@ ion-input, ion-item{
     font-size: x-large;
 }
 
-.custom-bullets{
+.custom-bullets {
     font-size: 15px;
     background: white !important;
     width: 17px !important;
@@ -67,7 +69,6 @@ ion-input, ion-item{
 .swiper-container-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
     width: fit-content !important;
 }
-
 
 .logo-white {
     background: white;
@@ -180,7 +181,7 @@ ion-input, ion-item{
     height: 80px;
     /* -width/2 */
     margin-left: -40px;
-    
+
     /* -height + arrow */
     margin-top: -88px;
     border-radius: 100%;
@@ -195,7 +196,7 @@ ion-input, ion-item{
     border-radius: 100% !important;
 }
 
-.img-iconxD2{
+.img-iconxD2 {
     height: 22px !important;
     width: 22px !important;
     border-radius: 50% !important;
@@ -204,32 +205,30 @@ ion-input, ion-item{
     left: 28.5px !important;
 }
 
-
-.color_danger{
+.color_danger {
     color: var(--ion-color-danger) !important;
 }
 
-.map-options-modal{
+.map-options-modal {
     padding: 110% 0% 0 0% !important;
     .modal-wrapper {
         border-radius: 25px 25px 0px 0px;
-    }   
+    }
 }
 
-.select-file-modal{
+.select-file-modal {
     padding: 110% 0% 0 0% !important;
     .modal-wrapper {
         border-radius: 25px 25px 0px 0px;
-    }   
+    }
 }
 
-.close-header{
+.close-header {
     padding: 15px 25px 25px 25px;
     background: var(--ion-color-primary);
 }
 
-
-.div-custom{
+.div-custom {
     height: 25%;
     background: white;
     position: absolute;
@@ -239,31 +238,31 @@ ion-input, ion-item{
     border-radius: 40px 40px 0px 0px;
 }
 
-.b-primary{
+.b-primary {
     color: var(--ion-color-primary-contrast);
-    background: var(--ion-color-primary);    
+    background: var(--ion-color-primary);
 }
 
-.b-secondary{
+.b-secondary {
     color: var(--ion-color-secondary-contrast);
     background: var(--ion-color-secondary);
 }
 
-.b-warning{
+.b-warning {
     color: var(--ion-color-warning-contrast);
     background: var(--ion-color-warning);
 }
 
-.alert-container{
+.alert-container {
     position: fixed;
     width: 100%;
     top: 10%;
     left: 0;
     z-index: 99999999;
-    padding: 20px;        
+    padding: 20px;
 }
 
-.alert-description{
+.alert-description {
     background: #ffffff;
     border-radius: 20px;
     padding: 20px;
@@ -271,14 +270,14 @@ ion-input, ion-item{
     overflow-y: auto;
 }
 
-.tabs-inicio{
+.tabs-inicio {
     position: absolute;
     justify-content: space-between;
     left: 0;
     bottom: 0;
-    width: 100%;    
+    width: 100%;
     z-index: 9999;
-    ion-button{
+    ion-button {
         width: 50px;
         height: 50px;
         padding: 5px;
@@ -287,20 +286,19 @@ ion-input, ion-item{
     }
 }
 
-.tabs-inicio-light{
+.tabs-inicio-light {
     border-top: 1px solid var(--ion-color-light) !important;
 }
 
-.tabs-inicio-primary{
+.tabs-inicio-primary {
     border-top: 1px solid var(--ion-color-primary) !important;
 }
 
-.tabs-inicio-medium{
+.tabs-inicio-medium {
     border-top: 1px solid var(--ion-color-medium) !important;
 }
 
-
-.match-discard-container{
+.match-discard-container {
     position: fixed;
     top: 50%;
     left: 0;
@@ -309,4 +307,3 @@ ion-input, ion-item{
     z-index: 9999;
     font-size: 50px;
 }
-

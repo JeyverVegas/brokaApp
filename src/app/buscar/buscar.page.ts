@@ -19,6 +19,7 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 export class BuscarPage implements OnInit {
 
   showmatch: boolean = false;
+  showdelete: boolean = false;
   productos = new BehaviorSubject([]);
   filtro = [];
   refrescando: any = null;
@@ -76,8 +77,8 @@ export class BuscarPage implements OnInit {
     }
 
     this.filtro = this.filtro.filter(producto => {
-      if (producto.name && valor) {
-        return (producto.name.toLowerCase().indexOf(valor.toLowerCase()) > -1);
+      if (producto.address.address && valor) {
+        return (producto.address.address.toLowerCase().indexOf(valor.toLowerCase()) > -1);
       }
     });
   }
@@ -144,7 +145,9 @@ export class BuscarPage implements OnInit {
         headers: this.authService.authHeader
       }).toPromise().then((response: any) => {
         this.productos.next(this.productos.value.concat(response.data));
-        if (!response.links.next) {
+        if (response.links.next) {
+          this.next = response.links.next;
+        } else {
           this.next = null;
         }
       }).catch(err => {
@@ -201,6 +204,27 @@ export class BuscarPage implements OnInit {
         ]
       }).then(a => a.present());
     }
+  }
+
+  async descartar(product) {
+    this.playSound();
+    this.showdelete = true;
+    this.productosService.discardProduct(product.id).then(response => {
+      for (let [index, p] of this.productos.getValue().entries()) {
+        if (p.id === product.id) {
+
+          this.productos.getValue().splice(index, 1);
+        }
+      }
+      if (this.productos.value.length == 0) {
+        this.productosService.getProducts();
+      }
+    }).catch(error => {
+      console.log(error);
+      this.presentToast(error.error.errors.property_id[0], 'danger');
+    }).finally(() => {
+      this.showdelete = false;
+    });
   }
 
 

@@ -68,7 +68,7 @@ export class UsuarioPage implements OnInit {
   async ionViewDidEnter() {
     try {
 
-      this.chatCount = this.chatService.returnChats().getValue().length;
+      this.chatCount = await (await this.chatService.returnChats()).getValue().length;
       this.loadingChatCount = false;
       this.matchCount = await (await this.matchService.getMatchs()).data.length;
       this.loadingMatchCount = false;
