@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
+import { Filtros2Page } from '../filtros2/filtros2.page';
 import { googleMapsControlOpts } from '../interface';
 import { ProductosService } from '../servicios/productos.service';
 
@@ -25,7 +25,8 @@ export class MapProductsPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private productService: ProductosService
+    private productService: ProductosService,
+    private modalCtrl: ModalController
   ) { }
 
   async ngOnInit() {
@@ -41,7 +42,10 @@ export class MapProductsPage implements OnInit {
   async loadProperties(event) {
     this.productService.filtros.radius = [event.radius, event.position.lat, event.position.lng];
     console.log(event);
-    this.products = (await this.productService.getProducts()).getValue();
+
+    (await this.productService.getProducts()).subscribe(products => {
+      this.products = products;
+    })
 
     if (!this.products) {
       return;
@@ -67,6 +71,14 @@ export class MapProductsPage implements OnInit {
       this.productService.filtros.within = null;
       this.products = await (await this.productService.getProducts()).getValue();
     }
+  }
+
+  async openFilters() {
+    const modal = await this.modalCtrl.create({
+      component: Filtros2Page
+    });
+
+    modal.present();
   }
 
 }

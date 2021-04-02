@@ -9,6 +9,7 @@ import { PropertyCardPage } from 'src/app/property-card/property-card.page';
 import { SmartAudioService } from 'src/app/servicios/smart-audio.service';
 import { GoogleMapsApiService } from 'src/app/servicios/google-maps-api.service';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
+import { ProductosService } from 'src/app/servicios/productos.service';
 
 
 @Component({
@@ -91,7 +92,8 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private smartAudio: SmartAudioService,
-    private googleMapApi: GoogleMapsApiService
+    private googleMapApi: GoogleMapsApiService,
+    private productService: ProductosService
   ) { }
 
   async ngOnInit() {
@@ -231,6 +233,18 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     if (changes.productsForMarkers) {
       this.clearMarkers();
       this.setMarkers(this.clusterer);
+
+      if (
+        this.radiusShape &&
+        this.for === 'user' &&
+        (!this.productService.filtros.radius ||
+          this.productService.filtros.radius.length < 1)) {
+        if (this.productsForMarkers.length > 0) {
+          this.map.setCenter({ lat: this.productsForMarkers[0].address.latitude, lng: this.productsForMarkers[0].address.longitude })
+        }
+        this.radiusShape.setMap(null);
+      }
+
       if (this.tutorial && this.tutorialStep == 2) {
         console.log('listo');
         this.secondStepSuccess = true;
@@ -303,7 +317,9 @@ export class GoogleMapComponent implements OnInit, OnChanges {
         ); */
         //productMarker.setMap(this.map);
         productMarker.addListener('click', () => {
-          this.showProductCard(product);
+          if (this.for == 'user') {
+            this.showProductCard(product);
+          }
         })
         this.brokaMarkers.push(productMarker);
         this.setIconForPropertyType(product.type);
@@ -446,6 +462,8 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     }
 
     this.radiusShape = new google.maps.Circle({
+      /* draggable: false,
+      editable: false, */
       fillColor: '#001c5b',
       fillOpacity: .35,
       radius: (this.radius * 1000),
@@ -453,11 +471,20 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       center: this.center
     });
 
-    this.radiusShape.addListener('click', () => {
-      this.presentToast('ha click fuera del radio para cambiar tu ubicación', 'danger');
+    this.radiusShape.addListener('center_changed', () => {
+      this.radiusShape.setCenter(this.center);
     })
 
+    this.radiusShape.addListener('click', () => {
+      this.presentToast('ha click fuera del radio para cambiar tu ubicación', 'danger');
+    });
+
+    /* this.radiusShape.addListener('radius_changed', (e) => {
+      console.log(this.radiusShape.getRadius());
+    }) */
+
     this.radiusShape.setMap(this.map);
+    this.map.setCenter(this.center);
     this.onChangeRadius.emit({ radius: this.radius, position: this.center });
 
     if (this.tutorialStep == 8 && this.tutorial) {
@@ -505,6 +532,8 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   */
 
   toggleRadiusControl(toggleAnyway?) {
+
+    /* this.radiusShape.setEditable(!this.radiusShape.getEditable()); */
 
     if (toggleAnyway) {
       this.showRadio = !this.showRadio;

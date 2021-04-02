@@ -1,4 +1,4 @@
-import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
@@ -17,7 +17,7 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
 })
-export class InicioPage {
+export class InicioPage implements OnInit {
 
   @ViewChildren('mapa') protected mapas: QueryList<ElementRef>;
   @ViewChildren('containerx') protected containerx: QueryList<ElementRef>;
@@ -54,8 +54,7 @@ export class InicioPage {
     private googleMapsApi: GoogleMapsApiService
   ) { }
 
-  async ionViewDidEnter() {
-
+  async ngOnInit() {
     this.productos = await this.productosService.getProducts();
     this.mapas.changes.subscribe((elements: any) => {
       var mapas: any[] = elements.toArray();
@@ -65,7 +64,11 @@ export class InicioPage {
         const product = this.productos.getValue()[Number(map.dataset.index)];
         this.crearMapa(map, product, Number(map.dataset.index));
       })
-    })
+    });
+  }
+
+  async ionViewDidEnter() {
+
   }
 
   crearMapa(mapa, product, index) {
@@ -228,8 +231,43 @@ export class InicioPage {
     }
   }
 
+  async restoreAll() {
+    this.playSound();
+    const alerta = await this.alertCtrl.create({
+      header: '¿Quieres reestablecer todos los inmuebles?',
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            this.playSound();
+          }
+        },
+        {
+          text: 'Si',
+          handler: async () => {
+            this.playSound();
+            const loading = await this.loadingCtrl.create({
+              spinner: 'lines',
+              message: 'Reestablenciendo todos los inmuebles...'
+            });
+            await loading.present();
+            this.productosService.removerAllDiscartedProducts().then(response => {
+              this.presentToast('Se han reestablecido todos los inmuebles ;)', 'secondary');
+            }).catch(err => {
+              console.log(err);
+              this.presentToast('Ha ocurrido un error al reestablecer los inmuebles :(', 'danger');
+            }).finally(() => {
+              loading.dismiss();
+            })
+          }
+        }
+      ]
+    });
+    alerta.present();
+  }
+
   async doRefresh(event) {
-    this.productos = await this.productosService.getProducts();
+    await this.productosService.getProducts();
     event.target.complete();
   }
 

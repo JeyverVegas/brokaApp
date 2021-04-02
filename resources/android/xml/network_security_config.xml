@@ -5,6 +5,7 @@
         <domain includeSubdomains="true">192.168.0.100</domain>
         <domain includeSubdomains="true">3.92.133.52</domain>
         <domain includeSubdomains="true">18.216.249.138</domain>
+        <domain includeSubdomains="true">18.219.211.63</domain>
         <domain includeSubdomains="true">www.beneficio-si.com</domain>
     </domain-config>
 </network-security-config>

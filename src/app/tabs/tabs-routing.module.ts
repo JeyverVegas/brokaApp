@@ -32,10 +32,6 @@ const routes: Routes = [
         loadChildren: () => import('../descartado/descartado.module').then(m => m.DescartadoPageModule)
       },
       {
-        path: 'inmobiliarias',
-        loadChildren: () => import('../inmobiliarias/inmobiliarias.module').then(m => m.InmobiliariasPageModule)
-      },
-      {
         path: 'mis-busquedas',
         loadChildren: () => import('../mis-busquedas/mis-busquedas.module').then(m => m.MisBusquedasPageModule)
       },

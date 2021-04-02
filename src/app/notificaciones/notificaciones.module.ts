@@ -8,6 +8,7 @@ import { NotificacionesPageRoutingModule } from './notificaciones-routing.module
 
 import { NotificacionesPage } from './notificaciones.page';
 import { ComponentsModule } from '../components/components.module';
+import { PropertyCardPageModule } from '../property-card/property-card.module';
 
 @NgModule({
   imports: [
@@ -15,8 +16,9 @@ import { ComponentsModule } from '../components/components.module';
     FormsModule,
     IonicModule,
     NotificacionesPageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    PropertyCardPageModule
   ],
   declarations: [NotificacionesPage]
 })
-export class NotificacionesPageModule {}
+export class NotificacionesPageModule { }

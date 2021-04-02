@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ImageModalPage } from '../image-modal/image-modal.page';
+import { PropertyCardPage } from '../property-card/property-card.page';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
-import { ShowProductPage } from '../show-product/show-product.page';
 
 @Component({
   selector: 'app-favoritos',
@@ -22,24 +22,24 @@ export class FavoritosPage implements OnInit {
     private toastController: ToastController
   ) { }
 
-  async ngOnInit() {  
-   
+  async ngOnInit() {
+
   }
 
-  async ionViewDidEnter(){
+  async ionViewDidEnter() {
     const loading = await this.loadingCtrl.create({
       message: 'Cargando...',
       spinner: 'bubbles'
     });
     await loading.present();
     this.favoritos = await this.productosService.getProductsFavorites();
-    loading.dismiss();    
+    loading.dismiss();
   }
 
-  async openProduct(producto){
+  async openProduct(producto) {
     this.playSound();
     const modal = await this.modalCtrl.create({
-      component: ShowProductPage,
+      component: PropertyCardPage,
       componentProps: {
         producto: producto
       }
@@ -66,7 +66,7 @@ export class FavoritosPage implements OnInit {
       producto.is_favorite = false;
       producto.favorite_to_count--;
     }).catch(error => {
-      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');      
+      this.presentToast('Ha ocurrido un error al quitar el producto de favoritos.', 'danger');
     });
   }
 
@@ -81,11 +81,11 @@ export class FavoritosPage implements OnInit {
     toast.present();
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 
-  async openPreview(img){
+  async openPreview(img) {
     const modal = await this.modalCtrl.create({
       component: ImageModalPage,
       cssClass: 'b_transparent',
@@ -98,7 +98,7 @@ export class FavoritosPage implements OnInit {
   }
 
   async doRefresh(event) {
-    this.favoritos = await this.productosService.getProductsFavorites(); 
+    this.favoritos = await this.productosService.getProductsFavorites();
     event.target.complete();
   }
 

@@ -8,6 +8,7 @@ import { FavoritosPageRoutingModule } from './favoritos-routing.module';
 
 import { FavoritosPage } from './favoritos.page';
 import { ComponentsModule } from '../components/components.module';
+import { PropertyCardPageModule } from '../property-card/property-card.module';
 
 @NgModule({
   imports: [
@@ -15,8 +16,9 @@ import { ComponentsModule } from '../components/components.module';
     FormsModule,
     IonicModule,
     FavoritosPageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    PropertyCardPageModule
   ],
   declarations: [FavoritosPage]
 })
-export class FavoritosPageModule {}
+export class FavoritosPageModule { }

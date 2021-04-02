@@ -63,12 +63,6 @@
                 {{findPrice(producto.prices)?.price_value?.toLocaleString('de-DE')}}
               </ion-text>
             </p>
-            <ion-button *ngIf="!producto.is_favorite" color="dark" fill="clear" (click)="addToFavorite(producto)">
-              {{producto.favorite_to_count}} <ion-icon slot="end" name="heart-outline" color="danger"></ion-icon>
-            </ion-button>
-            <ion-button *ngIf="producto.is_favorite" color="dark" fill="clear" (click)="removeFromFavorite(producto)">
-              {{producto.favorite_to_count}} <ion-icon slot="end" name="heart" color="danger"></ion-icon>
-            </ion-button>
           </div>
           <div class="cover cover-light"></div>
           <ion-ripple-effect></ion-ripple-effect>

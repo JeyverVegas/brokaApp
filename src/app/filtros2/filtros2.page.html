@@ -32,20 +32,45 @@
       <ion-icon name="close-circle" color="danger"></ion-icon>
     </ion-chip>
 
-    <ion-chip *ngIf="filtros.state !== 'todas' || null" color="primary" (click)="removeState()">
-      <ion-label>{{filtros.state}}</ion-label>
-      <ion-icon name="close-circle" color="danger"></ion-icon>
-    </ion-chip>
-
-    <ion-chip *ngIf="filtros.city !== 'todas' || null" color="primary" (click)="removeCity()">
-      <ion-label>{{filtros.city}}</ion-label>
-      <ion-icon name="close-circle" color="danger"></ion-icon>
-    </ion-chip>
-
     <ion-chip *ngIf="selectedContract" color="primary" (click)="removeContract()">
       <ion-label>{{selectedContract.name}}</ion-label>
       <ion-icon name="close-circle" color="danger"></ion-icon>
     </ion-chip>
+
+    <ion-chip *ngIf="selectedType" color="primary" (click)="removeType()">
+      <ion-label>{{selectedType.name}}</ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+
+    <div *ngIf="filtros.city && filtros.city.length > 0">
+      <ion-chip *ngFor="let address of filtros.city" color="primary" (click)="removeAddress(address)">
+        <ion-label>{{address?.state?.name? address.state.name + ',' : null}} {{address.name}}</ion-label>
+        <ion-icon name="close-circle" color="danger"></ion-icon>
+      </ion-chip>
+    </div>
+
+    <div *ngIf="filtros.bathrooms && filtros.bathrooms.length > 0">
+      <ion-chip *ngFor="let bathroom of filtros.bathrooms" color="primary" (click)="removeBathrooms(bathroom)">
+        <ion-label>{{bathroom > 1 ? bathroom >= 6 ? bathroom + ' o más Baños' : bathroom + ' Baños' : bathroom + '
+          Baño'}}</ion-label>
+        <ion-icon name="close-circle" color="danger"></ion-icon>
+      </ion-chip>
+    </div>
+
+    <div *ngIf="filtros.rooms && filtros.rooms.length > 0">
+      <ion-chip *ngFor="let room of filtros.rooms" color="primary" (click)="removeRooms(room)">
+        <ion-label>{{room > 1 ? room >= 6 ? room + ' o más Habitaciones' : room + ' Habitaciones' : room + '
+          Habitación'}}</ion-label>
+        <ion-icon name="close-circle" color="danger"></ion-icon>
+      </ion-chip>
+    </div>
+
+
+    <app-select-address shape="round" color="secondary" (onChange)="setAddress($event)" label="Dirección:"
+      searchPlaceHolder="Ej. Buenos Aires, Bolivar..." mode="ios" [items]="cities" (onSearch)="findCities($event)">
+    </app-select-address>
+
+    <div class="line line-medium ion-margin-vertical"></div>
 
     <ion-segment *ngIf="filtros.contractType" mode="md" scrollable [(ngModel)]="filtros?.contractType[0]"
       (ionChange)="changeContractType()">
@@ -61,7 +86,7 @@
       Tipo de propiedad
     </h6>
     <ion-item detail>
-      <ion-select placeholder="Seleccionar" [(ngModel)]="filtros.type[0]">
+      <ion-select (ionChange)="changePropertyType()" placeholder="Seleccionar" [(ngModel)]="filtros.type[0]">
         <ion-select-option *ngFor="let propertyType of propertyTypes" [value]="propertyType.id">
           <ion-label>
             {{propertyType.name}}
@@ -104,11 +129,11 @@
         <ion-col size="12">
           <div style="display: flex; width: 100%; justify-content: space-between; align-items: center;">
             <div class="input-price-container">
-              <input placeholder="Desde" [(ngModel)]="filtros.priceBetween[0]" min="1" class="input-price"
+              <input placeholder="Desde" [(ngModel)]="filtros?.priceBetween[0]" min="1" class="input-price"
                 type="number">
             </div>
             <div class="input-price-container">
-              <input placeholder="Hasta" [(ngModel)]="filtros.priceBetween[1]" min="1" class="input-price"
+              <input placeholder="Hasta" [(ngModel)]="filtros?.priceBetween[1]" min="1" class="input-price"
                 type="number">
             </div>
           </div>

@@ -27,12 +27,23 @@ export class AddressService {
     });
   }
 
-  getCities(stateID?: number): Promise<City[]> {
+  getCities(statesID?: number[], searchFilter?: string): Promise<City[]> {
     return new Promise((resolve) => {
       let query = this.authService.api + '/cities';
-      if (stateID) {
-        query = query + '?filter[state]=' + stateID;
+
+      if (searchFilter || statesID) {
+        query = query + '?';
       }
+
+      if (statesID) {
+        query = query + 'filter[state]=' + statesID.join(',');
+      }
+
+      if (searchFilter) {
+        query = query + 'filter[name]=' + searchFilter;
+      }
+
+
       this.http.get(query, {
         headers: this.authService.authHeader
       }).subscribe((response: { data: City[] }) => {

@@ -18,10 +18,10 @@
 
   <div *ngIf="chats.getValue().length > 0">
     <ion-list>
-      <ion-item button *ngFor="let chat of chats | async" (click)="openChat(chat)">
+      <ion-item button *ngFor="let chat of chats | async;" (click)="openChat(chat)">
         <ion-avatar slot="start">
-          <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!cargo" (ionImgDidLoad)="cargo = !cargo"
-            class="animate__animated animate__fadeIn"></ion-img>
+          <ion-img [src]="chat.image" *ngIf="chat.image" [class.hidden]="!imgIsLoad(false)"
+            (ionImgDidLoad)="imgIsLoad(true)" class="animate__animated animate__fadeIn"></ion-img>
           <img src="../../assets/images/user.png" *ngIf="!chat.image">
         </ion-avatar>
         <ion-label>

@@ -9,14 +9,18 @@ import { Filtros2PageRoutingModule } from './filtros2-routing.module';
 import { Filtros2Page } from './filtros2.page';
 import { ComponentsModule } from '../components/components.module';
 
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     Filtros2PageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
   ],
-  declarations: [Filtros2Page]
+  declarations: [Filtros2Page],
+  exports: [
+    Filtros2Page
+  ]
 })
 export class Filtros2PageModule { }

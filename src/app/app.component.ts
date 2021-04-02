@@ -28,7 +28,7 @@ export class AppComponent {
       name: 'Abrir Mapa',
       icon: 'location-outline',
       active: true,
-      url: '/map'
+      url: '/tabs/tabs/map-products'
     },
     {
       name: 'Mis notificaciones',
@@ -59,7 +59,7 @@ export class AppComponent {
       icon: 'checkbox-outline',
       active: false,
       url: '/tabs/tabs/mis-matchs'
-    },    
+    },
   ]
 
 
@@ -87,13 +87,13 @@ export class AppComponent {
       this.splashScreen.hide();
       this.smartAudio.preload('tabSwitch', 'assets/audios/click.mp3');
       this.smartAudio.preload('chatsound', 'assets/audios/chatsound.mp3');
-      this.authService.isAuthenticated.subscribe(isLogin =>{
-        if(isLogin){
-          this.chatService.getChats();          
+      this.authService.isAuthenticated.subscribe(isLogin => {
+        if (isLogin) {
+          this.chatService.getChats();
           //this.oneSignal.setExternalUserId(this.authService.user.id.toString());
         }
       })
-      
+
       if (this.platform.is('cordova')) {
         //this.setupPush();
       }
@@ -101,17 +101,17 @@ export class AppComponent {
   }
 
   setupPush() {
-    
+
     this.oneSignal.startInit('eb9f921d-63b7-4c42-9dec-82544a36a935', '277124092318');
 
-    this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.None);    
+    this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.None);
 
     this.oneSignal.handleNotificationReceived().subscribe((data) => {
       let msg = data.payload.body;
       let title = data.payload.title;
       let additionalData = data.payload.additionalData;
       this.showAlert(title, msg, additionalData.task);
-    });    
+    });
 
     this.oneSignal.handleNotificationOpened().subscribe((data) => {
       let additionalData = data.notification.payload.additionalData;
@@ -121,14 +121,14 @@ export class AppComponent {
     this.oneSignal.endInit();
   }
 
-  async showAlert(title, msg , task){
+  async showAlert(title, msg, task) {
     const alerta = await this.alertCtrl.create({
       header: title,
       message: msg,
       buttons: [
         {
           text: 'Action: ' + task,
-          handler: () =>{
+          handler: () => {
             alert('has algo.');
           }
         }

@@ -1,7 +1,7 @@
 <div style="position: relative;" class="map-size-{{size}}">
   <img src="../../assets/images/logo-completo.png" class="logo-img">
 
-  <div *ngIf="showRadio"
+  <div class="animate__animated animate__fadeInUp" *ngIf="showRadio"
     style="width: 80vw; position: absolute; top: 20vh; left: 20px; z-index: 9999; background: white; border-radius: 10px; text-align: center;">
     <ion-text color="primary">Radio: {{radius}}Km</ion-text>
     <ion-item style="--padding-start: 0; --inner-padding-end: 0; border-radius: 10px; --background:transparent"
@@ -16,8 +16,6 @@
       </ion-range>
     </ion-item>
   </div>
-
-  
 
   <div *ngIf="tutorialStep == 1 && tutorial"
     style="position: fixed; height: 100%; width: 100%; z-index: 999999999999; background: rgba(0, 0, 0, .8); color: white;"

@@ -185,8 +185,8 @@ export class ProductosService {
     var queryString = '?';
     try {
 
-      //Type (House, Apartment, Etc)
-      if (this.filtros.type) {
+      //Type (House, Apartment, Etc)      
+      if (this.filtros.type && this.filtros.type.length > 0 && this.filtros.type[0] !== null) {
         queryString = queryString + 'filter[type]=' + this.filtros.type.join(',') + '&';
       }
 
@@ -248,11 +248,15 @@ export class ProductosService {
       }
 
       //Address
-      if (this.filtros.state && this.filtros.state != 'todas') {
-        queryString = queryString + 'filter[state]=' + this.filtros.state + '&';
-        if (this.filtros.city && this.filtros.city != 'todas') {
-          queryString = queryString + 'filter[city]=' + this.filtros.city + '&';
-        }
+
+      //STATE
+      if (this.filtros.state && this.filtros.state.length > 0) {
+        queryString = queryString + 'filter[state]=' + this.filtros.state.map(state => state.id).join(',') + '&';
+      }
+
+      //CITY
+      if (this.filtros.city && this.filtros.city.length > 0) {
+        queryString = queryString + 'filter[city]=' + this.filtros.city.map(city => city.id).join(',') + '&';
       }
 
       //Price

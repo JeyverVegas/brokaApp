@@ -1,7 +1,12 @@
 <ion-content style="overflow: hidden; height: fit-content; position: relative;">
-  <ion-button fill="clear" style="position: fixed; top: 0%; left: 0; z-index: 1;" (click)="goback()">
-    <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+  <ion-button fill="clear" style="position: fixed; top: 1%; left: 10px; z-index: 1;" (click)="openFilters()">
+    <ion-icon name="menu" slot="icon-only"></ion-icon>
   </ion-button>
+
+  <ion-button fill="clear" color="danger" style="position: fixed; top: 1%; right: 10px; z-index: 1;" (click)="goback()">
+    <ion-icon name="close" slot="icon-only"></ion-icon>
+  </ion-button>
+
   <app-google-map (onAreaSet)="loadProductsByArea($event)" (onMapLoaded)="loadProperties($event)"
     (onChangeRadius)="changeRadius($event)" size="normal" [BrokaControls]="BrokaControls"
     [productsForMarkers]="products" [radius]="radius">

@@ -1,0 +1,69 @@
+<div class="select-address select-address-{{shape}} {{class}}">
+
+  <ion-item lines="none">
+    <ion-label color="{{color}}">
+      {{label}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item class="select-all" lines="none" *ngIf="showSelectAll">
+    <ion-label color="{{color}}">
+      {{selectAllText}}
+    </ion-label>
+    <!-- <ion-checkbox (click)="selectAll($event)" slot="end" color="{{color}}"></ion-checkbox> -->
+    <ion-checkbox [(ngModel)]="allSelected" (click)="onAllSelectedChange($event)" slot="end" color="{{color}}">
+    </ion-checkbox>
+  </ion-item>
+
+  <ion-searchbar class="searchbar-address" (ionChange)="filtrar($event)" mode="{{mode}}"
+    placeholder="{{searchPlaceHolder}}"></ion-searchbar>
+
+  <ion-list *ngIf="for == 'states' && !loadingAddress" class="item-list">
+    <ion-item (click)="toggleAddress(address)" class="animate__animated animate__fadeInLeft"
+      *ngFor="let address of items">
+      <ion-checkbox [checked]="getSelectedItemsId(address.id)" color="{{color}}" slot="start"></ion-checkbox>
+      <ion-label>{{address?.state?.name? address.state.name + ',' : null}} {{address.name}}</ion-label>
+    </ion-item>
+    <div class="animate__animated animate__fadeInLeft ion-text-center" *ngIf="items.length < 1 && !loadingAddress">
+      <ion-text color="danger">
+        no hay resultados
+      </ion-text>
+    </div>
+  </ion-list>
+
+  <div *ngIf="loadingAddress" class="ion-text-center ion-padding animate__animated animate__fadeIn">
+    <ion-spinner style="height: 50px; width: 50px;" color="{{color}}" name="crescent"></ion-spinner>
+  </div>
+
+  <!-- <ion-list *ngIf="for == 'cities'" class="item-list">
+    <div *ngFor="let state of filteredItems">
+      <ion-list-header>
+        <ion-label>{{state.stateName}}</ion-label>
+      </ion-list-header>
+      <ion-item class="animate__animated animate__fadeInLeft" *ngFor="let address of state.cities"
+        (click)="toggleAddress(address)">
+        <ion-checkbox [checked]="getSelectedItemsId(address.id)" color="{{color}}" slot="start">
+        </ion-checkbox>
+        <ion-label>{{address.name}}</ion-label>
+      </ion-item>
+      <div class="animate__animated animate__fadeInLeft ion-text-center" *ngIf="state.cities.length < 1">
+        <ion-text color="danger">
+          no hay resultados
+        </ion-text>
+      </div>
+    </div>
+  </ion-list> -->
+
+  <!-- <div style="overflow-y: auto;">
+    <ion-chip (click)="toggleAddress(selectedItem)" color="{{color}}" *ngFor="let selectedItem of selectedItems">
+      <ion-label>
+        {{selectedItem?.state?.name? selectedItem.state.name + ',' : null}} {{selectedItem.name}}
+      </ion-label>
+      <ion-icon name="close-circle" color="danger"></ion-icon>
+    </ion-chip>
+  </div> -->
+
+  <div class="ion-text-right dropdown-arrow-address">
+    <ion-icon color="{{color}}" name="{{closeIcon}}"></ion-icon>
+  </div>
+</div>

@@ -307,3 +307,19 @@ ion-item {
     z-index: 9999;
     font-size: 50px;
 }
+
+.property-features {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 7px;
+    color: var(--ion-color-primary-contrast);
+}
+
+.feature-image {
+    max-width: 30px;
+    margin-right: 5px;
+}

@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { PropertyCardPage } from '../property-card/property-card.page';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { NotificacionesService } from '../servicios/notificaciones.service';
 import { ProductosService } from '../servicios/productos.service';
-import { ShowProductPage } from '../show-product/show-product.page';
 
 @Component({
   selector: 'app-notificaciones',
@@ -28,10 +28,10 @@ export class NotificacionesPage implements OnInit {
     private ref: ChangeDetectorRef
   ) { }
 
-  async ngOnInit() {    
+  async ngOnInit() {
   }
 
-  async ionViewDidEnter(){
+  async ionViewDidEnter() {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...'
@@ -85,7 +85,7 @@ export class NotificacionesPage implements OnInit {
     console.log(notification);
     this.notificacionesService.notificationMarkRead(notification.id).then(async (response: any) => {
       notification = response.data;
-      notification.read_at = response.data.read_at;      
+      notification.read_at = response.data.read_at;
       console.log(response.data)
       if (notification.additional_data.computed_type == 'match_accepted') {
         this.router.navigateByUrl('/tabs/tabs/mis-matchs');
@@ -93,7 +93,7 @@ export class NotificacionesPage implements OnInit {
       if (notification.additional_data.computed_type == 'unknown') {
         this.router.navigateByUrl('/tabs/tabs/mis-matchs');
       }
-  
+
       if (notification.additional_data.computed_type == 'property_created') {
         const loading = await this.loadingCtrl.create({
           spinner: 'lines',
@@ -102,7 +102,7 @@ export class NotificacionesPage implements OnInit {
         await loading.present();
         this.productosService.getOneProduct(notification.additional_data.property_id).then(async (response: any) => {
           const modal = await this.modalCtrl.create({
-            component: ShowProductPage,
+            component: PropertyCardPage,
             componentProps: {
               producto: response.data
             }
@@ -116,9 +116,9 @@ export class NotificacionesPage implements OnInit {
         })
       }
       this.ref.detectChanges();
-    }).catch(err =>{
+    }).catch(err => {
       console.log(err);
-    })        
+    })
   }
 
 
@@ -133,7 +133,7 @@ export class NotificacionesPage implements OnInit {
     toast.present();
   }
 
-  async doRefresh(event){    
+  async doRefresh(event) {
     this.notificacionesService.getNotifications().then((response: any) => {
       this.notificaciones = response.data;
       this.next = response.links.next;

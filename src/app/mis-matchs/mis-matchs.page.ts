@@ -65,7 +65,7 @@ export class MisMatchsPage {
     this.loading = false;
   }
 
-  async retryLoad(event) {
+  async retryLoad(event?) {
 
     setTimeout(() => {
       if (this.loading) {

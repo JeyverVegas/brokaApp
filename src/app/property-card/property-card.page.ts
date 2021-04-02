@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { ProductosService } from '../servicios/productos.service';
 import { } from 'googlemaps';
 import { GoogleMapsApiService } from '../servicios/google-maps-api.service';
+import { googleMapsControlOpts } from '../interface';
 
 @Component({
   selector: 'app-property-card',
@@ -19,7 +20,12 @@ export class PropertyCardPage implements OnInit {
 
   productMarker: any;
 
-
+  MapBrokaControls: googleMapsControlOpts = {
+    showMyPositionButton: false,
+    showRadiusButton: false,
+    draggable: false,
+    zoom: 15
+  }
 
   constructor(
     private modalCtrl: ModalController,

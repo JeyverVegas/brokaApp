@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { ButtonsBrokaComponent } from './buttons-broka.component';
+import { SelectAddressComponent } from './select-address.component';
 
-describe('ButtonsBrokaComponent', () => {
-  let component: ButtonsBrokaComponent;
-  let fixture: ComponentFixture<ButtonsBrokaComponent>;
+describe('SelectAddressComponent', () => {
+  let component: SelectAddressComponent;
+  let fixture: ComponentFixture<SelectAddressComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ButtonsBrokaComponent ],
+      declarations: [ SelectAddressComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ButtonsBrokaComponent);
+    fixture = TestBed.createComponent(SelectAddressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

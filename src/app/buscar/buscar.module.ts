@@ -8,6 +8,7 @@ import { BuscarPageRoutingModule } from './buscar-routing.module';
 
 import { BuscarPage } from './buscar.page';
 import { ComponentsModule } from '../components/components.module';
+import { Filtros2PageModule } from '../filtros2/filtros2.module';
 
 @NgModule({
   imports: [
@@ -15,8 +16,9 @@ import { ComponentsModule } from '../components/components.module';
     FormsModule,
     IonicModule,
     BuscarPageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    Filtros2PageModule
   ],
   declarations: [BuscarPage]
 })
-export class BuscarPageModule {}
+export class BuscarPageModule { }

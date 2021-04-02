@@ -9,7 +9,6 @@ import { InicioPageRoutingModule } from './inicio-routing.module';
 import { InicioPage } from './inicio.page';
 
 import { ComponentsModule } from '../components/components.module'
-import { ShowProductPageModule } from '../show-product/show-product.module';
 import { AlertPageModule } from '../alert/alert.module';
 
 @NgModule({
@@ -19,7 +18,6 @@ import { AlertPageModule } from '../alert/alert.module';
     IonicModule,
     InicioPageRoutingModule,
     ComponentsModule,
-    ShowProductPageModule,
     AlertPageModule
   ],
   declarations: [InicioPage]

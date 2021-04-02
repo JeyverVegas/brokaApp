@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
-import { ContractType, ProductFilters, PropertyType } from '../interface';
+import { City, ContractType, ProductFilters, PropertyType, State } from '../interface';
+import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
 
 @Component({
@@ -10,8 +11,12 @@ import { ProductosService } from '../servicios/productos.service';
 })
 export class Filtros2Page implements OnInit {
 
-  showSegment = 'filtros';
+  showSegment: 'filtros' | 'guardados' = 'filtros';
 
+  provincies: State[] = [];
+  cities: City[] = [];
+  showCities = false;
+  loadingCities: boolean = false;
   contractTypes: ContractType[] = [];
   errorContractTypes: boolean = false;
 
@@ -26,10 +31,10 @@ export class Filtros2Page implements OnInit {
   errorLoadingCurrencies: boolean = false;
 
   filtros: ProductFilters = {
-    city: 'todas',
+    city: [],
     hasAnyFeatures: [],
     sizeBetween: [],
-    state: 'todas',
+    state: [],
     contractType: [],
     type: [null],
     currency: null,
@@ -43,29 +48,16 @@ export class Filtros2Page implements OnInit {
   };
 
   selectedContract: ContractType = null;
+  selectedType: PropertyType = null;
   constructor(
     private modalCtrl: ModalController,
     private toastController: ToastController,
     private productosService: ProductosService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private addressService: AddressService
   ) { }
 
   async ngOnInit() {
-
-    if (Object.keys(this.productosService.filtros).length > 1) {
-      this.filtros = this.productosService.filtros;
-      if (!this.productosService.filtros.rooms) {
-        this.filtros.rooms = []
-      }
-
-      if (!this.productosService.filtros.bathrooms) {
-        this.filtros.bathrooms = []
-      }
-
-      if (!this.filtros.type) {
-        this.filtros.type = [];
-      }
-    }
 
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
@@ -79,10 +71,11 @@ export class Filtros2Page implements OnInit {
         this.presentToast('Ha ocurrido un error al cargar los filtros, por favor intente mas tarde.', 'danger');
         this.modalCtrl.dismiss();
       }
-    })
+    });
 
     try {
       loading.present();
+
       this.contractTypes = await this.productosService.getContractType();
       if (this.contractTypes.length < 1) {
         this.errorContractTypes = true;
@@ -110,22 +103,55 @@ export class Filtros2Page implements OnInit {
 
       console.log(this.currencies);
 
+      if (Object.keys(this.productosService.filtros).length > 1) {
+        this.filtros = this.productosService.filtros;
+        if (!this.productosService.filtros.rooms) {
+          this.filtros.rooms = []
+        }
+
+        if (!this.productosService.filtros.bathrooms) {
+          this.filtros.bathrooms = []
+        }
+
+        if (!this.filtros.type) {
+          this.filtros.type = [];
+        }
+
+        if (this.filtros.priceBetween?.length < 1 || !this.filtros.priceBetween) {
+          this.filtros.priceBetween = [null, null];
+        }
+
+        if (!this.productosService.filtros.contractType) {
+          this.filtros.contractType = [];
+        }
+      }
+
+      console.log(this.filtros)
+
     } catch (err) {
       loading.dismiss();
       console.log(err);
     }
   }
 
+  onItemSelect(event) {
+    console.log(event);
+  }
+
   changeContractType() {
     this.selectedContract = this.contractTypes.find(contract => contract.id == this.filtros.contractType[0]);
   }
 
+  changePropertyType() {
+    this.selectedType = this.propertyTypes.find(type => type.id == this.filtros.type[0]);
+  }
+
   clearFilters() {
     this.filtros = {
-      city: 'todas',
+      city: [],
       hasAnyFeatures: [],
       sizeBetween: [],
-      state: 'todas',
+      state: [],
       contractType: [],
       type: [],
       currency: null,
@@ -150,6 +176,8 @@ export class Filtros2Page implements OnInit {
     }
 
     this.productosService.filtros = this.filtros;
+
+    console.log(this.productosService.filtros);
     this.productosService.getProducts();
     this.modalCtrl.dismiss();
   }
@@ -158,8 +186,26 @@ export class Filtros2Page implements OnInit {
     this.filtros.rooms = values;
   }
 
+  removeRooms(room) {
+    for (let [index, r] of this.filtros.rooms.entries()) {
+      if (r === room) {
+        this.filtros.rooms.splice(index, 1);
+        break;
+      }
+    }
+  }
+
   handleBathroomsChange(values) {
     this.filtros.bathrooms = values;
+  }
+
+  removeBathrooms(bathroom: number) {
+    for (let [index, b] of this.filtros.bathrooms.entries()) {
+      if (b === bathroom) {
+        this.filtros.bathrooms.splice(index, 1);
+        break;
+      }
+    }
   }
 
   removeRadius() {
@@ -167,19 +213,42 @@ export class Filtros2Page implements OnInit {
   }
 
   removeState() {
-    this.filtros.state = 'todas';
-    this.filtros.city = 'todas';
+    this.filtros.state = [];
+    this.filtros.city = [];
   }
 
   removeCity() {
-    this.filtros.city = 'todas';
+    this.filtros.city = [];
   }
 
   removeContract() {
     this.filtros.contractType = [];
   }
 
+  removeType() {
+    this.filtros.type = [];
+  }
 
+  async setAddress(event: City[]) {
+    this.filtros.city = event;
+  }
+
+  removeAddress(address) {
+    for (let [index, a] of this.filtros.city.entries()) {
+      if (a.id === address.id) {
+        this.filtros.city.splice(index, 1);
+        break;
+      }
+    }
+  }
+
+  async findCities(event: string) {
+    if (event.length > 0) {
+      this.cities = await this.addressService.getCities(null, event)
+    } else {
+      this.cities = [];
+    }
+  }
 
   async presentToast(text, color) {
     const toast = await this.toastController.create({

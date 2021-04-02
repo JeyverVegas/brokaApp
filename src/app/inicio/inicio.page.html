@@ -1,5 +1,7 @@
 <ion-content style="max-height: 100vh; overflow: hidden;">
-
+    <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher> -->
     <div *ngIf="showdelete" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
         <ion-icon name="close" color="light"></ion-icon>
     </div>
@@ -98,105 +100,64 @@
                             </ion-text>
                         </p>
                     </h3>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        <span class="property-features">
+                            <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
+                            {{producto.bathrooms}} Baños
+                        </span>
 
-                    <span class="property-features">
-                        <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
-                        {{producto.bathrooms}} Baños
-                    </span>
+                        <span class="property-features">
+                            <img src="../../assets/icon/light/habitaciones.png" style="width: 20px; height: 20px;"
+                                alt="">
+                            {{producto.rooms}} habitaciones
+                        </span>
 
-                    <span class="property-features">
-                        <img src="../../assets/icon/light/habitaciones.png" style="width: 20px; height: 20px;" alt="">
-                        {{producto.rooms}} habitaciones
-                    </span>
+                        <span class="property-features">
+                            <img src="../../assets/icon/light/m2.png" style="width: 20px; height: 20px;" alt="">
+                            {{producto.square_meters}}M2
+                        </span>
 
-                    <span class="property-features">
-                        <img src="../../assets/icon/light/m2.png" style="width: 20px; height: 20px;" alt="">
-                        {{producto.square_meters}}M2
-                    </span>
+                        <span *ngFor="let feature of producto.features" class="property-features">
+                            <img *ngIf="feature.image" class="feature-image" [src]="feature.image" alt="">
+                            {{feature.name}}
+                        </span>
 
-                    <span *ngFor="let feature of producto.features" class="property-features">
-                        {{feature.name}}
-                    </span>
+                        <span class="property-features">
+                            {{producto.type.name}}
+                        </span>
 
-                    <span class="property-features">
-                        {{producto.type.name}}
-                    </span>
-
-                    <span class="property-features">
-                        {{producto.status.name}}
-                    </span>
-                    <p class="property-address">
-                        <ion-icon name="location"></ion-icon>
-                        En donde: {{producto.address.address}}.
-                    </p>
+                        <span class="property-features">
+                            {{producto.status.name}}
+                        </span>
+                        <p class="property-address">
+                            <ion-icon name="location"></ion-icon>
+                            En donde: {{producto.address.address}}.
+                        </p>
+                    </div>
                 </div>
                 <app-google-map [BrokaControls]="MapBrokaControls" for="product" [productsForMarkers]="[producto]">
                 </app-google-map>
-                <!-- <div #mapa class="mapita" [attr.data-index]="i"></div> -->
             </div>
 
             <div class="description-container">
-                <!-- <div class="ion-activatable ripple-parent ion-text-nowrap" style="position: relative;"
-                    (click)="openProduct(producto)">
-                    <h5 style="color: white; margin: 0;">
-                        <ion-icon name="location"></ion-icon>
-                        {{(producto.address.address.length>25)? (producto.address.address |
-                        slice:0:25)+'...':(producto.address.address)}}
-                    </h5>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Ambientes:
-                        {{producto.environments}}</p>
-                    <p style="color: white; overflow: hidden; text-overflow: ellipsis; margin: 10px 0;">Precio:
-                        {{findPrice(producto.prices)?.currency?.code}}
-                        {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
-                    </p>
-                    <ion-ripple-effect></ion-ripple-effect>
-                </div> -->
                 <ion-buttons class="buttons-container">
-                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                    <div class="boton-redondo boton-redondo-size-small" (click)="doRefresh(null)">
                         <img style="max-width: 100%;" src="../../assets/icon/reload-circle.png" alt="">
-                        <!-- <div class="pulse12"></div> -->
                     </div>
                     <div class="boton-redondo boton-redondo-size-normal" (click)="descartar(producto)">
                         <img style="max-width: 100%;" src="../../assets/icon/danger/close-circle.png" alt="">
-                        <!-- <div class="pulse12"></div> -->
                     </div>
                     <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
                         <img style="max-width: 100%;" src="../../assets/icon/start-circle.png" alt="">
-                        <!-- <div class="pulse12"></div> -->
                     </div>
                     <div class="boton-redondo boton-redondo-size-normal" (click)="matchear(producto)">
                         <img style="max-width: 100%;" src="../../assets/icon/heart-circle.png" alt="">
-                        <!-- <div class="pulse12"></div> -->
                     </div>
-                    <!-- <div class="boton-redondo" routerLink="/tabs/tabs/buscar" routerDirection="forward"
-                        (click)="playSound()">
-                        <img src="../../assets/icon/info.png" alt="">
-                        <div class="pulse12"></div>
-                    </div> -->
                     <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
                         <img style="max-width: 100%;" src="../../assets/icon/thunder-circle.png" alt="">
-                        <!-- <div class="pulse12"></div> -->
                     </div>
                 </ion-buttons>
             </div>
         </div>
     </div>
-    <!-- <ion-buttons class="tabs-inicio {{productos.getValue().length === 0 ? 'tabs-inicio-light' : 'tabs-inicio-light'}}">
-        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/inicio">
-            <ion-icon name="home" color="{{productos.getValue().length === 0 ? 'light' : 'light'}}"></ion-icon>
-        </ion-button>
-        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/buscar">
-            <ion-icon name="search-outline"></ion-icon>
-        </ion-button>
-        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}"
-            routerLink="/tabs/tabs/map-products">
-            <ion-icon name="globe-outline"></ion-icon>
-        </ion-button>
-        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/chat">
-            <ion-icon name="chatbubble-outline"></ion-icon>
-        </ion-button>
-        <ion-button color="{{productos.getValue().length === 0 ? 'light' : 'light'}}" routerLink="/tabs/tabs/usuario">
-            <ion-icon name="person-outline"></ion-icon>
-        </ion-button>
-    </ion-buttons> -->
 </ion-content>

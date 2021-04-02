@@ -53,6 +53,14 @@ export class ChatPage implements OnInit {
     modal.present();
   }
 
+  imgIsLoad(load: boolean) {
+    if (load) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   playSound() {
     this.smartAudio.play('tabSwitch');
   }

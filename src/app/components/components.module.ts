@@ -7,11 +7,12 @@ import { TopBarComponent } from './top-bar/top-bar.component';
 import { ErrorAlertComponent } from './error-alert/error-alert.component';
 import { SelectMultipleComponent } from './select-multiple/select-multiple.component';
 import { GoogleMapComponent } from './google-map/google-map.component';
-import { ButtonsBrokaComponent } from './buttons-broka/buttons-broka.component';
+import { SelectAddressComponent } from './select-address/select-address.component';
 
 @NgModule({
-    declarations: [TopBarComponent, ErrorAlertComponent, SelectMultipleComponent, GoogleMapComponent, ButtonsBrokaComponent],
-    exports: [TopBarComponent, ErrorAlertComponent, SelectMultipleComponent, GoogleMapComponent, ButtonsBrokaComponent, CommonModule, FormsModule, IonicModule]
+    imports: [CommonModule, FormsModule, IonicModule],
+    declarations: [TopBarComponent, ErrorAlertComponent, SelectMultipleComponent, GoogleMapComponent, SelectAddressComponent],
+    exports: [TopBarComponent, ErrorAlertComponent, SelectMultipleComponent, GoogleMapComponent, SelectAddressComponent, CommonModule, FormsModule, IonicModule]
 })
 
 export class ComponentsModule { }

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
+import { Filtros2Page } from '../filtros2/filtros2.page';
 import { ImageModalPage } from '../image-modal/image-modal.page';
 import { PropertyCardPage } from '../property-card/property-card.page';
 import { AuthenticationService } from '../servicios/authentication.service';
@@ -38,10 +39,6 @@ export class BuscarPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-
-  }
-
-  async ionViewDidEnter() {
     this.productos = await this.productosService.getProducts();
     this.initializedItems();
   }
@@ -242,6 +239,15 @@ export class BuscarPage implements OnInit {
     }
 
     return price;
+  }
+
+  async abriFiltros() {
+    this.playSound();
+    const modal = await this.modalCtrl.create({
+      component: Filtros2Page
+    });
+
+    modal.present();
   }
 
 

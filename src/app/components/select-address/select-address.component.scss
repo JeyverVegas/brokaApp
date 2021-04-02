@@ -1,0 +1,79 @@
+.select-address {
+    padding: 20px;
+    transition: all 0.3s;
+    margin: 10px 0;
+}
+
+.select-all {
+    display: none;
+}
+
+.select-address:focus-within {
+    box-shadow: 0px 10px 10px 5px rgba(0, 0, 0, 0.1);
+    .item-list {
+        max-height: 200px;
+    }
+
+    .searchbar-address {
+        border: none;
+    }
+
+    .dropdown-arrow-address {
+        display: block;
+    }
+
+    .select-all {
+        display: initial;
+    }
+}
+
+.dropdown-arrow-address {
+    display: none;
+    font-size: 25px;
+}
+
+.searchbar-address {
+    margin: 5px 0;
+    border: 1px solid #92949c;
+}
+
+.item-list {
+    transition: all 0.3s;
+    max-height: 0px;
+    overflow-y: auto;
+    margin: 5px 0;
+}
+
+//Color
+.select-address-primary {
+    border: 1px solid var(--ion-color-primary);
+}
+
+.select-address-secondary {
+    border: 1px solid var(--ion-color-secondary);
+}
+
+.select-address-tertiary {
+    border: 1px solid var(--ion-color-tertiary);
+}
+
+.select-address-success {
+    border: 1px solid var(--ion-color-success);
+}
+
+.select-address-warning {
+    border: 1px solid var(--ion-color-warning);
+}
+
+.select-address-danger {
+    border: 1px solid var(--ion-color-danger);
+}
+
+//Shapes
+.select-address-normal {
+    border-radius: none;
+}
+
+.select-address-round {
+    border-radius: 25px;
+}

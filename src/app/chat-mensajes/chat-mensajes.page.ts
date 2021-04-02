@@ -13,9 +13,9 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
   styleUrls: ['./chat-mensajes.page.scss'],
 })
 export class ChatMensajesPage implements OnInit {
-   
+
   @Input() usuario: any;
-  @Input() chat: any;  
+  @Input() chat: any;
 
   nuevoMensaje = '';
   loadOldMessages = false;
@@ -26,8 +26,8 @@ export class ChatMensajesPage implements OnInit {
   @ViewChild(IonContent) content: IonContent;
   @ViewChild(IonGrid) grid: IonGrid;
 
-  constructor(    
-    private modalCtrl: ModalController,                
+  constructor(
+    private modalCtrl: ModalController,
     private http: HttpClient,
     private authService: AuthenticationService,
     private toastController: ToastController,
@@ -42,58 +42,58 @@ export class ChatMensajesPage implements OnInit {
       message: 'Cargando Mensajes'
     });
     loading.present();
-    this.http.get(this.authService.api + '/chats/'+ this.chat.id + '/messages', { headers: this.authService.authHeader}).toPromise()
-    .then((response: any) =>{
-      this.chat.messages = response.data;      
-      this.chat.messages.sort((a, b) => {
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      });
-      setTimeout(() => {
-        this.content.scrollToBottom(200);
-      }, 500);
-      console.log(this.chat.messages);
-      loading.dismiss();
-    }).catch(err =>{
-      loading.dismiss();
-      console.log(err);
-    })
+    this.http.get(this.authService.api + '/chats/' + this.chat.id + '/messages', { headers: this.authService.authHeader }).toPromise()
+      .then((response: any) => {
+        this.chat.messages = response.data;
+        this.chat.messages.sort((a, b) => {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        });
+        setTimeout(() => {
+          this.content.scrollToBottom(200);
+        }, 500);
+        console.log(this.chat.messages);
+        loading.dismiss();
+      }).catch(err => {
+        loading.dismiss();
+        console.log(err);
+      })
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.chatService.markMessagesRead(this.chat.id);
     this.chatService.setNewMewssagesCount0();
   }
 
-  doRefresh(event){
-    this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: {data: any[]})=>{
-      if(response.data.length < 1){
+  doRefresh(event) {
+    this.chatService.getMoreMessages(this.chat.messages[0].id, this.chat.id).then((response: { data: any[] }) => {
+      if (response.data.length < 1) {
         event.target.disabled = true;
         return;
       }
       console.log(response);
-      let oldMessages: any[] = response.data;      
+      let oldMessages: any[] = response.data;
       oldMessages.sort((a, b) => {
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      });      
+      });
       console.log('oldMessages', oldMessages);
       console.log('chatMessages', this.chat.messages);
       this.chat.messages.unshift(...oldMessages);
-    }).catch(error =>{
+    }).catch(error => {
       console.log(error);
-    }).finally(() =>{
+    }).finally(() => {
       event.target.complete();
-    });    
+    });
   }
-  
-  allIsImage(attachments: any[]){
-    if(attachments){
+
+  allIsImage(attachments: any[]) {
+    if (attachments) {
       var allimg = false;
       var re = /(?:\.([^.]+))?$/;
-      attachments.forEach(attachment =>{
+      attachments.forEach(attachment => {
         var extension = re.exec(attachment.url);
-        if( extension[0] == '.jpeg' || extension[0] == '.png' || extension[0] == '.jpg' ) {
+        if (extension[0] == '.jpeg' || extension[0] == '.png' || extension[0] == '.jpg') {
           allimg = true;
-        }else{
+        } else {
           allimg = false;
         }
       })
@@ -101,7 +101,7 @@ export class ChatMensajesPage implements OnInit {
     }
   }
 
-  openimagePreview(attachments: []){
+  openimagePreview(attachments: []) {
     this.modalCtrl.create({
       component: ChatImagesPreviewPage,
       componentProps: {
@@ -112,7 +112,7 @@ export class ChatMensajesPage implements OnInit {
   }
 
   enviarMensaje() {
-    this.playSound();    
+    this.playSound();
 
     const formData = new FormData();
 
@@ -123,17 +123,25 @@ export class ChatMensajesPage implements OnInit {
       chat_id: this.chat.id
     }
 
-    this.chatService.sendMessage(newMessage).then((response: any) => {      
+    this.chatService.sendMessage(newMessage).then((response: any) => {
       this.chat.messages.push(response.data);
       setTimeout(() => {
         this.content.scrollToBottom(200);
       });
-    }).catch(err =>{
+    }).catch(err => {
       console.log(err);
     });
 
     this.nuevoMensaje = "";
-  }  
+  }
+
+  imgIsLoad(load: boolean) {
+    if (load) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   async presentToast(text, color) {
     const toast = await this.toastController.create({
@@ -167,7 +175,7 @@ export class ChatMensajesPage implements OnInit {
     this.modalCtrl.dismiss();
   }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 }

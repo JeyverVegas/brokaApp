@@ -42,13 +42,17 @@ export interface ProfileImage {
   updated_at?: Date;
 }
 
+export type Color = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'dark' | 'medium' | 'light';
+
 export interface State {
   id?: number;
   name?: string;
 }
 
 
-export interface City extends State { }
+export interface City extends State {
+  state_id?: number;
+}
 export interface PropertyType extends State { }
 export interface ContractType extends State { }
 export interface PropertyStatus extends State { }
@@ -75,8 +79,8 @@ export interface ProductFilters {
   hasAnyFeatures?: Array<number>;
   realEstateAgency?: Array<number>;
   radius?: [number, number, number];
-  city?: string;
-  state?: string;
+  city?: City[];
+  state?: State[];
   priceBetween?: [number, number];
   currency?: number;
   within?: LatLng[];

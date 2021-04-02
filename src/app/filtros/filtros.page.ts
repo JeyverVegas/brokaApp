@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
 import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures, googleMapsControlOpts } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
@@ -72,10 +71,10 @@ export class FiltrosPage implements OnInit {
   radiusActivated = null;
 
   filtros: ProductFilters = {
-    city: 'todas',
+    city: [],
     hasAnyFeatures: [],
     sizeBetween: [],
-    state: 'todas',
+    state: [],
     contractType: [],
     type: [],
     currency: null,
@@ -188,7 +187,7 @@ export class FiltrosPage implements OnInit {
     return alert;
   }
 
-  goBack(index: number, comeFrom: boolean) {
+  goBack(index?: number, comeFrom?: boolean) {
     if (index) {
       this.slides.slideTo(index);
     } else {
@@ -207,8 +206,8 @@ export class FiltrosPage implements OnInit {
 
   async goToAddress() {
     this.filtros.per_page = 10;
-    this.filtros.city = 'todas';
-    this.filtros.state = 'todas';
+    this.filtros.city = [];
+    this.filtros.state = [];
     this.filtros.radius = null;
     this.filtros.within = null;
     this.productosService.filtros = this.filtros;
@@ -234,8 +233,8 @@ export class FiltrosPage implements OnInit {
 
   async goToMap() {
     this.filtros.per_page = 99999999999;
-    this.filtros.city = 'todas';
-    this.filtros.state = 'todas';
+    this.filtros.city = [];
+    this.filtros.state = [];
     this.productosService.filtros = this.filtros;
     this.loadProperties(this.positionAndRadius);
     /* this.inmuebles = await (await this.productosService.getProducts()).getValue(); */
@@ -287,7 +286,7 @@ export class FiltrosPage implements OnInit {
   }
 
   async setState() {
-    if (this.filtros.state != 'todas') {
+    if (this.filtros.state && this.filtros.state.length > 0) {
       this.isProvinciesLoad = false;
       const loading = await this.loadingCtrl.create({
         spinner: 'lines',
@@ -311,7 +310,7 @@ export class FiltrosPage implements OnInit {
         await loading.dismiss();
       }
     } else {
-      this.filtros.city = 'todas';
+      this.filtros.city = [];
       this.partidos = [];
     }
   }

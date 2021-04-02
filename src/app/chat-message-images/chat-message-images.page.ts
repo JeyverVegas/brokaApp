@@ -50,7 +50,7 @@ export class ChatMessageImagesPage implements OnInit {
     this.modalctrl.dismiss();
   }
 
-  async sendMessage(){
+  async sendMessage() {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'enviando...'
@@ -60,27 +60,35 @@ export class ChatMessageImagesPage implements OnInit {
     const formData = new FormData();
     formData.append('content', this.mensaje);
     for (let index = 0; index < this.imagenes.length; index++) {
-      const imagen:any = this.imagenes[index];
+      const imagen: any = this.imagenes[index];
       formData.append(`attachments[${index}]`, imagen, imagen.name);
     }
     let message = {
       chat_id: this.chat.id,
       formData: formData
     }
-    this.chatService.sendMessage(message).then((response: any) =>{
+    this.chatService.sendMessage(message).then((response: any) => {
       this.chat.messages.push(response.data);
       setTimeout(() => {
         this.content.scrollToBottom(200);
-      });            
-    }).catch(err =>{
+      });
+    }).catch(err => {
       console.log(err);
       this.presentToast('Ha ocurrido un error al enviar el mensaje.', 'danger');
-    }).finally(()=>{
-      this.imagesToShow.forEach(image =>{
+    }).finally(() => {
+      this.imagesToShow.forEach(image => {
         URL.revokeObjectURL(image);
       })
       loading.dismiss();
     })
+  }
+
+  imgIsLoad(load: boolean) {
+    if (load) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async presentToast(message: string, color: string) {

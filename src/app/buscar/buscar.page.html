@@ -1,5 +1,6 @@
 <app-top-bar></app-top-bar>
 <ion-content>
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -15,6 +16,28 @@
   <ion-searchbar mode="ios" (ionInput)="filtrar($event)" placeholder="buscar..."></ion-searchbar>
   <div class="ion-padding">
 
+    <div style="height: 100%; display: flex;" *ngIf="filtro.length === 0">
+      <div style="margin: auto; text-align: center; margin-top: 30%;">
+        <img src="../../assets/images/logo-completo.png" style="max-width: 50%;" class="logo-img">
+        <h2>
+          <ion-text color="medium">
+            ¿No encuentras lo que buscas?
+          </ion-text>
+        </h2>
+        <p>
+          <ion-text color="medium">
+            Puedes explorar el mapa o cambiar los filtros de busqueda para encontrar propiedades cerca de
+            tí.
+          </ion-text>
+        </p>
+        <ion-button color="primary" shape="round" class="animate__animated animate__infinite animate__pulse" mode="ios"
+          (click)="abriFiltros()">
+          <ion-icon slot="start" name="options-outline"></ion-icon>
+          Cambiar filtros
+        </ion-button>
+      </div>
+    </div>
+
     <ion-grid *ngIf="filtro.length > 0">
       <ion-row>
         <ion-col size="12">
@@ -23,7 +46,7 @@
           </h3>
         </ion-col>
       </ion-row>
-      <ion-row *ngFor="let producto of filtro" class="animate__animated animate__fadeInUp">
+      <ion-row *ngFor="let producto of filtro" class="animate__animated animate__fadeInLeft">
         <ion-col size="5" class="ion-align-self-center">
           <img class="img-list" src="{{producto.images[0].url}}" alt="" (click)="openProduct(producto)">
         </ion-col>

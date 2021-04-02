@@ -8,7 +8,8 @@
     <ion-label>
       <h3>{{chat.name}}</h3>
       <p>
-        {{images.length}} fotos {{images[0].created_at | date:'dd'}} de {{images[0].created_at | date:'MMMM'}} de {{images[0].created_at | date:'yyyy'}}
+        {{images.length}} fotos {{images[0].created_at | date:'dd'}} de {{images[0].created_at | date:'MMMM'}} de
+        {{images[0].created_at | date:'yyyy'}}
       </p>
     </ion-label>
   </ion-item>
@@ -20,5 +21,5 @@
     <div class="hour-display">
       {{img.created_at | date:'hh:mm aaa'}}
     </div>
-  </div>  
+  </div>
 </ion-content>

@@ -9,7 +9,7 @@ import { SmartAudioService } from '../servicios/smart-audio.service';
 })
 export class ChatImagesPreviewPage implements OnInit {
 
-  @Input() images: [];
+  @Input() images: any[] = [];
   @Input() chat: any;
 
   constructor(
@@ -21,12 +21,12 @@ export class ChatImagesPreviewPage implements OnInit {
 
   }
 
-  closeModal(){
+  closeModal() {
     this.playSound();
     this.modalCtrl.dismiss();
-  } 
+  }
 
-  playSound(){
+  playSound() {
     this.smartAudio.play('tabSwitch');
   }
 

@@ -23,6 +23,8 @@ import { ImageModalPageModule } from './image-modal/image-modal.module';
 import { MapOptionsPageModule } from './map-options/map-options.module';
 import { SelectFilePageModule } from './select-file/select-file.module';
 import { PropertyCardPageModule } from './property-card/property-card.module';
+import { Filtros2PageModule } from './filtros2/filtros2.module';
+
 
 
 
@@ -38,7 +40,8 @@ import { PropertyCardPageModule } from './property-card/property-card.module';
     ImageModalPageModule,
     MapOptionsPageModule,
     SelectFilePageModule,
-    PropertyCardPageModule
+    PropertyCardPageModule,
+    Filtros2PageModule
   ],
   providers: [
     StatusBar,

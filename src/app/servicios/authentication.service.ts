@@ -21,7 +21,7 @@ export class AuthenticationService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject(null);
   token = '';
   /* 3.92.133.52 */
-  host = '18.216.249.138';
+  host = '18.219.211.63';
   api = 'http://' + this.host + '/api'
   user: Usuario = null;
   authHeader = null;

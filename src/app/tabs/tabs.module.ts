@@ -7,7 +7,7 @@ import { TabsPageRoutingModule } from './tabs-routing.module';
 
 import { TabsPage } from './tabs.page';
 import { FiltrosPageModule } from '../filtros/filtros.module';
-import { ShowProductPageModule } from '../show-product/show-product.module';
+
 
 @NgModule({
   imports: [
@@ -16,8 +16,7 @@ import { ShowProductPageModule } from '../show-product/show-product.module';
     FormsModule,
     TabsPageRoutingModule,
     FiltrosPageModule,
-    ShowProductPageModule
   ],
   declarations: [TabsPage]
 })
-export class TabsPageModule {}
+export class TabsPageModule { }
