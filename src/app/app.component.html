@@ -1,5 +1,16 @@
 <ion-app>
-  <ion-menu swipeGesture="false" side="end" menuId="first" contentId="main" (ionWillOpen)="updateUser()">
+
+  <div #appspinner class="sk-folding-cube-container">
+    <div class="sk-folding-cube">
+      <div class="sk-cube1 sk-cube"></div>
+      <div class="sk-cube2 sk-cube"></div>
+      <div class="sk-cube4 sk-cube"></div>
+      <div class="sk-cube3 sk-cube"></div>
+    </div>
+  </div>
+
+  <ion-menu [disabled]="splashSpinner" swipeGesture="false" side="end" menuId="first" contentId="main"
+    (ionWillOpen)="updateUser()">
     <ion-content>
       <div class="menu-header-bg"></div>
       <ion-menu-toggle>
@@ -38,5 +49,5 @@
 
     </ion-content>
   </ion-menu>
-  <ion-router-outlet id="main"></ion-router-outlet>
+  <ion-router-outlet [hidden]="splashSpinner" id="main"></ion-router-outlet>
 </ion-app>

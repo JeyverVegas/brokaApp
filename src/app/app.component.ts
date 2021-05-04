@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -22,7 +22,11 @@ export class AppComponent {
     profile: { firstname: 'Invitado', image: '' }
   } as Usuario;
 
+  @ViewChild('appspinner', { static: true }) appSpinner: ElementRef;
+  splashSpinner = true;
+
   selectedPath = null;
+
 
   pages = [
     {
@@ -89,6 +93,12 @@ export class AppComponent {
       this.splashScreen.hide();
       this.smartAudio.preload('tabSwitch', 'assets/audios/click.mp3');
       this.smartAudio.preload('chatsound', 'assets/audios/chatsound.mp3');
+
+      setTimeout(() => {
+        this.splashSpinner = false
+        this.appSpinner.nativeElement.style.display = 'none';
+      }, 3000)
+
       this.authService.isAuthenticated.subscribe(isLogin => {
         if (isLogin) {
           this.chatService.getChats();
