@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { catchError, timeout } from 'rxjs/operators';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
+import { DEFAULT_REQUEST_TIMEOUT } from '../servicios/productos.service';
 
 @Component({
   selector: 'app-registro',
@@ -32,8 +34,8 @@ export class RegistroPage implements OnInit {
     private router: Router,
     private smartAudio: SmartAudioService,
     private authService: AuthenticationService,
-    private toastCtrl: ToastController
-
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -45,23 +47,38 @@ export class RegistroPage implements OnInit {
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
       message: 'Cargando...',
-      duration: 10000,
       cssClass: 'custom-loading custom-loading-primary',
     });
 
-    loading.onDidDismiss().then(() => {
-      if (!this.isRegistered && !this.error.displayError) {
-        this.presentToast('Ha ocurrido un error al registrarse, por favor verifique su conexion a internet.', 'danger');
-      }
-    })
-
     loading.present();
 
-    this.authService.register(this.usuario).subscribe(async (response) => {
+    this.authService.register(this.usuario).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).subscribe(async (response) => {
       this.isRegistered = true;
       await loading.dismiss();
       this.router.navigateByUrl('/filtros', { replaceUrl: true });
     }, async (err) => {
+
+      if (err.message == "Tiempo de espera excedido.") {
+        this.alertCtrl.create({
+          header: 'Error de conexión',
+          message: err,
+          buttons: [
+            {
+              text: 'Ok'
+            }
+          ]
+        }).then(a => {
+          a.present();
+        });
+
+        return;
+      }
+
       this.presentToast('error al registrar el usuario', 'danger');
       this.error.message = err.error.message;
       this.error.errors = err.error.errors;

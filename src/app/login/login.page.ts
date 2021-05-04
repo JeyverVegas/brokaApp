@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook/ngx';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AuthenticationService } from '../servicios/authentication.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { catchError, timeout } from 'rxjs/operators';
+import { DEFAULT_REQUEST_TIMEOUT } from '../servicios/productos.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +35,7 @@ export class LoginPage implements OnInit {
     private smartAudio: SmartAudioService,
     private authService: AuthenticationService,
     private toastCtrl: ToastController,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
@@ -49,11 +52,33 @@ export class LoginPage implements OnInit {
 
     loading.present();
 
-    this.authService.login(this.usuario).subscribe(async (response) => {
+    this.authService.login(this.usuario).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).subscribe(async (response) => {
       await loading.dismiss();
       this.router.navigateByUrl('filtros', { replaceUrl: true });
     }, async (err) => {
       await loading.dismiss();
+
+      if (err.message == "Tiempo de espera excedido.") {
+        this.alertCtrl.create({
+          header: 'Error de conexión',
+          message: err,
+          buttons: [
+            {
+              text: 'Ok'
+            }
+          ]
+        }).then(a => {
+          a.present();
+        });
+
+        return;
+      }
+
       this.error.message = err.error.message;
       this.error.errors = err.error.errors;
       this.error.displayError = true;
