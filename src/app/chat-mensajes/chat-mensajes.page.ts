@@ -39,7 +39,8 @@ export class ChatMensajesPage implements OnInit {
   async ngOnInit() {
     const loading = await this.loadingCtrl.create({
       spinner: 'dots',
-      message: 'Cargando Mensajes'
+      message: 'Cargando Mensajes',
+      cssClass: 'custom-loading custom-loading-primary',
     });
     loading.present();
     this.http.get(this.authService.api + '/chats/' + this.chat.id + '/messages', { headers: this.authService.authHeader }).toPromise()

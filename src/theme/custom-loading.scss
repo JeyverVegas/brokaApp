@@ -1,0 +1,124 @@
+/*CUSTOM LOADING*/
+
+.custom-loading {
+  .loading-wrapper {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+/*LOADING COLORS*/
+
+.custom-loading-primary {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-primary);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-secondary {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-secondary);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-tertiary {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-tertiary);
+      }
+    }
+  }
+}
+
+.custom-loading-success {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-success);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-warning {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-warning);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-danger {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-danger);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-dark {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-dark);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-medium {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-medium);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+.custom-loading-light {
+  .loading-wrapper {
+    .loading-spinner {
+      ion-spinner {
+        color: var(--ion-color-light);
+      }
+    }
+    .loading-content {
+      color: var(--ion-color-light);
+    }
+  }
+}

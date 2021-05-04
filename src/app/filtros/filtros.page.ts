@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, IonSlides, LoadingController, ModalController, ToastController } from '@ionic/angular';
-import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures, googleMapsControlOpts } from '../interface';
+import { ContractType, ProductFilters, PropertyType, PropertyStatus, PropertyFeatures, googleMapsControlOpts, City } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
 import { SmartAudioService } from '../servicios/smart-audio.service';
@@ -18,8 +18,7 @@ export class FiltrosPage implements OnInit {
   contractTypes: ContractType[] = [];
   propertyStatuses: PropertyStatus[] = [];
   features: PropertyFeatures[] = [];
-  provincies = [];
-  partidos = [];
+  cities = [];
   inmuebles: any[] = [];
   @ViewChild('filtrosslider', { static: true }) protected slides: IonSlides;
 
@@ -36,7 +35,8 @@ export class FiltrosPage implements OnInit {
   firtsRender = false;
 
   slidesOpts = {
-    allowTouchMove: false
+    allowTouchMove: false,
+    //autoHeight: true
   }
 
   comeFromSlide: number = null;
@@ -104,35 +104,45 @@ export class FiltrosPage implements OnInit {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
       message: 'Cargando...',
-      duration: 10000
+      cssClass: 'custom-loading custom-loading-primary',
     });
-
-    let alert: any = null;
-
-    loading.onWillDismiss().then(async () => {
-      if (!this.isLoadingFirstRenderData) {
-        alert = await this.presentAlert();
-      }
-    })
 
     try {
       await loading.present();
-      this.contractTypes = await this.productosService.getContractType();
-      this.propertyTypes = await this.productosService.getPropertyType();
-      this.minMaxRange = await this.productosService.getFiltersRange();
+      const [contractTypes, propertyTypes, minMaxRange] = await Promise.all([
+        this.productosService.getContractType(),
+        this.productosService.getPropertyType(),
+        this.productosService.getFiltersRange()
+      ]);
+
+      this.contractTypes = contractTypes;
+      this.propertyTypes = propertyTypes;
+      this.minMaxRange = minMaxRange;
+
       this.currencies = this.minMaxRange.prices;
-      this.provincies = await this.addressService.getStates();
       this.radiusActivated = this.productosService.filtros.radius;
       this.isLoadingFirstRenderData = true;
-      if (alert) {
-        alert.dismiss();
-      }
       await loading.dismiss();
     } catch (error) {
+      console.log(error.message);
+      if (error.message == "Tiempo de espera excedido.") {
+        this.alertCtrl.create({
+          header: 'Error de conexión',
+          message: error,
+          buttons: [
+            {
+              text: 'Ok'
+            }
+          ]
+        }).then(a => {
+          a.present();
+          a.onWillDismiss().then(_ => {
+            this.ngOnInit();
+          })
+        });
+      }
       await loading.dismiss();
-      console.log(error);
     }
-
     this.firstRender = true;
   }
 
@@ -158,7 +168,6 @@ export class FiltrosPage implements OnInit {
       this.minMaxRange = await this.productosService.getFiltersRange();
       this.currencies = this.minMaxRange.prices;
       console.log(this.minMaxRange);
-      this.provincies = await this.addressService.getStates();
       this.radiusActivated = this.productosService.filtros.radius;
       this.isLoadingFirstRenderData = true;
       alert.dismiss();
@@ -244,6 +253,8 @@ export class FiltrosPage implements OnInit {
   async changeRadius(event: any) {
     if (this.firtsRender) {
       this.productosService.filtros.within = null;
+      this.productosService.filtros.city = null;
+      this.productosService.filtros.state = null;
       this.positionAndRadius = event;
       this.loadProperties(event);
     }
@@ -272,6 +283,8 @@ export class FiltrosPage implements OnInit {
   async loadProductsByArea(event) {
     this.productosService.filtros.within = event;
     this.productosService.filtros.radius = null;
+    this.productosService.filtros.city = null;
+    this.productosService.filtros.state = null;
     this.inmuebles = (await this.productosService.getProducts()).getValue();
     console.log(event);
   }
@@ -285,40 +298,43 @@ export class FiltrosPage implements OnInit {
     }
   }
 
-  async setState() {
-    if (this.filtros.state && this.filtros.state.length > 0) {
-      this.isProvinciesLoad = false;
-      const loading = await this.loadingCtrl.create({
-        spinner: 'lines',
-        message: 'Cargando partidos...',
-        duration: 10000
-      });
-      loading.onWillDismiss().then(() => {
-        if (!this.isProvinciesLoad) {
-          this.presentToast('ha ocurrido un error al cargar las provincias, por favor intente más tarde.', 'danger');
-        }
-      });
-      await loading.present();
-      try {
-        let provincy = this.provincies.find(provincy => provincy.name == this.filtros.state);
-        console.log(provincy);
-        this.partidos = await this.addressService.getCities(provincy.id);
-        this.isProvinciesLoad = true;
-        await loading.dismiss();
-      } catch (error) {
-        console.log(error);
-        await loading.dismiss();
-      }
+
+  async findCities(event: string) {
+    if (event.length > 0) {
+      this.cities = await this.addressService.getCities(null, event)
     } else {
-      this.filtros.city = [];
-      this.partidos = [];
+      this.cities = [];
     }
   }
 
-  setStateCity() {
-    this.playSound();
-    this.slideNext(6);
+  async setAddress(event: City[]) {
+    const loading = await this.loadingCtrl.create({
+      spinner: 'crescent',
+      message: 'Cargando...',
+      cssClass: 'custom-loading custom-loading-primary',
+    });
+    loading.present();
+
+    try {
+      let city = await this.addressService.getCityById(event[0].id);
+      this.filtros.city = [city];
+      this.filtros.radius = null;
+      this.filtros.within = null;
+      loading.dismiss();
+    } catch (error) {
+      loading.dismiss();
+    }
   }
+
+  isAddressSet() {
+    if (this.filtros.city && this.filtros.city.length > 0) {
+      return true
+    }
+
+    return false;
+  }
+
+
 
   setCurrency() {
     const currency = this.minMaxRange.prices.find(price => price.id == this.filtros.currency);
@@ -333,8 +349,6 @@ export class FiltrosPage implements OnInit {
   }
 
   async setPricesBetween() {
-    this.filtros.priceBetween[0] = this.pricesBetween.lower;
-    this.filtros.priceBetween[1] = this.pricesBetween.upper;
     this.productosService.filtros = this.filtros;
     if (await this.modalCtrl.getTop()) {
       this.productosService.getProducts();

@@ -19,6 +19,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Facebook } from '@ionic-native/facebook/ngx';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
+import { NavigationBar } from '@ionic-native/navigation-bar/ngx';
 import { ImageModalPageModule } from './image-modal/image-modal.module';
 import { MapOptionsPageModule } from './map-options/map-options.module';
 import { SelectFilePageModule } from './select-file/select-file.module';
@@ -59,6 +60,7 @@ import { Filtros2PageModule } from './filtros2/filtros2.module';
     Facebook,
     GooglePlus,
     OneSignal,
+    NavigationBar
   ],
   bootstrap: [AppComponent]
 })

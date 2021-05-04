@@ -1,13 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import { ContractType, ProductFilters, ProductRelationships, PropertyFeatures, PropertyType } from '../interface'
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { catchError, timeout } from 'rxjs/operators';
+
+export const DEFAULT_REQUEST_TIMEOUT = 10000;
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ProductosService {
 
   private productos = new BehaviorSubject([]);
@@ -52,61 +57,86 @@ export class ProductosService {
   }
 
   getFiltersRange(): Promise<any> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.http.get(this.authService.api + '/ranges', {
         headers: this.authService.authHeader
-      }).subscribe((response: any) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: any) => {
         resolve(response);
       }, error => {
-        alert(JSON.stringify(error));
+        reject(error)
       })
     });
   }
 
   getPropertyType(): Promise<PropertyType[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.http.get(this.authService.api + '/property-types', {
         headers: this.authService.authHeader
-      }).subscribe((response: { data: PropertyType[] }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: PropertyType[] }) => {
         resolve(response.data);
       }, error => {
-        alert(JSON.stringify(error));
+        reject(error)
       })
     });
   }
 
   getContractType(): Promise<ContractType[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.http.get(this.authService.api + '/contract-types', {
         headers: this.authService.authHeader
-      }).subscribe((response: { data: ContractType[] }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: ContractType[] }) => {
         resolve(response.data);
       }, error => {
-        alert(JSON.stringify(error));
+        reject(error)
       })
     });
   }
 
   getPropertyStatuses(): Promise<PropertyType[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.http.get(this.authService.api + '/property-statuses', {
         headers: this.authService.authHeader
-      }).subscribe((response: { data: PropertyType[] }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: PropertyType[] }) => {
         resolve(response.data);
       }, error => {
-        alert(JSON.stringify(error));
+        reject(error)
       })
     });
   }
 
   getPropertyFeatures(): Promise<PropertyFeatures[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.http.get(this.authService.api + '/property-features', {
         headers: this.authService.authHeader
-      }).subscribe((response: { data: PropertyFeatures[] }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: PropertyFeatures[] }) => {
         resolve(response.data);
       }, error => {
-        alert(JSON.stringify(error));
+        reject(error)
       })
     });
   }
@@ -114,13 +144,23 @@ export class ProductosService {
   uploadSearch(search) {
     return this.http.post(this.authService.api + '/profile/search-parameters', search, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   downloadSearch() {
     return this.http.get(this.authService.api + '/profile/search-parameters', {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   getOneProduct(propertyID: number) {
@@ -129,7 +169,12 @@ export class ProductosService {
       params: {
         include: this.getProductRelationships([])
       }
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   async getProducts(): Promise<BehaviorSubject<any[]>> {
@@ -138,14 +183,14 @@ export class ProductosService {
     this.loading = await this.loadingCtrl.create({
       message: 'Cargando propiedades...',
       spinner: 'bubbles',
-      duration: 10000
+      cssClass: 'custom-loading custom-loading-primary',
     })
 
-    this.loading.onWillDismiss().then(() => {
+    /* this.loading.onWillDismiss().then(() => {
       if (!success) {
         this.presentAlert();
       }
-    })
+    }) */
 
     try {
       this.loading.present();
@@ -154,7 +199,30 @@ export class ProductosService {
         params: {
           include: this.getProductRelationships()
         }
-      }).toPromise();
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          this.loading.dismiss();
+          this.alertCtrl.create({
+            header: 'Error de conexión',
+            message: 'Tiempo de espera excedido.',
+            buttons: [
+              {
+                text: 'Cancelar'
+              },
+              {
+                text: 'Reintentar',
+                handler: () => {
+                  this.getProducts();
+                }
+              }
+            ]
+          }).then(a => {
+            a.present();
+          });
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).toPromise();
 
       this.productos.next(response.data);
       this.total.next(response.meta.total);
@@ -296,16 +364,21 @@ export class ProductosService {
       relationships = [];
     }
 
-    return new Promise<[]>((resolve) => {
+    return new Promise<[]>((resolve, reject) => {
       this.http.get(this.authService.api + '/properties/favorites', {
         headers: this.authService.authHeader,
         params: {
           include: this.getProductRelationships(relationships)
         }
-      }).subscribe((response: { data: any }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: any }) => {
         resolve(response.data);
       }, e => {
-        console.log(e);
+        reject(e);
       });
     });
   }
@@ -321,31 +394,56 @@ export class ProductosService {
   addFavoriteProduct(id: number) {
     return this.http.post(this.authService.api + '/properties/favorites', { property_id: id }, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   removeFavoriteProduct(id: number) {
     return this.http.delete(this.authService.api + '/properties/favorites/' + id, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   discardProduct(id: number) {
     return this.http.post(this.authService.api + '/properties/discarted', { property_id: id }, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   removeDiscardProduct(id: number) {
     return this.http.delete(this.authService.api + '/properties/discarted/' + id, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   removerAllDiscartedProducts() {
     return this.http.delete(this.authService.api + '/properties/discarted', {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
   getDescartados(relationships?: Array<ProductRelationships>) {
@@ -354,16 +452,21 @@ export class ProductosService {
       relationships = [];
     }
 
-    return new Promise<[]>((resolve) => {
+    return new Promise<[]>((resolve, reject) => {
       this.http.get(this.authService.api + '/properties/discarted', {
         headers: this.authService.authHeader,
         params: {
           include: this.getProductRelationships(relationships)
         }
-      }).subscribe((response: { data: any }) => {
+      }).pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).subscribe((response: { data: any }) => {
         resolve(response.data);
       }, e => {
-        console.log(e);
+        reject(e);
       });
     });
   }

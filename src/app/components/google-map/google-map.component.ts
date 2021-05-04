@@ -1,5 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, Inject, Renderer2 } from '@angular/core';
-import { DOCUMENT } from '@angular/common'
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { googleMapsControlOpts, LatLng, } from 'src/app/interface';
 import { AuthenticationService } from 'src/app/servicios/authentication.service';
@@ -68,6 +67,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
   polygon: google.maps.Polygon;
   isAreaSet: boolean = false;
   polygonMarkers: google.maps.Marker[] = [];
+  @Input() zone: any[] = [];
 
   //Radius
   @Input() radius: number = 1;
@@ -233,7 +233,10 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     if (changes.productsForMarkers) {
       this.clearMarkers();
       this.setMarkers(this.clusterer);
-
+      this.zoom = 10;
+      if (this.map) {
+        this.map.setZoom(this.zoom);
+      }
       if (
         this.radiusShape &&
         this.for === 'user' &&
@@ -245,25 +248,63 @@ export class GoogleMapComponent implements OnInit, OnChanges {
         this.radiusShape.setMap(null);
       }
 
+      if (!this.productService.filtros.within || this.productService.filtros.within.length < 1 || !this.zone) {
+        this.clearPolygon();
+      }
+
+      if (this.zone && this.polygon) {
+        const path = this.polygon.getPath();
+        path.clear();
+
+        this.zone.forEach(latLng => {
+          var coordinatess = new google.maps.LatLng(latLng.lat, latLng.lng);
+          path.push(coordinatess);
+        });
+        if (this.productsForMarkers.length < 1) {
+          console.log(this.zone[0]);
+          this.map.setCenter(this.zone[0]);
+        }
+        this.zoom = 13;
+        this.map.setZoom(this.zoom);
+      };
+
+
       if (this.tutorial && this.tutorialStep == 2) {
-        console.log('listo');
         this.secondStepSuccess = true;
       }
     }
+
+    if (this.productsForMarkers.length < 1 && this.zone && this.polygon) {
+      const path = this.polygon.getPath();
+      path.clear();
+
+      this.zone.forEach(latLng => {
+        var coordinatess = new google.maps.LatLng(latLng.lat, latLng.lng);
+        path.push(coordinatess);
+      });
+      console.log(this.zone[0].latLng);
+      this.map.setZoom(this.zone[0].latLng);
+      this.zoom = 13;
+      this.map.setZoom(this.zoom);
+    };
   }
 
   async displayMapForUser() {
-    var curentLocation = await (await this.geolocation.getCurrentPosition()).coords;
-    if (!curentLocation) {
-      if (this.authService.user.address) {
-        this.center = { lat: this.authService.user.address.latitude, lng: this.authService.user.address.longitude }
-        this.map.setCenter(this.center);
+    try {
+      var curentLocation = await (await this.geolocation.getCurrentPosition()).coords;
+      if (!curentLocation) {
+        if (this.authService.user.address) {
+          this.center = { lat: this.authService.user.address.latitude, lng: this.authService.user.address.longitude }
+          this.map.setCenter(this.center);
+        }
       }
+      this.center = { lat: curentLocation.latitude, lng: curentLocation.longitude }
+      this.map.setCenter(this.center);
+      this.setUserMarker();
+      this.setRadius();
+    } catch (error) {
+
     }
-    this.center = { lat: curentLocation.latitude, lng: curentLocation.longitude }
-    this.map.setCenter(this.center);
-    this.setUserMarker();
-    this.setRadius();
   }
 
   setUserMarker() {
@@ -318,7 +359,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
         //productMarker.setMap(this.map);
         productMarker.addListener('click', () => {
           if (this.for == 'user') {
-            this.showProductCard(product);
+            this.showProductCard(product, productMarker);
           }
         })
         this.brokaMarkers.push(productMarker);
@@ -354,9 +395,6 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       default:
         return {
           url: '../../../assets/icon/marker.png',
-          scaledSize: new google.maps.Size(40, 45),
-          origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(0, 0)
         }
     }
 
@@ -394,6 +432,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     try {
       var curentLocation = await (await this.geolocation.getCurrentPosition({ timeout: 6001 })).coords;
       this.clearPolygon();
+      this.clearMarkers();
       this.center = { lat: curentLocation.latitude, lng: curentLocation.longitude }
       this.map.setCenter(this.center);
       this.map.setZoom(10);
@@ -425,7 +464,7 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     this.isAreaSet = false;
   }
 
-  async showProductCard(product: any) {
+  async showProductCard(product: any, marker) {
     this.playSound();
     const modal = await this.modalCtrl.create({
       component: PropertyCardPage,
@@ -434,6 +473,17 @@ export class GoogleMapComponent implements OnInit, OnChanges {
       }
     });
     modal.present();
+
+    modal.onWillDismiss().then(m => {
+      if (m.data?.deleteProperty) {
+        for (let [index, m] of this.brokaMarkers.entries()) {
+          if (m === marker) {
+            marker.setMap(null);
+            this.brokaMarkers.splice(index, 1);
+          }
+        }
+      }
+    });
   }
 
 
@@ -478,10 +528,6 @@ export class GoogleMapComponent implements OnInit, OnChanges {
     this.radiusShape.addListener('click', () => {
       this.presentToast('ha click fuera del radio para cambiar tu ubicación', 'danger');
     });
-
-    /* this.radiusShape.addListener('radius_changed', (e) => {
-      console.log(this.radiusShape.getRadius());
-    }) */
 
     this.radiusShape.setMap(this.map);
     this.map.setCenter(this.center);

@@ -4,24 +4,57 @@
       <ion-icon name="close"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <div *ngIf="showdelete" class="match-discard-container">
+    <ion-icon name="close" color="light" class="animate__animated animate__fadeInUp animate__faster"></ion-icon>
+  </div>
+
+  <div *ngIf="showmatch" class="match-discard-container">
+    <ion-icon name="heart" color="success" class="animate__animated animate__fadeInUp animate__faster"></ion-icon>
+  </div>
+
   <div class="img-container">
     <div class="show-image" style="border-radius: 15px; overflow: hidden;" *ngFor="let image of property.images">
       <img [src]="image.url" style="max-width: 100%;" alt="">
     </div>
     <div class="product-description">
-      <h3 style="text-align: right;">
-        <ion-text color="light">
-          <ion-icon *ngIf="property.type.id == 1" name="home"></ion-icon>
-          <ion-icon *ngIf="property.type.id == 2" name="business"></ion-icon>
-          {{property.type.name}}
-        </ion-text>
-        <p>
-          <ion-text color="light">
-            {{findPrice(property.prices)?.currency?.code}}
-            {{findPrice(property.prices)?.price_value.toLocaleString('de-DE')}}
-          </ion-text>
-        </p>
-      </h3>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <div *ngIf="property.is_highly_requested" style="display: flex; color: white; align-items: center;">
+              <ion-icon style="font-size: 50px;" name="heart-circle-outline"></ion-icon>
+              <p style="margin-left: 10px;">Popular entre los usuarios.</p>
+            </div>
+            <div *ngIf="property.is_big" style="display: flex; color: white; align-items: center;">
+              <img style="max-width: 50px;" src="../../assets/icon/light/property-big.png" alt="">
+              <p style="margin-left: 10px;">Propiedad de gran tamaño.</p>
+            </div>
+            <div *ngIf="property.is_cheap_in_dollars" style="display: flex; color: white; align-items: center;">
+              <img style="max-width: 30px;" src="../../assets/icon/light/low-price.png" alt="">
+              <p style="margin-left: 10px;">Economica en $.</p>
+            </div>
+            <div *ngIf="property.is_cheap_in_pesos" style="display: flex; color: white; align-items: center;">
+              <img style="max-width: 30px;" src="../../assets/icon/light/low-price.png" alt="">
+              <p style="margin-left: 10px;">Economica en $.</p>
+            </div>
+          </ion-col>
+          <ion-col>
+            <h3 style="text-align: right;">
+              <ion-text color="light">
+                <ion-icon *ngIf="property.type.id == 1" name="home"></ion-icon>
+                <ion-icon *ngIf="property.type.id == 2" name="business"></ion-icon>
+                {{property.type.name}}
+              </ion-text>
+              <p>
+                <ion-text color="light">
+                  {{findPrice(property.prices)?.currency?.code}}
+                  {{findPrice(property.prices)?.price_value.toLocaleString('de-DE')}}
+                </ion-text>
+              </p>
+            </h3>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
       <div style="display: flex; flex-wrap: wrap;">
         <span class="property-features">
           <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
@@ -57,5 +90,15 @@
       </div>
     </div>
     <div #googlemapproduct class="google-map-property"></div>
+  </div>
+  <div *ngIf="showMatchDiscardButtons" class="description-container">
+    <ion-buttons class="buttons-container">
+      <div class="boton-redondo boton-redondo-size-normal" (click)="descartar(producto)">
+        <img style="max-width: 100%;" src="../../assets/icon/danger/close-circle.png" alt="">
+      </div>
+      <div class="boton-redondo boton-redondo-size-normal" (click)="matchear(producto)">
+        <img style="max-width: 100%;" src="../../assets/icon/heart-circle.png" alt="">
+      </div>
+    </ion-buttons>
   </div>
 </ion-content>

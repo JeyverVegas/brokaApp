@@ -83,7 +83,8 @@ export class UserProfilePage implements OnInit {
   async ngOnInit() {
     let loading = await this.loadingCtrl.create({
       message: 'Cargando datos...',
-      spinner: 'bubbles'
+      spinner: 'bubbles',
+      cssClass: 'custom-loading custom-loading-primary',
     });
     await loading.present();
     try {
@@ -116,7 +117,8 @@ export class UserProfilePage implements OnInit {
   async setState(event) {
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
-      message: 'cargando partidos...'
+      message: 'cargando partidos...',
+      cssClass: 'custom-loading custom-loading-primary',
     })
     await loading.present();
     try {
@@ -334,7 +336,8 @@ export class UserProfilePage implements OnInit {
     const loading = await this.loadingCtrl.create({
       message: 'Guardando Información',
       spinner: 'bubbles',
-      duration: 10000
+      duration: 10000,
+      cssClass: 'custom-loading custom-loading-primary',
     });
 
     loading.onWillDismiss().then(() => {

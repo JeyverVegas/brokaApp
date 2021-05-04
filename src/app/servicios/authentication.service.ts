@@ -8,6 +8,8 @@ import { Profile, UserAddress, Usuario } from '../interface';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook/ngx';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { Router } from '@angular/router';
+import { DEFAULT_REQUEST_TIMEOUT } from './productos.service';
+
 
 const TOKEN_KEY = 'my-token';
 const USER_DATA = 'user-data';
@@ -153,7 +155,6 @@ export class AuthenticationService {
         return from(this.storage.set(USER_DATA, user));
       }),
       tap(_ => {
-
       })
     )
   }

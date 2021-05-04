@@ -206,7 +206,8 @@ export class MisMatchsPage {
     const modal = await this.modalCtrl.create({
       component: PropertyCardPage,
       componentProps: {
-        property: producto
+        property: producto,
+        showMatchDiscardButtons: false
       }
     });
     modal.present();

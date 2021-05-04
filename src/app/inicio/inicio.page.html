@@ -2,12 +2,12 @@
     <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher> -->
-    <div *ngIf="showdelete" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
-        <ion-icon name="close" color="light"></ion-icon>
+    <div *ngIf="showdelete" class="match-discard-container">
+        <ion-icon name="close" color="light" class="animate__animated animate__fadeInUp animate__faster"></ion-icon>
     </div>
 
-    <div *ngIf="showmatch" class="match-discard-container animate__animated animate__fadeInUp animate__faster">
-        <ion-icon name="heart" color="success"></ion-icon>
+    <div *ngIf="showmatch" class="match-discard-container">
+        <ion-icon name="heart" color="success" class="animate__animated animate__fadeInUp animate__faster"></ion-icon>
     </div>
 
     <div *ngIf="showAlert" class="alert-container animate__animated animate__fadeInUp animate__faster">
@@ -38,20 +38,20 @@
         </div>
     </div>
 
-    <ion-fab vertical="top" horizontal="start" fill="clear" slot="fixed" *ngIf="productos.getValue().length > 0">
+    <ion-fab vertical="top" horizontal="start" fill="clear" slot="fixed" *ngIf="productExist()">
         <ion-fab-button class="buttons-top" (click)="abriFiltros()">
             <ion-icon name="options-outline"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
-    <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="productos.getValue().length > 0">
+    <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="productExist()">
         <ion-fab-button class="{{showAlert ? 'buttons-top-danger' : null}} buttons-top" fill="clear"
             (click)="toggleSaveSearch()">
             <ion-icon [name]="showAlert ? 'close' : 'download-outline'"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
-    <div *ngIf="productos.getValue().length === 0" class="not-found-container">
+    <div *ngIf="!productExist()" class="not-found-container">
         <div class="traslucent-bg"></div>
         <div class="image-bg"></div>
         <div class="ion-text-center ion-padding" style="margin: auto; z-index: 2;">
@@ -74,90 +74,129 @@
             </ion-button>
         </div>
     </div>
-    <div class="display-total ion-padding" style="display: none;" [class.hidden]="productos.getValue().length == 0">
+    <div class="display-total ion-padding" style="display: none;" [class.hidden]="!productExist()">
         <ion-icon name="home" slot="start"></ion-icon> Resultados: {{total | async}}
     </div>
 
 
-    <div style="overflow: hidden; height: 100%;" [class.hidden]="productos.getValue().length == 0">
-        <div *ngFor="let producto of productos | async; let i = index" style="height: 100%; position: relative;">
-            <div #containerx [attr.data-index]="i" class="img-container" style="overflow: auto;">
-                <div class="show-image" style="border-radius: 15px; overflow: hidden;"
-                    *ngFor="let image of producto.images">
-                    <img [src]="image.url" style="max-width: 100%;" alt="">
+    <div style="overflow: hidden; height: 100%;" [class.hidden]="!productExist()">
+        <ng-container *ngFor="let producto of productos | async; let i = index">
+            <div style="height: 100%; position: relative;" *ngIf="i < 11">
+                <div #containerx [attr.data-index]="i" class="img-container" style="overflow: auto;">
+                    <div class="show-image" style="border-radius: 15px; overflow: hidden;"
+                        *ngFor="let image of producto.images">
+                        <img [src]="image.url" style="max-width: 100%;" alt="">
+                    </div>
+                    <div class="product-description">
+                        <ion-grid>
+                            <ion-row>
+                                <ion-col>
+                                    <div *ngIf="producto.is_highly_requested"
+                                        style="display: flex; color: white; align-items: center;">
+                                        <ion-icon style="font-size: 50px;" name="heart-circle-outline"></ion-icon>
+                                        <p style="margin-left: 10px;">Popular entre los usuarios.</p>
+                                    </div>
+                                    <div *ngIf="producto.is_big"
+                                        style="display: flex; color: white; align-items: center;">
+                                        <img style="max-width: 50px;" src="../../assets/icon/light/property-big.png"
+                                            alt="">
+                                        <p style="margin-left: 10px;">Propiedad de gran tamaño.</p>
+                                    </div>
+                                    <div *ngIf="producto.is_cheap_in_dollars"
+                                        style="display: flex; color: white; align-items: center;">
+                                        <img style="max-width: 30px;" src="../../assets/icon/light/low-price.png"
+                                            alt="">
+                                        <p style="margin-left: 10px;">Economica en $.</p>
+                                    </div>
+                                    <div *ngIf="producto.is_cheap_in_pesos"
+                                        style="display: flex; color: white; align-items: center;">
+                                        <img style="max-width: 30px;" src="../../assets/icon/light/low-price.png"
+                                            alt="">
+                                        <p style="margin-left: 10px;">Economica en ARS.</p>
+                                    </div>
+                                </ion-col>
+                                <ion-col>
+                                    <h3 style="text-align: right;">
+                                        <ion-text color="light">
+                                            <ion-icon *ngIf="producto.type.id == 1" name="home"></ion-icon>
+                                            <ion-icon *ngIf="producto.type.id == 2" name="business"></ion-icon>
+                                            {{producto.type.name}}
+                                        </ion-text>
+                                        <p>
+                                            <ion-text color="light">
+                                                {{findPrice(producto.prices)?.currency?.code}}
+                                                {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
+                                            </ion-text>
+                                        </p>
+                                    </h3>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+
+                        <div>
+
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap;">
+                            <span class="property-features">
+                                <img src="../../assets/icon/light/banos.png"
+                                    style="width: 20px; height: 20px; margin-right: 10px;" alt="">
+                                {{producto.bathrooms}} Baños
+                            </span>
+
+                            <span class="property-features">
+                                <img src="../../assets/icon/light/habitaciones.png"
+                                    style="width: 20px; height: 20px; margin-right: 10px;" alt="">
+                                {{producto.rooms}} habitaciones
+                            </span>
+
+                            <span class="property-features">
+                                <img src="../../assets/icon/light/m2.png"
+                                    style="width: 20px; height: 20px; margin-right: 10px;" alt="">
+                                {{producto.square_meters}}M2
+                            </span>
+
+                            <span *ngFor="let feature of producto.features" class="property-features">
+                                <img *ngIf="feature.image" class="feature-image" [src]="feature.image" alt="">
+                                {{feature.name}}
+                            </span>
+
+                            <span class="property-features">
+                                {{producto.type.name}}
+                            </span>
+
+                            <span class="property-features">
+                                {{producto.status.name}}
+                            </span>
+                            <p class="property-address">
+                                <ion-icon name="location"></ion-icon>
+                                En donde: {{producto.address.address}}.
+                            </p>
+                        </div>
+                    </div>
+                    <app-google-map [BrokaControls]="MapBrokaControls" for="product" [productsForMarkers]="[producto]">
+                    </app-google-map>
                 </div>
-                <div class="product-description">
-                    <h3 style="text-align: right;">
-                        <ion-text color="light">
-                            <ion-icon *ngIf="producto.type.id == 1" name="home"></ion-icon>
-                            <ion-icon *ngIf="producto.type.id == 2" name="business"></ion-icon>
-                            {{producto.type.name}}
-                        </ion-text>
-                        <p>
-                            <ion-text color="light">
-                                {{findPrice(producto.prices)?.currency?.code}}
-                                {{findPrice(producto.prices)?.price_value.toLocaleString('de-DE')}}
-                            </ion-text>
-                        </p>
-                    </h3>
-                    <div style="display: flex; flex-wrap: wrap;">
-                        <span class="property-features">
-                            <img src="../../assets/icon/light/banos.png" style="width: 20px; height: 20px;" alt="">
-                            {{producto.bathrooms}} Baños
-                        </span>
 
-                        <span class="property-features">
-                            <img src="../../assets/icon/light/habitaciones.png" style="width: 20px; height: 20px;"
-                                alt="">
-                            {{producto.rooms}} habitaciones
-                        </span>
-
-                        <span class="property-features">
-                            <img src="../../assets/icon/light/m2.png" style="width: 20px; height: 20px;" alt="">
-                            {{producto.square_meters}}M2
-                        </span>
-
-                        <span *ngFor="let feature of producto.features" class="property-features">
-                            <img *ngIf="feature.image" class="feature-image" [src]="feature.image" alt="">
-                            {{feature.name}}
-                        </span>
-
-                        <span class="property-features">
-                            {{producto.type.name}}
-                        </span>
-
-                        <span class="property-features">
-                            {{producto.status.name}}
-                        </span>
-                        <p class="property-address">
-                            <ion-icon name="location"></ion-icon>
-                            En donde: {{producto.address.address}}.
-                        </p>
-                    </div>
+                <div class="description-container">
+                    <ion-buttons class="buttons-container">
+                        <div class="boton-redondo boton-redondo-size-small" (click)="doRefresh(null)">
+                            <img style="max-width: 100%;" src="../../assets/icon/reload-circle.png" alt="">
+                        </div>
+                        <div class="boton-redondo boton-redondo-size-normal" (click)="descartar(producto)">
+                            <img style="max-width: 100%;" src="../../assets/icon/danger/close-circle.png" alt="">
+                        </div>
+                        <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                            <img style="max-width: 100%;" src="../../assets/icon/start-circle.png" alt="">
+                        </div>
+                        <div class="boton-redondo boton-redondo-size-normal" (click)="matchear(producto)">
+                            <img style="max-width: 100%;" src="../../assets/icon/heart-circle.png" alt="">
+                        </div>
+                        <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
+                            <img style="max-width: 100%;" src="../../assets/icon/thunder-circle.png" alt="">
+                        </div>
+                    </ion-buttons>
                 </div>
-                <app-google-map [BrokaControls]="MapBrokaControls" for="product" [productsForMarkers]="[producto]">
-                </app-google-map>
             </div>
-
-            <div class="description-container">
-                <ion-buttons class="buttons-container">
-                    <div class="boton-redondo boton-redondo-size-small" (click)="doRefresh(null)">
-                        <img style="max-width: 100%;" src="../../assets/icon/reload-circle.png" alt="">
-                    </div>
-                    <div class="boton-redondo boton-redondo-size-normal" (click)="descartar(producto)">
-                        <img style="max-width: 100%;" src="../../assets/icon/danger/close-circle.png" alt="">
-                    </div>
-                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
-                        <img style="max-width: 100%;" src="../../assets/icon/start-circle.png" alt="">
-                    </div>
-                    <div class="boton-redondo boton-redondo-size-normal" (click)="matchear(producto)">
-                        <img style="max-width: 100%;" src="../../assets/icon/heart-circle.png" alt="">
-                    </div>
-                    <div class="boton-redondo boton-redondo-size-small" (click)="playSound()">
-                        <img style="max-width: 100%;" src="../../assets/icon/thunder-circle.png" alt="">
-                    </div>
-                </ion-buttons>
-            </div>
-        </div>
+        </ng-container>
     </div>
 </ion-content>

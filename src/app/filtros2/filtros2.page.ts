@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { City, ContractType, ProductFilters, PropertyType, State } from '../interface';
 import { AddressService } from '../servicios/address.service';
 import { ProductosService } from '../servicios/productos.service';
@@ -12,6 +12,7 @@ import { ProductosService } from '../servicios/productos.service';
 export class Filtros2Page implements OnInit {
 
   showSegment: 'filtros' | 'guardados' = 'filtros';
+  @Input() commingFromMap: boolean = false;
 
   provincies: State[] = [];
   cities: City[] = [];
@@ -24,6 +25,8 @@ export class Filtros2Page implements OnInit {
   errorpropertyTypes: boolean = false;
 
   rooms = [1];
+
+  cityShape = null;
 
   optioValues = Array.from(Array(6));
 
@@ -49,12 +52,14 @@ export class Filtros2Page implements OnInit {
 
   selectedContract: ContractType = null;
   selectedType: PropertyType = null;
+  selectedCurrency = null;
   constructor(
     private modalCtrl: ModalController,
     private toastController: ToastController,
     private productosService: ProductosService,
     private loadingCtrl: LoadingController,
-    private addressService: AddressService
+    private addressService: AddressService,
+    private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
@@ -62,21 +67,19 @@ export class Filtros2Page implements OnInit {
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
       message: 'cargando informacion...',
-      duration: 10000
-    });
-
-    loading.onDidDismiss().then(() => {
-      if (this.errorContractTypes || this.errorpropertyTypes || this.errorLoadingCurrencies) {
-        console.log(this.contractTypes, this.currencies, this.propertyTypes)
-        this.presentToast('Ha ocurrido un error al cargar los filtros, por favor intente mas tarde.', 'danger');
-        this.modalCtrl.dismiss();
-      }
+      cssClass: 'custom-loading custom-loading-primary',
     });
 
     try {
       loading.present();
 
-      this.contractTypes = await this.productosService.getContractType();
+      const [contractTypes, propertyTypes, minMaxRange] = await Promise.all([
+        this.productosService.getContractType(),
+        this.productosService.getPropertyType(),
+        this.productosService.getFiltersRange()
+      ]);
+
+      this.contractTypes = contractTypes;
       if (this.contractTypes.length < 1) {
         this.errorContractTypes = true;
         loading.dismiss();
@@ -85,14 +88,14 @@ export class Filtros2Page implements OnInit {
 
       console.log(this.contractTypes);
 
-      this.propertyTypes = await this.productosService.getPropertyType();
+      this.propertyTypes = propertyTypes;
       if (this.propertyTypes.length < 1) {
         this.errorpropertyTypes = true;
         loading.dismiss();
         return;
       }
 
-      this.currencies = await (await this.productosService.getFiltersRange()).prices;
+      this.currencies = minMaxRange.prices;
       if (this.currencies.length < 1) {
         this.errorLoadingCurrencies = true;
         loading.dismiss();
@@ -105,6 +108,11 @@ export class Filtros2Page implements OnInit {
 
       if (Object.keys(this.productosService.filtros).length > 1) {
         this.filtros = this.productosService.filtros;
+
+        if (this.filtros.currency) {
+          this.selectedCurrency = this.currencies.find(currency => currency.id == this.filtros.currency);
+        }
+
         if (!this.productosService.filtros.rooms) {
           this.filtros.rooms = []
         }
@@ -130,7 +138,22 @@ export class Filtros2Page implements OnInit {
 
     } catch (err) {
       loading.dismiss();
-      console.log(err);
+      if (err.message == "Tiempo de espera excedido.") {
+        this.alertCtrl.create({
+          header: 'Error de conexión',
+          message: err,
+          buttons: [
+            {
+              text: 'OK'
+            }
+          ]
+        }).then(a => {
+          a.present();
+          a.onWillDismiss().then(_ => {
+            this.modalCtrl.dismiss();
+          })
+        });
+      }
     }
   }
 
@@ -175,10 +198,17 @@ export class Filtros2Page implements OnInit {
       this.filtros.priceBetween[1] = 0;
     }
 
+    if (this.commingFromMap) {
+      this.filtros.per_page = 999999999999999;
+    } else {
+      this.filtros.per_page = 10;
+    }
+
     this.productosService.filtros = this.filtros;
 
     console.log(this.productosService.filtros);
     this.productosService.getProducts();
+
     this.modalCtrl.dismiss();
   }
 
@@ -212,6 +242,10 @@ export class Filtros2Page implements OnInit {
     this.filtros.radius = null;
   }
 
+  removeAreaCustom() {
+    this.filtros.within = null;
+  }
+
   removeState() {
     this.filtros.state = [];
     this.filtros.city = [];
@@ -229,8 +263,38 @@ export class Filtros2Page implements OnInit {
     this.filtros.type = [];
   }
 
+  removePrice() {
+    this.filtros.priceBetween[0] = null;
+    this.filtros.priceBetween[1] = null;
+  }
+
+  removeCurrency() {
+    this.filtros.currency = null;
+    this.selectedCurrency = null;
+  }
+
   async setAddress(event: City[]) {
-    this.filtros.city = event;
+    const loading = await this.loadingCtrl.create({
+      spinner: 'crescent',
+      message: 'Cargando...',
+      cssClass: 'custom-loading custom-loading-primary',
+    });
+    loading.present();
+
+    try {
+      let city = await this.addressService.getCityById(event[0].id);
+      this.filtros.city = [city];
+      this.filtros.radius = null;
+      this.filtros.within = null;
+      loading.dismiss();
+    } catch (error) {
+      loading.dismiss();
+    }
+  }
+
+  setCurrency(currency) {
+    console.log(currency);
+    this.selectedCurrency = currency;
   }
 
   removeAddress(address) {

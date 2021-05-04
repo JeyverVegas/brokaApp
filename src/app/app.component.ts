@@ -9,6 +9,7 @@ import { Router, RouterEvent } from '@angular/router';
 import { Usuario } from './interface';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { ChatService } from './servicios/chat.service';
+import { NavigationBar } from '@ionic-native/navigation-bar/ngx';
 
 @Component({
   selector: 'app-root',
@@ -73,7 +74,8 @@ export class AppComponent {
     private loadingCtrl: LoadingController,
     private oneSignal: OneSignal,
     private alertCtrl: AlertController,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private navigationBar: NavigationBar
   ) {
     this.initializeApp();
     this.router.events.subscribe((event: RouterEvent) => {

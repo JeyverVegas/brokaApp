@@ -132,7 +132,7 @@
     width: 100%;
     z-index: 1;
     " class="animate__animated animate__fadeInUp">
-    <div class="ion-padding ion-margin-top" style="color: white; background: rgba(76, 175, 80, .8)">
+    <div class="ion-padding " style="color: white; background: rgba(76, 175, 80, .8); margin-top: 10vh;">
       <h3>¡Muy Bien!</h3>
       <p>
         con esta función podes obtener tu ubicación actual y dibujar un radio alrededor de ella para así encontrar las
@@ -158,7 +158,7 @@
     z-index: 1;
     " class="animate__animated animate__fadeInUp">
     <div class="ion-padding"
-      style="position: absolute; bottom: 40%; left: 0; color: white; background: rgba(76, 175, 80, .8)">
+      style="position: absolute; bottom: 20vh; left: 0; width: 100%; color: white; background: rgba(76, 175, 80, .8)">
       <div class="ion-text-center">
         <ion-icon class="animate__animated animate__pulse animate__infinite" style="font-size: 50px;" name="arrow-up">
         </ion-icon>
@@ -200,7 +200,8 @@
     style="position: absolute; width: 100%; z-index: 999999999999; color: white;"
     class="animate__animated animate__fadeInUp">
     <!--Segundo Paso "Click en el mapa"-->
-    <div style="transition: all .3s; background: {{isAreaSet ? 'rgba(76, 175, 80, .8)' : 'rgba(0, 0, 0, 0.7)'}}">
+    <div
+      style="max-height: 30vh; overflow-y: auto; transition: all .3s; background: {{isAreaSet ? 'rgba(76, 175, 80, .8)' : 'rgba(0, 0, 0, 0.7)'}}">
       <p class="ion-padding">
         Por favor pulsa sobre el mapa para asi crear una area de busqueda.
       </p>

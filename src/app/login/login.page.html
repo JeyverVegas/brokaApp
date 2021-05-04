@@ -20,7 +20,7 @@
       <ion-text color="medium">¡Bienvenido de nuevo, te extrañamos!</ion-text>
     </p>
   </div>
-  <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>  
+  <!-- <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>   -->
   <div>
     <form (ngSubmit)="onSubmit()">
       <ion-item>
@@ -41,22 +41,23 @@
         <a routerLink="/new-password" routerDirection="forward">
           <ion-text color="medium">
             <b>¿Haz olvidado tu contraseña?</b>
-          </ion-text>        
+          </ion-text>
         </a>
-      </div>      
+      </div>
       <br>
       <ion-button mode="ios" expand="full" color="primary" shape="round" class="ion-margin-top" type="submit">
         Iniciar Sesión
         <ion-icon name="log-in-outline" slot="end"></ion-icon>
       </ion-button>
       <p class="ion-text-center">
-        <ion-text color="medium">¿No tienes una cuenta? <a style="color: gray;" (click)="goToRegister()"><b>Regístrate</b></a></ion-text>
-      </p>      
+        <ion-text color="medium">¿No tienes una cuenta? <a style="color: gray;"
+            (click)="goToRegister()"><b>Regístrate</b></a></ion-text>
+      </p>
     </form>
   </div>
   <br>
   <div class="line line-medium ion-margin-bottom"></div>
-  <br>  
+  <br>
   <div>
     <ion-button expand="block" shape="round" class="boton-facebook" (click)="logFacebook()">
       <ion-icon name="logo-facebook" slot="start"></ion-icon>
@@ -66,6 +67,6 @@
     <ion-button color="danger" expand="block" shape="round" fill="outline" (click)="logGoogle()">
       <ion-icon name="logo-google"></ion-icon>
       Conectate con Google
-    </ion-button>    
+    </ion-button>
   </div>
 </ion-content>

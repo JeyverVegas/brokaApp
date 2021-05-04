@@ -8,7 +8,7 @@
   </ion-button>
 
   <app-google-map (onAreaSet)="loadProductsByArea($event)" (onMapLoaded)="loadProperties($event)"
-    (onChangeRadius)="changeRadius($event)" size="normal" [BrokaControls]="BrokaControls"
+    (onChangeRadius)="changeRadius($event)" size="normal" [zone]="cityShape" [BrokaControls]="BrokaControls"
     [productsForMarkers]="products" [radius]="radius">
   </app-google-map>
 </ion-content>

@@ -1,9 +1,14 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { ProductosService } from '../servicios/productos.service';
 import { } from 'googlemaps';
 import { GoogleMapsApiService } from '../servicios/google-maps-api.service';
 import { googleMapsControlOpts } from '../interface';
+import { SmartAudioService } from '../servicios/smart-audio.service';
+import { AuthenticationService } from '../servicios/authentication.service';
+import { MatchService } from '../servicios/match.service';
+import { ChatService } from '../servicios/chat.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-property-card',
@@ -20,6 +25,11 @@ export class PropertyCardPage implements OnInit {
 
   productMarker: any;
 
+  showdelete = false;
+  showmatch = false;
+
+  @Input() showMatchDiscardButtons: boolean = true;
+
   MapBrokaControls: googleMapsControlOpts = {
     showMyPositionButton: false,
     showRadiusButton: false,
@@ -30,7 +40,14 @@ export class PropertyCardPage implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private productosService: ProductosService,
-    private googleMapsApiService: GoogleMapsApiService
+    private googleMapsApiService: GoogleMapsApiService,
+    private smartAudio: SmartAudioService,
+    private toastController: ToastController,
+    private authService: AuthenticationService,
+    private matchService: MatchService,
+    private chatService: ChatService,
+    private alertCtrl: AlertController,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -64,6 +81,65 @@ export class PropertyCardPage implements OnInit {
     this.productMarker.setMap(this.map);
   }
 
+  async matchear() {
+    this.playSound();
+
+    if (this.authService.user.profile) {
+      this.playSound();
+      this.showmatch = true;
+      this.matchService.storeMatch({ property_id: this.property.id }).then(response => {
+        this.chatService.getChats();
+        this.modalCtrl.dismiss({ deleteProperty: true }).then(() => {
+          this.presentToast('Se ha matcheado exitosamente la propiedad.', 'success');
+        })
+      }).catch(err => {
+        console.log(err);
+        this.presentToast('Ha ocurrido un error al matchear la propiedad.', 'danger');
+      }).finally(async () => {
+        this.showmatch = false;
+      });
+    } else {
+      this.alertCtrl.create({
+        header: 'Debe completar primero su perfil',
+        message: 'Para poder darle me gusta a una propiedad y que quede en tu listado, tenes que completar el perfil.',
+        buttons: [
+          {
+            text: 'SEGUIR MIRANDO',
+            handler: () => {
+              this.playSound();
+            }
+          },
+          {
+            text: 'COMPLETAR PERFIL',
+            handler: async () => {
+              this.playSound();
+              this.modalCtrl.dismiss().then(() => {
+                this.router.navigateByUrl('/user-profile');
+              });
+            }
+          }
+        ]
+      }).then(a => a.present());
+    }
+  }
+
+  async descartar() {
+    this.playSound();
+    this.showdelete = true;
+    this.productosService.discardProduct(this.property.id).then(response => {
+      this.modalCtrl.dismiss({ deleteProperty: true }).then(m => {
+        this.presentToast('Se ha descartado el inmueble satisfactoriamente.', 'success');
+      })
+    }).catch(error => {
+      console.log(error);
+      this.presentToast('Ha ocurrido un error al descartar el inmueble intentelo mas tarde.', 'danger');
+    }).finally(() => {
+      this.showdelete = false;
+    });
+  }
+
+
+
   closeModal() {
     this.modalCtrl.dismiss();
   }
@@ -82,6 +158,23 @@ export class PropertyCardPage implements OnInit {
     }
 
     return price;
+  }
+
+  async presentToast(text, color) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 3000,
+      color: color,
+      buttons: [
+        'ok'
+      ]
+    });
+    toast.present();
+  }
+
+  playSound() {
+    this.smartAudio.play('tabSwitch');
   }
 
 }

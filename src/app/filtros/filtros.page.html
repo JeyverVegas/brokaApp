@@ -81,21 +81,13 @@
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
       <div style="margin-top: 50%;">
-        <ion-item lines="none" class="select-address">
-          <ion-select placeholder="Provincias" [(ngModel)]="filtros.state" (ionChange)="setState()">
-            <ion-select-option [value]="null">Provincias</ion-select-option>
-            <ion-select-option *ngFor="let provincy of provincies" [value]="provincy.name">{{provincy.name}}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item class="select-address" *ngIf="filtros.state && filtros.state.length > 0" lines="none">
-          <ion-select [(ngModel)]="filtros.city">
-            <ion-select-option [value]="null">Partidos</ion-select-option>
-            <ion-select-option *ngFor="let partido of partidos" [value]="partido.name">{{partido.name}}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-button (click)="setStateCity()">
+        <app-select-address shape="round" color="secondary" (onChange)="setAddress($event)" label="Dirección:"
+          searchPlaceHolder="Ej. Buenos Aires, Bolivar..." mode="ios" [items]="cities" (onSearch)="findCities($event)">
+        </app-select-address>
+        <h1 *ngIf="isAddressSet()">
+          {{filtros.city[0].name}}
+        </h1>
+        <ion-button [disabled]="!isAddressSet()" (click)="slideNext(6)">
           aceptar
         </ion-button>
       </div>

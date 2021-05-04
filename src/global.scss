@@ -26,6 +26,7 @@
 @import "~@ionic/angular/css/flex-utils.css";
 @import "~animate.css/animate.css";
 @import "./theme/botones-broka.scss";
+@import "./theme/custom-loading.scss";
 
 /*Estilos Globales de la App*/
 
@@ -300,12 +301,16 @@ ion-item {
 
 .match-discard-container {
     position: fixed;
-    top: 50%;
+    top: 0;
     left: 0;
     width: 100%;
-    text-align: center;
+    height: 100vh;
+    display: flex;
     z-index: 9999;
     font-size: 50px;
+    ion-icon {
+        margin: auto;
+    }
 }
 
 .property-features {

@@ -28,6 +28,7 @@ export class TabsPage implements OnInit {
       this.selectedPath = this.router.url;
     })
     this.user = this.authService.user;
+    console.log(this.user);
     this.newMessagesCount = this.chatService.getNewMewssagesCount();
   }
 

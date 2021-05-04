@@ -46,6 +46,7 @@ export class BuscarPage implements OnInit {
   initializedItems() {
     this.productos.subscribe(productos => {
       this.filtro = productos;
+
       this.next = this.productosService.getNext();
       if (this.refrescando) {
         this.refrescando.complete();
@@ -62,6 +63,16 @@ export class BuscarPage implements OnInit {
       }
     });
     modal.present();
+
+    modal.onWillDismiss().then(m => {
+      if (m.data?.deleteProperty) {
+        for (let [index, p] of this.productos.getValue().entries()) {
+          if (p.id === producto.id) {
+            this.productos.getValue().splice(index, 1);
+          }
+        }
+      }
+    });
   }
 
   filtrar(ev) {
@@ -160,7 +171,7 @@ export class BuscarPage implements OnInit {
   async matchear(product) {
     this.playSound();
 
-    if (this.authService.user.profile && this.authService.user.address) {
+    if (this.authService.user.profile) {
       this.playSound();
       this.showmatch = true;
       this.matchService.storeMatch({ property_id: product.id }).then(response => {

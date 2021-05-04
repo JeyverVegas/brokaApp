@@ -44,6 +44,7 @@ export class LoginPage implements OnInit {
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
       message: 'Cargando...',
+      cssClass: 'custom-loading custom-loading-primary',
     });
 
     loading.present();

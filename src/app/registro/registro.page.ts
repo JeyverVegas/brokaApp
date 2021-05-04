@@ -45,7 +45,8 @@ export class RegistroPage implements OnInit {
     const loading = await this.loadingCtrl.create({
       spinner: 'crescent',
       message: 'Cargando...',
-      duration: 10000
+      duration: 10000,
+      cssClass: 'custom-loading custom-loading-primary',
     });
 
     loading.onDidDismiss().then(() => {

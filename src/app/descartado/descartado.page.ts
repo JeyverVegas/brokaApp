@@ -29,7 +29,8 @@ export class DescartadoPage implements OnInit {
   async ionViewDidEnter() {
     const loading = await this.loadingCtrl.create({
       message: 'Cargando...',
-      spinner: 'crescent'
+      spinner: 'crescent',
+      cssClass: 'custom-loading custom-loading-primary',
     });
     loading.present();
     this.descartados = await this.productosService.getDescartados();
@@ -67,7 +68,8 @@ export class DescartadoPage implements OnInit {
             this.playSound();
             const loading = await this.loadingCtrl.create({
               spinner: 'dots',
-              message: 'Cargando...'
+              message: 'Cargando...',
+              cssClass: 'custom-loading custom-loading-primary',
             });
             loading.present();
             this.productosService.removeDiscardProduct(product.id).then(response => {
@@ -120,7 +122,8 @@ export class DescartadoPage implements OnInit {
             this.playSound();
             const loading = await this.loadingCtrl.create({
               spinner: 'lines',
-              message: 'Reestablenciendo todos los inmuebles...'
+              message: 'Reestablenciendo todos los inmuebles...',
+              cssClass: 'custom-loading custom-loading-primary',
             });
             await loading.present();
             this.productosService.removerAllDiscartedProducts().then(response => {

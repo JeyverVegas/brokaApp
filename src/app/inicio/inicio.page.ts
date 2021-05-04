@@ -55,20 +55,23 @@ export class InicioPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.productos = await this.productosService.getProducts();
-    this.mapas.changes.subscribe((elements: any) => {
-      var mapas: any[] = elements.toArray();
-
-      mapas.forEach((mapa: ElementRef) => {
-        const map = mapa.nativeElement;
-        const product = this.productos.getValue()[Number(map.dataset.index)];
-        this.crearMapa(map, product, Number(map.dataset.index));
-      })
-    });
   }
 
   async ionViewDidEnter() {
+    try {
+      this.productos = await this.productosService.getProducts();
+      this.mapas.changes.subscribe((elements: any) => {
+        var mapas: any[] = elements.toArray();
 
+        mapas.forEach((mapa: ElementRef) => {
+          const map = mapa.nativeElement;
+          const product = this.productos.getValue()[Number(map.dataset.index)];
+          this.crearMapa(map, product, Number(map.dataset.index));
+        })
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   crearMapa(mapa, product, index) {
@@ -132,6 +135,10 @@ export class InicioPage implements OnInit {
     });
 
     modal.present();
+
+    modal.onWillDismiss().then(modal => {
+      console.log(modal.data);
+    });
   }
 
   async toggleSaveSearch() {
@@ -179,16 +186,23 @@ export class InicioPage implements OnInit {
       }
     }).catch(error => {
       console.log(error);
-      this.presentToast(error.error.errors.property_id[0], 'danger');
+      this.presentToast('Ha ocurrido un error al descartar el inmueble intentelo mas tarde.', 'danger');
     }).finally(() => {
       this.showdelete = false;
     });
   }
 
+  productExist(): boolean {
+    if (this.productos && this.productos.getValue().length > 0) {
+      return true
+    }
+    return false;
+  }
+
   async matchear(product) {
     this.playSound();
 
-    if (this.authService.user.profile && this.authService.user.address) {
+    if (this.authService.user.profile) {
       this.playSound();
       this.showmatch = true;
       this.matchService.storeMatch({ property_id: product.id }).then(response => {
@@ -266,9 +280,15 @@ export class InicioPage implements OnInit {
     alerta.present();
   }
 
-  async doRefresh(event) {
-    await this.productosService.getProducts();
-    event.target.complete();
+  async doRefresh(event?) {
+    try {
+      await this.productosService.getProducts();
+      if (event) {
+        event.target.complete();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   playSound() {

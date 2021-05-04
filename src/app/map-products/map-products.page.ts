@@ -19,6 +19,8 @@ export class MapProductsPage implements OnInit {
 
   firtsRender = false;
 
+  cityShape = null;
+
   radius = 20;
 
   products: any[] = [];
@@ -31,16 +33,22 @@ export class MapProductsPage implements OnInit {
 
   async ngOnInit() {
     this.productService.filtros.per_page = 999999999999999;
-
+    if (this.productService.filtros.city && this.productService.filtros.city.length > 0) {
+      this.cityShape = this.productService.filtros.city[0].shape;
+    }
   }
 
-  ionViewWillLeave() {
-    this.productService.filtros.per_page = null;
+  async ionViewWillLeave() {
+    this.productService.filtros.per_page = 10;
     this.firtsRender = false;
   }
 
   async loadProperties(event) {
     this.productService.filtros.radius = [event.radius, event.position.lat, event.position.lng];
+    this.productService.filtros.within = null;
+    this.productService.filtros.state = null;
+    this.productService.filtros.city = null;
+    this.cityShape = null;
     console.log(event);
 
     (await this.productService.getProducts()).subscribe(products => {
@@ -57,6 +65,9 @@ export class MapProductsPage implements OnInit {
   async loadProductsByArea(event) {
     this.productService.filtros.within = event;
     this.productService.filtros.radius = null;
+    this.productService.filtros.city = null;
+    this.productService.filtros.state = null;
+    this.cityShape = null;
     this.products = (await this.productService.getProducts()).getValue();
     console.log(event);
   }
@@ -68,17 +79,31 @@ export class MapProductsPage implements OnInit {
   async changeRadius(event: any) {
     if (this.firtsRender) {
       this.productService.filtros.radius = [event.radius, event.position.lat, event.position.lng];
+      this.productService.filtros.city = null;
+      this.productService.filtros.state = null;
       this.productService.filtros.within = null;
+      this.cityShape = null;
       this.products = await (await this.productService.getProducts()).getValue();
     }
   }
 
   async openFilters() {
     const modal = await this.modalCtrl.create({
-      component: Filtros2Page
+      component: Filtros2Page,
+      componentProps: {
+        commingFromMap: true
+      }
     });
 
     modal.present();
+
+    modal.onWillDismiss().then(modal => {
+      if (this.productService.filtros.city && this.productService.filtros.city.length > 0) {
+        this.cityShape = this.productService.filtros.city[0].shape;
+      } else {
+        this.cityShape = null;
+      }
+    });
   }
 
 }

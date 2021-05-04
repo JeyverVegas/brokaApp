@@ -22,7 +22,8 @@
     <ion-item (click)="toggleAddress(address)" class="animate__animated animate__fadeInLeft"
       *ngFor="let address of items">
       <ion-checkbox [checked]="getSelectedItemsId(address.id)" color="{{color}}" slot="start"></ion-checkbox>
-      <ion-label>{{address?.state?.name? address.state.name + ',' : null}} {{address.name}}</ion-label>
+      <ion-label class="ion-text-wrap">{{address?.state?.name? address.state.name + ',' : null}} {{address.name}}
+      </ion-label>
     </ion-item>
     <div class="animate__animated animate__fadeInLeft ion-text-center" *ngIf="items.length < 1 && !loadingAddress">
       <ion-text color="danger">

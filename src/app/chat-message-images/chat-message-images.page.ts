@@ -53,7 +53,8 @@ export class ChatMessageImagesPage implements OnInit {
   async sendMessage() {
     const loading = await this.loadingCtrl.create({
       spinner: 'lines',
-      message: 'enviando...'
+      message: 'enviando...',
+      cssClass: 'custom-loading custom-loading-primary',
     });
     await loading.present();
     this.modalctrl.dismiss();

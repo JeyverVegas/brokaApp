@@ -67,16 +67,20 @@ export class UsuarioPage implements OnInit {
 
   async ionViewDidEnter() {
     try {
-
-      this.chatCount = await (await this.chatService.returnChats()).getValue().length;
+      const [chatCount, matchCount, discardCount] = await Promise.all([
+        this.chatService.returnChats(),
+        this.matchService.getMatchs(),
+        this.productosService.getDescartados()
+      ]);
+      this.chatCount = chatCount.getValue().length;
       this.loadingChatCount = false;
-      this.matchCount = await (await this.matchService.getMatchs()).data.length;
+      this.matchCount = matchCount.data.length;
       this.loadingMatchCount = false;
-      this.discardCount = await (await this.productosService.getDescartados()).length;
+      this.discardCount = discardCount.length;
       this.loadingDiscardCount = false;
     } catch (error) {
-      this.presentToast('ha ocurrido un error al cargar, por favor intente mas tarde', 'danger');
       console.log(error);
+      this.presentToast('ha ocurrido un error al cargar, por favor intente mas tarde', 'danger');
     }
   }
 
@@ -101,7 +105,8 @@ export class UsuarioPage implements OnInit {
           handler: async () => {
             const loading = await this.loadingCtrl.create({
               spinner: 'lines',
-              message: 'Eliminando Imagen...'
+              message: 'Eliminando Imagen...',
+              cssClass: 'custom-loading custom-loading-primary',
             });
             await loading.present();
             this.authService.deleteImgGallery(imageId).then((response: any) => {
@@ -335,6 +340,7 @@ export class UsuarioPage implements OnInit {
             const loading = await this.loadingCtrl.create({
               spinner: 'crescent',
               message: 'Cerrando Sesión.',
+              cssClass: 'custom-loading custom-loading-primary',
             });
             await loading.present();
             this.chatService.unistallEcho();

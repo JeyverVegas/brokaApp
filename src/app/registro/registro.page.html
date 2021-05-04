@@ -20,7 +20,7 @@
       <ion-text color="medium">¡Crea una cuenta para continuar!</ion-text>
     </p>
   </div>
-  <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>  
+  <!-- <app-error-alert *ngIf="error.displayError" [error]="error"></app-error-alert>   -->
   <div>
     <form (ngSubmit)="onSubmit()">
       <ion-item>
@@ -28,7 +28,7 @@
         <ion-input [(ngModel)]="usuario.email" name="email" type="email" required>
           <ion-icon class="icon-input" name="mail-outline" slot="start"></ion-icon>
         </ion-input>
-      </ion-item>            
+      </ion-item>
       <br>
       <ion-item>
         <ion-label position="stacked" color="medium">Contraseña</ion-label>
@@ -46,11 +46,14 @@
         Registrarse
         <ion-icon name="log-in-outline" slot="end"></ion-icon>
       </ion-button>
-      <p class="ion-text-center"><ion-text color="medium">Ya tengo una cuenta y quisiera <a (click)="goToLogin()" style="color: gray;"><b>Iniciar Sesión</b></a></ion-text></p>
+      <p class="ion-text-center">
+        <ion-text color="medium">Ya tengo una cuenta y quisiera <a (click)="goToLogin()" style="color: gray;"><b>Iniciar
+              Sesión</b></a></ion-text>
+      </p>
     </form>
   </div>
   <br>
-  <div class="line line-medium ion-margin-bottom"></div>  
+  <div class="line line-medium ion-margin-bottom"></div>
   <br>
   <div>
     <ion-button expand="block" shape="round" class="boton-facebook" (click)="playSound()">

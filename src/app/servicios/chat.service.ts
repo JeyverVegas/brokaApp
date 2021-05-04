@@ -6,6 +6,8 @@ import Pusher from "pusher-js";
 import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import { SmartAudioService } from './smart-audio.service';
+import { DEFAULT_REQUEST_TIMEOUT } from './productos.service';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +76,12 @@ export class ChatService {
   async getChats(chatPage?: boolean) {
     this.http.get(this.authService.api + '/chats', {
       headers: this.authService.authHeader
-    }).toPromise().then((response: any) => {
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise().then((response: any) => {
       this.chats.next(response.data);
       if (!chatPage) {
         this.newMessagesCount.next(this.chats.getValue().reduce((suma, b) => suma + b.unread_messages_count, 0));
@@ -95,7 +102,12 @@ export class ChatService {
   getMoreMessages(lastMessageId, chat_id) {
     return this.http.get(this.authService.api + '/chats/' + chat_id + '/messages?older_than_id=' + lastMessageId, {
       headers: this.authService.authHeader
-    }).toPromise();
+    }).pipe(
+      timeout(DEFAULT_REQUEST_TIMEOUT),
+      catchError(e => {
+        throw new Error("Tiempo de espera excedido.");
+      })
+    ).toPromise();
   }
 
 
@@ -113,7 +125,13 @@ export class ChatService {
 
   sendMessage(newMessage: any) {
     return this.http.post(this.authService.api + '/chats/' + newMessage.chat_id + '/messages', newMessage.formData,
-      { headers: this.authService.authHeader }).toPromise();
+      { headers: this.authService.authHeader })
+      .pipe(
+        timeout(DEFAULT_REQUEST_TIMEOUT),
+        catchError(e => {
+          throw new Error("Tiempo de espera excedido.");
+        })
+      ).toPromise();
   }
 
   markMessagesRead(chatId: number) {

@@ -52,6 +52,7 @@ export interface State {
 
 export interface City extends State {
   state_id?: number;
+  shape?: { lat: number, lng: number }[]
 }
 export interface PropertyType extends State { }
 export interface ContractType extends State { }
